@@ -95,14 +95,25 @@
         <div class="mb-4">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <label for="sortOrder" class="form-label me-2">Ordina per:</label>
-                    <select class="form-select form-select-sm d-inline-block w-auto" id="sortOrder">
-                        <option value="name">Nome</option>
-                        <option value="quality-desc">Qualità (più alta)</option>
-                        <option value="quality-asc">Qualità (più bassa)</option>
-                        <option value="cost-asc">Costo (più basso)</option>
-                        <option value="cost-desc">Costo (più alto)</option>
-                    </select>
+                    <form id="sortForm" action="/search" method="get" class="d-inline">
+                        <!-- Hidden fields to preserve current search parameters -->
+                        <input type="hidden" name="specialty" value="{{ search_params.specialty }}">
+                        <input type="hidden" name="region" value="{{ search_params.region }}">
+                        <input type="hidden" name="min_quality" value="{{ search_params.min_quality }}">
+                        <input type="hidden" name="query_text" value="{{ search_params.query_text }}">
+                        
+                        <label for="sort_by" class="form-label me-2">Ordina per:</label>
+                        <select class="form-select form-select-sm d-inline-block w-auto" id="sort_by" name="sort_by" onchange="document.getElementById('sortForm').submit();">
+                            <option value="quality_desc" {% if search_params.sort_by == 'quality_desc' %}selected{% endif %}>Qualità (Migliore prima)</option>
+                            <option value="quality_asc" {% if search_params.sort_by == 'quality_asc' %}selected{% endif %}>Qualità (Peggiore prima)</option>
+                            <option value="cost_asc" {% if search_params.sort_by == 'cost_asc' %}selected{% endif %}>Costo (Più economico prima)</option>
+                            <option value="cost_desc" {% if search_params.sort_by == 'cost_desc' %}selected{% endif %}>Costo (Più costoso prima)</option>
+                            <option value="name_asc" {% if search_params.sort_by == 'name_asc' %}selected{% endif %}>Nome (A-Z)</option>
+                            <option value="name_desc" {% if search_params.sort_by == 'name_desc' %}selected{% endif %}>Nome (Z-A)</option>
+                            <option value="city_asc" {% if search_params.sort_by == 'city_asc' %}selected{% endif %}>Città (A-Z)</option>
+                            <option value="city_desc" {% if search_params.sort_by == 'city_desc' %}selected{% endif %}>Città (Z-A)</option>
+                        </select>
+                    </form>
                 </div>
                 <div>
                     <button class="btn btn-sm btn-outline-secondary me-2" id="viewGrid">
@@ -318,44 +329,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Sorting
-    const sortOrder = document.getElementById('sortOrder');
-    if (sortOrder) {
-        sortOrder.addEventListener('change', function() {
-            sortFacilities(this.value);
-        });
-    }
-    
-    function sortFacilities(criteria) {
-        const gridCards = Array.from(document.querySelectorAll('.facility-card'));
-        const listItems = Array.from(document.querySelectorAll('.facility-item'));
-        
-        // Sort function
-        const sortFunc = (a, b) => {
-            if (criteria === 'name') {
-                return a.dataset.name.localeCompare(b.dataset.name);
-            } else if (criteria === 'quality-desc') {
-                return parseFloat(b.dataset.quality) - parseFloat(a.dataset.quality);
-            } else if (criteria === 'quality-asc') {
-                return parseFloat(a.dataset.quality) - parseFloat(b.dataset.quality);
-            } else if (criteria === 'cost-asc') {
-                return parseFloat(a.dataset.cost) - parseFloat(b.dataset.cost);
-            } else if (criteria === 'cost-desc') {
-                return parseFloat(b.dataset.cost) - parseFloat(a.dataset.cost);
-            }
-            return 0;
-        };
-        
-        // Sort and reorder grid
-        gridCards.sort(sortFunc).forEach((card, index) => {
-            card.parentNode.appendChild(card);
-        });
-        
-        // Sort and reorder list
-        listItems.sort(sortFunc).forEach((item, index) => {
-            item.parentNode.appendChild(item);
-        });
-    }
+    // Note: We've removed client-side sorting since we're now using server-side sorting
+    // The sorting is handled by the backend via the sort_by parameter
 });
 </script>
 {% endblock %}

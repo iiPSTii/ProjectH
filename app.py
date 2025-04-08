@@ -73,6 +73,7 @@ with app.app_context():
         region = request.args.get('region', '')
         min_quality = request.args.get('min_quality', 0, type=float)
         query_text = request.args.get('query_text', '')
+        sort_by = request.args.get('sort_by', 'quality_desc')  # Default sort by quality descending
         
         # Process the search query to extract location information
         detected_location = None
@@ -210,6 +211,28 @@ with app.app_context():
             facilities = query.all()
             logger.debug(f"Basic filter search found {len(facilities)} facilities")
         
+        # Sort the facilities based on the sort_by parameter
+        sorting_functions = {
+            'quality_desc': lambda x: (x.quality_score if x.quality_score is not None else -1) * -1,  # Default
+            'quality_asc': lambda x: x.quality_score if x.quality_score is not None else float('inf'),
+            'cost_desc': lambda x: (x.cost_estimate if x.cost_estimate is not None else -1) * -1,
+            'cost_asc': lambda x: x.cost_estimate if x.cost_estimate is not None else float('inf'),
+            'name_asc': lambda x: x.name.lower(),
+            'name_desc': lambda x: x.name.lower(),
+            'city_asc': lambda x: (x.city or '').lower(),
+            'city_desc': lambda x: (x.city or '').lower(),
+        }
+        
+        reverse_sort = sort_by.endswith('_desc') and sort_by != 'quality_desc' and sort_by != 'cost_desc'
+        
+        # If sort_by is not in our mapping, default to quality descending
+        sort_function = sorting_functions.get(sort_by, sorting_functions['quality_desc'])
+        
+        # Sort the facilities
+        facilities = sorted(facilities, key=sort_function, reverse=reverse_sort)
+        
+        logger.debug(f"Sorted facilities by {sort_by}")
+        
         # Return results template
         return render_template('results.html', facilities=facilities, db_status=db_status, search_params={
             'specialty': specialty,
@@ -218,7 +241,8 @@ with app.app_context():
             'query_text': query_text,
             'original_query': original_query if detected_location else query_text,
             'detected_location': detected_location,
-            'mapped_specialties': mapped_specialties
+            'mapped_specialties': mapped_specialties,
+            'sort_by': sort_by
         })
 
     @app.route('/data-manager')
