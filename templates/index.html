@@ -140,6 +140,54 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Admin Controls Section -->
+        <div class="card bg-dark border-0 shadow-lg mt-5 mb-5">
+            <div class="card-header bg-primary bg-opacity-10">
+                <h4 class="mb-0"><i class="fas fa-cogs me-2"></i> Controlli Amministratore</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card bg-dark border-secondary mb-3">
+                            <div class="card-header">Gestione Dati</div>
+                            <div class="card-body">
+                                <h5 class="card-title">Carica i Dati</h5>
+                                <p class="card-text">Carica i dati delle strutture sanitarie scegliendo la modalità.</p>
+                                
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="webScrapingToggle">
+                                    <label class="form-check-label" for="webScrapingToggle">
+                                        Usa Web Scraping (dati reali)
+                                    </label>
+                                </div>
+                                
+                                <div class="d-grid gap-2">
+                                    <a href="/load-data?web_scraping=false" class="btn btn-secondary" id="loadDataBtn">
+                                        <i class="fas fa-database me-2"></i> Carica Dati di Esempio
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card bg-dark border-secondary mb-3">
+                            <div class="card-header">Fonti dei Dati</div>
+                            <div class="card-body">
+                                <h5 class="card-title">Informazioni sulle Fonti</h5>
+                                <p class="card-text">Le fonti dei dati includono:</p>
+                                <ul class="list-group list-group-flush bg-dark">
+                                    <li class="list-group-item bg-dark">Regione Puglia - Anagrafe strutture sanitarie</li>
+                                    <li class="list-group-item bg-dark">Provincia Autonoma di Trento - Strutture sanitarie</li>
+                                    <li class="list-group-item bg-dark">Regione Toscana - Strutture ospedaliere</li>
+                                    <li class="list-group-item bg-dark">Regione Lazio - Strutture sanitarie</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
@@ -154,5 +202,32 @@ function updateQualityValue(val) {
         qualityValueElement.textContent = val + '/5';
     }
 }
+
+// Web scraping toggle functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const webScrapingToggle = document.getElementById('webScrapingToggle');
+    const loadDataBtn = document.getElementById('loadDataBtn');
+    
+    // Update button text and URL based on toggle state
+    function updateLoadButton() {
+        if (webScrapingToggle.checked) {
+            loadDataBtn.href = '/load-data?web_scraping=true';
+            loadDataBtn.innerHTML = '<i class="fas fa-cloud-download-alt me-2"></i> Carica Dati Reali (Web Scraping)';
+            loadDataBtn.classList.remove('btn-secondary');
+            loadDataBtn.classList.add('btn-success');
+        } else {
+            loadDataBtn.href = '/load-data?web_scraping=false';
+            loadDataBtn.innerHTML = '<i class="fas fa-database me-2"></i> Carica Dati di Esempio';
+            loadDataBtn.classList.remove('btn-success');
+            loadDataBtn.classList.add('btn-secondary');
+        }
+    }
+    
+    // Set up event listener for toggle changes
+    webScrapingToggle.addEventListener('change', updateLoadButton);
+    
+    // Initialize button state
+    updateLoadButton();
+});
 </script>
 {% endblock %}

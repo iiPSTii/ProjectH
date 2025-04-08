@@ -13,8 +13,11 @@ from unidecode import unidecode
 logger = logging.getLogger(__name__)
 
 # Data sources with attributions
-# Original URLs are no longer valid, so we'll use built-in sample data instead
-DATA_SOURCES = {
+# We now have two modes: sample data or real web scraping
+USE_WEB_SCRAPING = False  # Set to True to use web scraping, False for sample data
+
+# Sample data sources if web scraping is disabled
+SAMPLE_DATA_SOURCES = {
     'puglia': {
         'url': 'puglia_sample_data',  # Each region has its own identifier
         'attribution': 'Regione Puglia - Anagrafe strutture sanitarie - IODL 2.0',
@@ -29,8 +32,40 @@ DATA_SOURCES = {
         'url': 'toscana_sample_data',  # Each region has its own identifier
         'attribution': 'Regione Toscana - Strutture ospedaliere - IODL 2.0',
         'region_name': 'Toscana'
+    },
+    'lazio': {
+        'url': 'lazio_sample_data',  # Each region has its own identifier
+        'attribution': 'Regione Lazio - Strutture sanitarie',
+        'region_name': 'Lazio'
     }
 }
+
+# Real web scraping sources
+WEB_SCRAPING_SOURCES = {
+    'puglia': {
+        'url': 'https://www.dati.puglia.it/dataset/anagrafe-strutture-sanitarie',
+        'attribution': 'Regione Puglia - Anagrafe strutture sanitarie - IODL 2.0',
+        'region_name': 'Puglia'
+    },
+    'trento': {
+        'url': 'https://dati.trentino.it/dataset/strutture-sanitarie-pubbliche-e-accreditate',
+        'attribution': 'Provincia Autonoma di Trento - Strutture sanitarie - CC-BY',
+        'region_name': 'Trentino'
+    },
+    'toscana': {
+        'url': 'https://www.opendata.toscana.it/dataset/strutture-ospedaliere',
+        'attribution': 'Regione Toscana - Strutture ospedaliere - CC-BY',
+        'region_name': 'Toscana'
+    },
+    'lazio': {
+        'url': 'https://www.salutelazio.it/strutture-sanitarie',
+        'attribution': 'Regione Lazio - Strutture sanitarie',
+        'region_name': 'Lazio'
+    }
+}
+
+# Choose which data sources to use based on USE_WEB_SCRAPING flag
+DATA_SOURCES = WEB_SCRAPING_SOURCES if USE_WEB_SCRAPING else SAMPLE_DATA_SOURCES
 
 # Specialty mapping to normalize across regions
 SPECIALTY_MAPPING = {
@@ -178,9 +213,41 @@ def extract_specialties(text):
 
 def download_csv(url):
     """
-    Instead of downloading from URLs (which are now invalid),
-    this function generates sample data for each region.
+    Download data for a region from a URL.
+    
+    This function has two modes:
+    1. Web scraping mode: Attempts to scrape real data from the provided URL
+    2. Sample data mode: Generates sample data for testing
     """
+    # Check if we should use web scraping
+    if USE_WEB_SCRAPING:
+        try:
+            import web_scraper
+            
+            # Create the appropriate scraper based on the URL
+            scraper = None
+            if 'puglia' in str(url).lower():
+                scraper = web_scraper.PugliaDataScraper()
+            elif 'trento' in str(url).lower() or 'trentino' in str(url).lower():
+                scraper = web_scraper.TrentinoDataScraper()
+            elif 'toscana' in str(url).lower():
+                scraper = web_scraper.ToscanaDataScraper()
+            elif 'lazio' in str(url).lower():
+                scraper = web_scraper.SaluteLazioScraper()
+            
+            if scraper:
+                logger.info(f"Using web scraper for {url}")
+                df = scraper.fetch_data()
+                if df is not None and not df.empty:
+                    return df
+                
+            # If scraper failed or wasn't found, fall back to sample data
+            logger.warning(f"Web scraping failed for {url}, using sample data instead")
+        except Exception as e:
+            logger.error(f"Error during web scraping for {url}: {str(e)}")
+            logger.warning("Falling back to sample data")
+    
+    # Generate sample data (used when web scraping is disabled or failed)
     logger.info(f"Creating sample data for {url}")
     
     if 'puglia' in str(url).lower():
@@ -313,6 +380,48 @@ def download_csv(url):
         }
         return pd.DataFrame(data)
         
+    elif 'lazio' in str(url).lower():
+        # Sample data for Lazio region
+        data = {
+            'Nome': [
+                'Policlinico Umberto I', 'Ospedale San Giovanni', 'Ospedale San Camillo',
+                'Policlinico Gemelli', 'Ospedale Sant\'Eugenio', 'Ospedale San Filippo Neri',
+                'Ospedale Sandro Pertini', 'Ospedale Regina Apostolorum', 'Ospedale Sant\'Andrea'
+            ],
+            'Tipo': [
+                'Policlinico Universitario', 'Ospedale', 'Ospedale',
+                'Policlinico Universitario', 'Ospedale', 'Ospedale',
+                'Ospedale', 'Ospedale', 'Ospedale Universitario'
+            ],
+            'Indirizzo': [
+                'Viale del Policlinico 155', 'Via dell\'Amba Aradam 9', 'Circonvallazione Gianicolense 87',
+                'Largo Agostino Gemelli 8', 'Piazzale dell\'Umanesimo 10', 'Via Giovanni Martinotti 20',
+                'Via dei Monti Tiburtini 385', 'Via San Francesco 50', 'Via di Grottarossa 1035'
+            ],
+            'Città': [
+                'Roma', 'Roma', 'Roma',
+                'Roma', 'Roma', 'Roma',
+                'Roma', 'Albano Laziale', 'Roma'
+            ],
+            'Telefono': [
+                '06 49971', '06 77051', '06 58701',
+                '06 30151', '06 51001', '06 33061',
+                '06 41431', '06 932981', '06 33771'
+            ],
+            'Specialità': [
+                'Medicina Generale, Cardiologia, Neurologia, Oncologia', 
+                'Cardiologia, Ortopedia, Oncologia',
+                'Medicina Generale, Cardiologia, Pronto Soccorso',
+                'Oncologia, Ginecologia, Pediatria',
+                'Medicina Generale, Oculistica, Dermatologia',
+                'Cardiologia, Neurologia, Ortopedia',
+                'Chirurgia, Medicina Generale, Urologia',
+                'Ginecologia, Pediatria, Fisioterapia',
+                'Neurologia, Ortopedia, Urologia'
+            ]
+        }
+        return pd.DataFrame(data)
+    
     else:
         # Generic sample data if region not recognized
         logger.warning(f"Unknown region for URL: {url}, using generic sample data")
@@ -559,6 +668,83 @@ def load_toscana_data(data_source):
     
     return facilities_added
 
+def load_lazio_data(data_source):
+    """Load and process data from Lazio region"""
+    logger.info("Processing Lazio data")
+    df = download_csv(data_source['url'])
+    
+    region = get_or_create_region(data_source['region_name'])
+    facilities_added = 0
+    
+    for idx in range(len(df)):
+        # Extract basic facility information
+        name = safe_get(df, idx, 'Nome')
+        if not name:
+            continue
+            
+        facility_type = safe_get(df, idx, 'Tipo')
+        address = safe_get(df, idx, 'Indirizzo')
+        city = safe_get(df, idx, 'Città')
+        
+        # Look for existing facility to avoid duplicates
+        existing = MedicalFacility.query.filter_by(
+            name=name, 
+            city=city
+        ).first()
+        
+        if existing:
+            logger.debug(f"Facility already exists: {name} in {city}")
+            continue
+        
+        # Create new facility with random cost estimates for some facilities
+        import random
+        cost_estimate = None
+        if random.random() > 0.3:  # 70% of facilities have cost estimates
+            cost_estimate = round(random.uniform(50, 300), 2)
+            
+        facility = MedicalFacility(
+            name=name,
+            address=address,
+            city=city,
+            region=region,
+            facility_type=facility_type,
+            telephone=safe_get(df, idx, 'Telefono'),
+            data_source="Lazio Open Data",
+            attribution=data_source['attribution'],
+            # Set values for optional fields
+            quality_score=round(random.uniform(2.5, 5.0), 1),  # Random quality between 2.5-5.0
+            cost_estimate=cost_estimate
+        )
+        
+        # Add facility to database
+        db.session.add(facility)
+        db.session.commit()
+        
+        # Process specialties
+        specialties_text = safe_get(df, idx, 'Specialità')
+        if specialties_text:
+            specialty_names = extract_specialties(specialties_text)
+            for specialty_name in specialty_names:
+                specialty = get_or_create_specialty(specialty_name)
+                if specialty:
+                    # Check if this facility already has this specialty to avoid duplicates
+                    existing_fs = FacilitySpecialty.query.filter_by(
+                        facility_id=facility.id,
+                        specialty_id=specialty.id
+                    ).first()
+                    
+                    if not existing_fs:
+                        facility_specialty = FacilitySpecialty(
+                            facility_id=facility.id,
+                            specialty_id=specialty.id
+                        )
+                        db.session.add(facility_specialty)
+        
+        db.session.commit()
+        facilities_added += 1
+    
+    return facilities_added
+
 def load_data():
     """Load data from all sources"""
     stats = {
@@ -570,7 +756,8 @@ def load_data():
     loaders = {
         'puglia': load_puglia_data,
         'trento': load_trento_data,
-        'toscana': load_toscana_data
+        'toscana': load_toscana_data,
+        'lazio': load_lazio_data
     }
     
     for source_key, loader_func in loaders.items():

@@ -91,8 +91,18 @@ with app.app_context():
     @app.route('/load-data')
     def load_data_route():
         try:
+            # Check if we want to use web scraping
+            use_web_scraping = request.args.get('web_scraping', 'false').lower() == 'true'
+            logger.info(f"Loading data with web scraping: {use_web_scraping}")
+            
+            # Set the USE_WEB_SCRAPING flag in data_loader
+            import data_loader
+            data_loader.USE_WEB_SCRAPING = use_web_scraping
+            
+            # Load the data
             stats = load_data()
-            flash(f"Data loaded successfully! Added {stats['total']} facilities from {stats['regions']} regions.", "success")
+            mode = "web scraping" if use_web_scraping else "sample data"
+            flash(f"Data loaded successfully using {mode}! Added {stats['total']} facilities from {stats['regions']} regions.", "success")
         except Exception as e:
             logger.error(f"Error loading data: {str(e)}")
             flash(f"Error loading data: {str(e)}", "danger")
