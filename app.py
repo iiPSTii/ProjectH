@@ -1,6 +1,6 @@
 import os
 import logging
-from flask import Flask, render_template, request, jsonify, flash, redirect
+from flask import Flask, render_template, request, jsonify, flash, redirect, send_file
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 from werkzeug.middleware.proxy_fix import ProxyFix
@@ -40,10 +40,10 @@ with app.app_context():
     # Import models and create tables
     from models import MedicalFacility, Specialty, FacilitySpecialty, Region, DatabaseStatus
     db.create_all()
-    
+
     # Import and register route functions
     from data_loader import load_data, get_regions, get_specialties, normalize_specialty
-    
+
     # Check database status
     def get_database_status():
         """Get the current database status"""
@@ -74,35 +74,35 @@ with app.app_context():
         min_quality = request.args.get('min_quality', 0, type=float)
         query_text = request.args.get('query_text', '')
         sort_by = request.args.get('sort_by', 'quality_desc')  # Default sort by quality descending
-        
+
         # Process the search query to extract location information
         detected_location = None
         original_query = query_text
-        
+
         if query_text:
             # Try to detect location/city references in the query
             cleaned_query, detected_region = detect_location_in_query(query_text)
-            
+
             if detected_region:
                 logger.debug(f"Detected location in query: '{query_text}' -> region: '{detected_region}'")
                 detected_location = detected_region
-                
+
                 # Only update the query text if we found location
                 if cleaned_query != query_text and cleaned_query.strip():
                     query_text = cleaned_query
-                
+
                 # If no region was specified in the form, use the detected one
                 if not region:
                     region = detected_region
-        
+
         logger.debug(f"Search params: specialty={specialty}, region={region}, min_quality={min_quality}, query_text={query_text}")
-        
+
         # Get database status
         db_status = get_database_status()
-        
+
         # Build the query
         query = db.session.query(MedicalFacility)
-        
+
         # Apply specialty filter if provided by form
         if specialty:
             normalized_specialty = normalize_specialty(specialty)
@@ -112,50 +112,50 @@ with app.app_context():
             specialty_filter_applied = True
         else:
             specialty_filter_applied = False
-        
+
         # Apply region filter if provided
         if region:
             query = query.join(MedicalFacility.region, isouter=True).filter(Region.name.ilike(f'%{region}%'))
-        
+
         # Apply quality filter if provided
         if min_quality is not None and min_quality > 0:
             query = query.filter(MedicalFacility.quality_score >= min_quality)
-        
+
         # Apply text search if provided
         mapped_specialties = []
         if query_text:
             # First, try to map the query to medical profession terms
             profession_specialties = map_profession_to_specialties(query_text)
-            
+
             # If no medical profession mapping found, try medical conditions
             if not profession_specialties:
                 condition_specialties = map_query_to_specialties(query_text)
                 mapped_specialties = condition_specialties
             else:
                 mapped_specialties = profession_specialties
-            
+
             logger.debug(f"Mapped query '{query_text}' to specialties: {mapped_specialties}")
-            
+
             # Create a copy of the query before applying specialty filters
             base_query = query
             specialty_search_applied = False
-            
+
             # If not already filtered by specialty form field and we have mapped specialties
             if not specialty_filter_applied and mapped_specialties:
                 specialty_search_applied = True
                 query = query.join(MedicalFacility.specialties).join(FacilitySpecialty.specialty).filter(
                     Specialty.name.in_(mapped_specialties)
                 )
-            
+
             # If no medical mapping found or specialty already filtered, do regular text search
             if not specialty_search_applied or specialty_filter_applied:
                 # Search in facility name, address, specialties, and conditions
                 search_term = f"%{query_text.lower()}%"
-                
+
                 # Join with specialties only if not already joined
                 if not specialty_filter_applied:
                     query = query.outerjoin(MedicalFacility.specialties).outerjoin(FacilitySpecialty.specialty)
-                
+
                 # Search in facility name, facility type, address, city or specialty name
                 query = query.filter(
                     db.or_(
@@ -166,23 +166,23 @@ with app.app_context():
                         db.func.lower(Specialty.name).like(search_term)
                     )
                 )
-            
+
             # Execute query to see if we found any results
             facilities = query.all()
-            
+
             # If no facilities found and we've tried specialty mapping, fall back to general search
             if len(facilities) == 0 and specialty_search_applied:
                 logger.debug(f"No facilities found with specialty mapping, falling back to broader search")
-                
+
                 # We need a fresh query with original filters (region, quality) but not the specialty mapping
                 query = base_query
-                
+
                 # Get general medical specialties to try as fallbacks
                 general_specialties = ['Medicina Generale', 'Medicina Interna', 'Ortopedia']
-                
+
                 # Join specialties tables
                 query = query.join(MedicalFacility.specialties).join(FacilitySpecialty.specialty)
-                
+
                 # Filter by these general specialties
                 query = query.filter(
                     db.or_(
@@ -191,7 +191,7 @@ with app.app_context():
                         db.func.lower(MedicalFacility.city).like(f"%{query_text.lower()}%")
                     )
                 )
-                
+
                 # Add a message to indicate we're showing broader results
                 if not mapped_specialties:
                     # If we couldn't map the query at all, add general mapping
@@ -199,7 +199,7 @@ with app.app_context():
                 else:
                     # If we had some mappings but found no facilities, add these general ones
                     mapped_specialties.extend(general_specialties)
-                
+
                 # Re-execute query to get facilities
                 facilities = query.all()
                 logger.debug(f"Fallback search found {len(facilities)} facilities")
@@ -210,7 +210,7 @@ with app.app_context():
             # No text search, just execute the query with existing filters
             facilities = query.all()
             logger.debug(f"Basic filter search found {len(facilities)} facilities")
-        
+
         # Sort the facilities based on the sort_by parameter
         sorting_functions = {
             'quality_desc': lambda x: (x.quality_score if x.quality_score is not None else -1) * -1,  # Default
@@ -222,17 +222,17 @@ with app.app_context():
             'city_asc': lambda x: (x.city or '').lower(),
             'city_desc': lambda x: (x.city or '').lower(),
         }
-        
+
         reverse_sort = sort_by.endswith('_desc') and sort_by != 'quality_desc' and sort_by != 'cost_desc'
-        
+
         # If sort_by is not in our mapping, default to quality descending
         sort_function = sorting_functions.get(sort_by, sorting_functions['quality_desc'])
-        
+
         # Sort the facilities
         facilities = sorted(facilities, key=sort_function, reverse=reverse_sort)
-        
+
         logger.debug(f"Sorted facilities by {sort_by}")
-        
+
         # Return results template
         return render_template('results.html', facilities=facilities, db_status=db_status, search_params={
             'specialty': specialty,
@@ -251,20 +251,20 @@ with app.app_context():
         # Get statistics about current data
         regions = get_regions()
         specialties = get_specialties()
-        
+
         # Get database status
         db_status = get_database_status()
-        
+
         # Count facilities
         try:
             total_facilities = db.session.query(MedicalFacility).count()
         except:
             total_facilities = 0
-        
+
         # Calculate progress percentage (assume 20 regions is 100%)
         total_regions_count = len(regions)
         progress_percentage = min(int((total_regions_count / 20) * 100), 100)
-        
+
         # Check which batches have been loaded
         # This is a simple check based on expected regions in each batch
         batch_regions = {
@@ -273,21 +273,21 @@ with app.app_context():
             2: ["Emilia Romagna", "Sardegna", "Marche", "Abruzzo", "Calabria"],
             3: ["Friuli Venezia Giulia", "Umbria", "Basilicata", "Molise", "Valle d Aosta"]
         }
-        
+
         batch_status = {}
         region_names = [r.name for r in regions]
-        
+
         for batch_num, expected_regions in batch_regions.items():
             # Check if at least 3 regions from this batch exist in the database
             # (allowing for some flexibility if certain regions fail to load)
             found_regions = [r for r in expected_regions if any(er in r for er in region_names)]
             batch_status[batch_num] = len(found_regions) >= 3
-        
+
         all_batches_loaded = all(batch_status.values())
-        
+
         # Add command to run full database initialization
         full_db_init_command = "python initialize_database.py"
-        
+
         return render_template(
             'data_manager.html',
             total_regions=total_regions_count,
@@ -306,22 +306,22 @@ with app.app_context():
         try:
             # We now support batch loading to avoid timeouts
             logger.info(f"Loading data batch {batch}")
-            
+
             # Import the data_loader module
             import data_loader
-            
+
             # Only clear database on the first batch
             if batch == 0:
                 logger.info("This is the first batch, clearing database...")
             else:
                 logger.info(f"Loading batch {batch}, continuing from previous batches")
-            
+
             # Load the data with batch parameter for limiting regions
             stats = load_data(batch=batch)
-            
+
             # Provide info about continuing the loading process
             total_batches = 4  # We'll split the 20 regions into 4 batches of 5 each
-            
+
             if batch < total_batches - 1:
                 next_batch = batch + 1
                 flash(f"Batch {batch} loaded successfully! Added {stats['total']} facilities from {stats['regions']} regions. " +
@@ -337,7 +337,7 @@ with app.app_context():
             logger.exception(e)  # Log the full exception for debugging
             db.session.rollback()
             flash(f"Error loading data batch {batch}: {str(e)}", "danger")
-        
+
         # Redirect to the data manager page instead of index
         return redirect('/data-manager')
 
@@ -348,10 +348,26 @@ with app.app_context():
             if cost is None:
                 return "N/A"
             return f"€{cost:.2f}"
-        
+
         def format_quality(quality):
             if quality is None:
                 return "N/A"
             return f"{quality:.1f}/5.0"
-        
+
         return dict(format_cost=format_cost, format_quality=format_quality)
+
+    @app.route('/download-db')
+    def download_database():
+        """Download the SQLite database file"""
+        import os
+        from flask import send_file
+
+        db_path = app.config["SQLALCHEMY_DATABASE_URI"].replace('sqlite:///', '')
+        if os.path.exists(db_path):
+            return send_file(
+                db_path,
+                mimetype='application/x-sqlite3',
+                as_attachment=True,
+                download_name='medical_facilities.db'
+            )
+        return "Database file not found", 404
