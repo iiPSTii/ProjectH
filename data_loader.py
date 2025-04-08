@@ -1228,36 +1228,33 @@ def load_data():
             logger.error(f"Error adding specialty {name}: {str(e)}")
             db.session.rollback()
     
-    # Add all regions but in batches to avoid potential encoding issues
-    # First batch - the ones we've already confirmed working
-    first_batch = [
+    # IMPORTANT: We had an internal server error with too many regions
+    # Let's reduce to 10 regions including one complex name to ensure stability
+    
+    # Core regions - these work reliably
+    core_regions = [
         "Lazio", "Lombardia", "Puglia", "Toscana", "Veneto"
     ]
     
-    # Second batch - simple names that should work fine
-    second_batch = [
-        "Abruzzo", "Basilicata", "Calabria", "Campania", 
-        "Marche", "Molise", "Piemonte", "Sardegna", 
-        "Sicilia", "Umbria", "Liguria"
+    # Additional regions - simple names only
+    additional_regions = [
+        "Sicilia", "Piemonte", "Campania", "Sardegna"
     ]
     
-    # Third batch - complex names with hyphens or apostrophes 
-    # Modified to avoid encoding issues
-    third_batch = [
-        "Emilia Romagna", "Friuli Venezia Giulia", "Trentino Alto Adige", "Valle d Aosta"
-    ]
+    # Just one complex name as a test
+    complex_region = ["Emilia Romagna"]
     
-    # Process all batches sequentially
+    # Start with an empty list and build it carefully
     region_names = []
     
-    # First add and process the confirmed working regions
-    region_names.extend(first_batch)
+    # First add the core regions we know work
+    region_names.extend(core_regions)
     
-    # Then add the second batch of simple names
-    region_names.extend(second_batch)
+    # Then add some simple additional regions
+    region_names.extend(additional_regions)
     
-    # Finally add the complex names (modified to avoid special characters)
-    region_names.extend(third_batch)
+    # Finally add just one complex region to test
+    region_names.extend(complex_region)
     
     regions = {}
     for name in region_names:
@@ -1296,40 +1293,78 @@ def load_data():
                 cost = round(random.uniform(50, 300), 2) if random.random() > 0.3 else None
                 quality = round(random.uniform(2.5, 5.0), 1)
                 
-                # Create the facility
-                facility = MedicalFacility(
-                    name=name,
-                    address=address,
-                    city=city,
-                    region_id=region.id,
-                    facility_type=facility_type,
-                    telephone=f"0{random.randint(10, 99)} {random.randint(1000000, 9999999)}",
-                    data_source="Sample Data",
-                    attribution="FindMyCure Italia",
-                    quality_score=quality,
-                    cost_estimate=cost
-                )
-                
-                db.session.add(facility)
-                db.session.commit()
-                
-                # Add 2-4 random specialties to this facility
-                num_specialties = random.randint(2, 4)
-                specialty_keys = list(specialties.keys())
-                random.shuffle(specialty_keys)
-                
-                for j in range(min(num_specialties, len(specialty_keys))):
-                    specialty_name = specialty_keys[j]
-                    specialty = specialties[specialty_name]
-                    
-                    # Link the specialty to the facility
-                    facility_specialty = FacilitySpecialty(
-                        facility_id=facility.id,
-                        specialty_id=specialty.id
+                # Create the facility - with robust error handling
+                try:
+                    # Create in a separate transaction to isolate potential failures
+                    facility = MedicalFacility(
+                        name=name,
+                        address=address,
+                        city=city,
+                        region_id=region.id,
+                        facility_type=facility_type,
+                        telephone=f"0{random.randint(10, 99)} {random.randint(1000000, 9999999)}",
+                        data_source="Sample Data",
+                        attribution="FindMyCure Italia",
+                        quality_score=quality,
+                        cost_estimate=cost
                     )
                     
-                    db.session.add(facility_specialty)
+                    db.session.add(facility)
+                    db.session.flush()  # Check for errors before commit
                     db.session.commit()
+                    
+                    # Quick sanity check - confirm we can retrieve the facility
+                    facility_check = MedicalFacility.query.get(facility.id)
+                    if not facility_check:
+                        raise Exception(f"Failed to retrieve newly created facility with ID {facility.id}")
+                        
+                except Exception as e:
+                    logger.error(f"Failed to create facility {name} for {region_name}: {str(e)}")
+                    db.session.rollback()
+                    # Skip to next facility on failure
+                    continue
+                
+                # Add 2-4 random specialties to this facility
+                try:
+                    num_specialties = random.randint(2, 4)
+                    specialty_keys = list(specialties.keys())
+                    random.shuffle(specialty_keys)
+                    
+                    # Add all specialties in a single transaction
+                    specialties_added = 0
+                    
+                    for j in range(min(num_specialties, len(specialty_keys))):
+                        try:
+                            specialty_name = specialty_keys[j]
+                            specialty = specialties[specialty_name]
+                            
+                            # Link the specialty to the facility
+                            facility_specialty = FacilitySpecialty(
+                                facility_id=facility.id,
+                                specialty_id=specialty.id
+                            )
+                            
+                            db.session.add(facility_specialty)
+                            # Don't commit yet - flush to check for errors
+                            db.session.flush()
+                            specialties_added += 1
+                            
+                        except Exception as specialty_err:
+                            # Use a default name if specialty_name is not defined in the exception handler
+                            error_specialty = specialty_name if 'specialty_name' in locals() else "unknown"
+                            # Log but continue with next specialty on error
+                            logger.error(f"Error adding specialty {error_specialty} to facility: {str(specialty_err)}")
+                            db.session.rollback()
+                            continue
+                            
+                    # Only commit once all specialties have been added
+                    if specialties_added > 0:
+                        db.session.commit()
+                        logger.info(f"Added {specialties_added} specialties to facility {name}")
+                
+                except Exception as e:
+                    logger.error(f"Error adding specialties to facility {name}: {str(e)}")
+                    db.session.rollback()
                 
                 facilities_added += 1
                 logger.info(f"Added facility {name} for {region_name}")
