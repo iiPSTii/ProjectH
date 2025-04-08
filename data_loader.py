@@ -38,6 +38,87 @@ SAMPLE_DATA_SOURCES = {
         'url': 'lazio_sample_data',  # Each region has its own identifier
         'attribution': 'Regione Lazio - Strutture sanitarie',
         'region_name': 'Lazio'
+    },
+    # Add all remaining Italian regions for sample data
+    'lombardia': {
+        'url': 'lombardia_sample_data',
+        'attribution': 'Regione Lombardia - Strutture sanitarie',
+        'region_name': 'Lombardia'
+    },
+    'sicilia': {
+        'url': 'sicilia_sample_data',
+        'attribution': 'Regione Sicilia - Strutture sanitarie',
+        'region_name': 'Sicilia'
+    },
+    'emiliaromagna': {
+        'url': 'emiliaromagna_sample_data',
+        'attribution': 'Regione Emilia-Romagna - Strutture sanitarie',
+        'region_name': 'Emilia-Romagna'
+    },
+    'campania': {
+        'url': 'campania_sample_data',
+        'attribution': 'Regione Campania - Strutture sanitarie',
+        'region_name': 'Campania'
+    },
+    'veneto': {
+        'url': 'veneto_sample_data',
+        'attribution': 'Regione Veneto - Strutture sanitarie',
+        'region_name': 'Veneto'
+    },
+    'piemonte': {
+        'url': 'piemonte_sample_data',
+        'attribution': 'Regione Piemonte - Strutture sanitarie',
+        'region_name': 'Piemonte'
+    },
+    'liguria': {
+        'url': 'liguria_sample_data',
+        'attribution': 'Regione Liguria - Strutture sanitarie',
+        'region_name': 'Liguria'
+    },
+    'abruzzo': {
+        'url': 'abruzzo_sample_data',
+        'attribution': 'Regione Abruzzo - Strutture sanitarie',
+        'region_name': 'Abruzzo'
+    },
+    'marche': {
+        'url': 'marche_sample_data',
+        'attribution': 'Regione Marche - Strutture sanitarie',
+        'region_name': 'Marche'
+    },
+    'umbria': {
+        'url': 'umbria_sample_data',
+        'attribution': 'Regione Umbria - Strutture sanitarie',
+        'region_name': 'Umbria'
+    },
+    'calabria': {
+        'url': 'calabria_sample_data',
+        'attribution': 'Regione Calabria - Strutture sanitarie',
+        'region_name': 'Calabria'
+    },
+    'sardegna': {
+        'url': 'sardegna_sample_data',
+        'attribution': 'Regione Sardegna - Strutture sanitarie',
+        'region_name': 'Sardegna'
+    },
+    'basilicata': {
+        'url': 'basilicata_sample_data',
+        'attribution': 'Regione Basilicata - Strutture sanitarie',
+        'region_name': 'Basilicata'
+    },
+    'molise': {
+        'url': 'molise_sample_data',
+        'attribution': 'Regione Molise - Strutture sanitarie',
+        'region_name': 'Molise'
+    },
+    'valledaosta': {
+        'url': 'valledaosta_sample_data',
+        'attribution': 'Regione Valle d\'Aosta - Strutture sanitarie',
+        'region_name': 'Valle d\'Aosta'
+    },
+    'friuliveneziagiulia': {
+        'url': 'friuliveneziagiulia_sample_data',
+        'attribution': 'Regione Friuli-Venezia Giulia - Strutture sanitarie',
+        'region_name': 'Friuli-Venezia Giulia'
     }
 }
 
@@ -62,11 +143,105 @@ WEB_SCRAPING_SOURCES = {
         'url': 'https://www.salutelazio.it/strutture-sanitarie',
         'attribution': 'Regione Lazio - Strutture sanitarie',
         'region_name': 'Lazio'
+    },
+    # Add all remaining Italian regions for real data scraping
+    'lombardia': {
+        'url': 'https://www.dati.lombardia.it/resource/structuresanitarie',
+        'attribution': 'Regione Lombardia - Strutture sanitarie',
+        'region_name': 'Lombardia'
+    },
+    'sicilia': {
+        'url': 'https://pti.regione.sicilia.it/portal/page/portal/PIR_PORTALE/PIR_LaStrutturaRegionale/PIR_AssessoratoSalute/PIR_AziendeOspedaliere',
+        'attribution': 'Regione Sicilia - Strutture sanitarie',
+        'region_name': 'Sicilia'
+    },
+    'emiliaromagna': {
+        'url': 'https://salute.regione.emilia-romagna.it/ssr/strutture-sanitarie',
+        'attribution': 'Regione Emilia-Romagna - Strutture sanitarie',
+        'region_name': 'Emilia-Romagna'
+    },
+    'campania': {
+        'url': 'http://www.regione.campania.it/regione/it/tematiche/magazine-salute/le-aziende-sanitarie-ed-ospedaliere',
+        'attribution': 'Regione Campania - Strutture sanitarie',
+        'region_name': 'Campania'
+    },
+    'veneto': {
+        'url': 'https://www.regione.veneto.it/web/sanita/aziende-ulss-e-ospedaliere',
+        'attribution': 'Regione Veneto - Strutture sanitarie',
+        'region_name': 'Veneto'
+    },
+    'piemonte': {
+        'url': 'https://www.regione.piemonte.it/web/temi/sanita/organizzazione-strutture-sanitarie',
+        'attribution': 'Regione Piemonte - Strutture sanitarie',
+        'region_name': 'Piemonte'
+    },
+    'liguria': {
+        'url': 'https://www.alisa.liguria.it/index.php',
+        'attribution': 'Regione Liguria - Strutture sanitarie',
+        'region_name': 'Liguria'
+    },
+    'abruzzo': {
+        'url': 'https://www.regione.abruzzo.it/content/aziende-sanitarie-locali',
+        'attribution': 'Regione Abruzzo - Strutture sanitarie',
+        'region_name': 'Abruzzo'
+    },
+    'marche': {
+        'url': 'https://www.regione.marche.it/Regione-Utile/Salute/Strutture-sanitarie',
+        'attribution': 'Regione Marche - Strutture sanitarie',
+        'region_name': 'Marche'
+    },
+    'umbria': {
+        'url': 'https://www.regione.umbria.it/salute/aziende-sanitarie',
+        'attribution': 'Regione Umbria - Strutture sanitarie',
+        'region_name': 'Umbria'
+    },
+    'calabria': {
+        'url': 'https://www.regione.calabria.it/website/organizzazione/dipartimento7/subsite/aziende/',
+        'attribution': 'Regione Calabria - Strutture sanitarie',
+        'region_name': 'Calabria'
+    },
+    'sardegna': {
+        'url': 'https://www.regione.sardegna.it/j/v/68?s=1&v=9&c=5798',
+        'attribution': 'Regione Sardegna - Strutture sanitarie',
+        'region_name': 'Sardegna'
+    },
+    'basilicata': {
+        'url': 'https://www.regione.basilicata.it/giunta/site/giunta/department.jsp?dep=100050&area=108875',
+        'attribution': 'Regione Basilicata - Strutture sanitarie',
+        'region_name': 'Basilicata'
+    },
+    'molise': {
+        'url': 'http://www.regione.molise.it/web/sito/home.nsf/web+search/9D8CB8C7E20F647CC1257E690037A84B',
+        'attribution': 'Regione Molise - Strutture sanitarie',
+        'region_name': 'Molise'
+    },
+    'valledaosta': {
+        'url': 'https://www.regione.vda.it/sanita/organizzazione_nuovo_ospedale/default_i.aspx',
+        'attribution': 'Regione Valle d\'Aosta - Strutture sanitarie',
+        'region_name': 'Valle d\'Aosta'
+    },
+    'friuliveneziagiulia': {
+        'url': 'https://www.regione.fvg.it/rafvg/cms/RAFVG/salute-sociale/sistema-sociale-sanitario/',
+        'attribution': 'Regione Friuli-Venezia Giulia - Strutture sanitarie',
+        'region_name': 'Friuli-Venezia Giulia'
     }
 }
 
-# Choose which data sources to use based on USE_WEB_SCRAPING flag
-DATA_SOURCES = WEB_SCRAPING_SOURCES if USE_WEB_SCRAPING else SAMPLE_DATA_SOURCES
+# Initialize DATA_SOURCES with sample data
+DATA_SOURCES = SAMPLE_DATA_SOURCES.copy()
+
+def update_data_sources():
+    """Update DATA_SOURCES based on USE_WEB_SCRAPING flag"""
+    global DATA_SOURCES
+    if USE_WEB_SCRAPING:
+        logger.info("Using web scraping sources")
+        DATA_SOURCES = WEB_SCRAPING_SOURCES.copy()
+    else:
+        logger.info("Using sample data sources")
+        DATA_SOURCES = SAMPLE_DATA_SOURCES.copy()
+        
+# Initial setup
+update_data_sources()
 
 # Specialty mapping to normalize across regions
 SPECIALTY_MAPPING = {
@@ -479,16 +654,122 @@ def download_csv(url):
         }
         return pd.DataFrame(data)
     
-    else:
-        # Generic sample data if region not recognized
-        logger.warning(f"Unknown region for URL: {url}, using generic sample data")
+    elif 'lombardia' in str(url).lower():
+        # Sample data for Lombardia region
         data = {
-            'Name': ['Generic Hospital 1', 'Generic Hospital 2', 'Generic Hospital 3'],
-            'Type': ['Hospital', 'Hospital', 'Hospital'],
-            'Address': ['Address 1', 'Address 2', 'Address 3'],
-            'City': ['City 1', 'City 2', 'City 3'],
-            'Phone': ['123456789', '123456780', '123456781'],
-            'Specialties': ['Specialty 1, Specialty 2', 'Specialty 3, Specialty 4', 'Specialty 5, Specialty 6']
+            'Nome': [
+                'Ospedale Niguarda', 'Ospedale San Raffaele', 'Policlinico di Milano',
+                'Ospedale San Paolo', 'Ospedale Sacco', 'Istituto Nazionale dei Tumori'
+            ],
+            'Tipo': [
+                'Ospedale', 'Ospedale', 'Policlinico Universitario',
+                'Ospedale', 'Ospedale', 'Istituto Specializzato'
+            ],
+            'Indirizzo': [
+                'Piazza Ospedale Maggiore 3', 'Via Olgettina 60', 'Via Francesco Sforza 35',
+                'Via Antonio di Rudinì 8', 'Via Giovanni Battista Grassi 74', 'Via Giacomo Venezian 1'
+            ],
+            'Città': [
+                'Milano', 'Milano', 'Milano',
+                'Milano', 'Milano', 'Milano'
+            ],
+            'Telefono': [
+                '02 64441', '02 26431', '02 55031',
+                '02 81841', '02 39041', '02 2390'
+            ],
+            'Specialità': [
+                'Cardiologia, Neurologia, Pediatria, Oncologia', 
+                'Oncologia, Neurologia, Cardiologia',
+                'Medicina Generale, Chirurgia, Pediatria',
+                'Ortopedia, Traumatologia, Medicina Generale',
+                'Malattie Infettive, Pneumologia',
+                'Oncologia, Radioterapia, Chirurgia Oncologica'
+            ]
+        }
+        return pd.DataFrame(data)
+        
+    elif 'sicilia' in str(url).lower():
+        # Sample data for Sicilia region
+        data = {
+            'Nome': [
+                'Ospedale Civico', 'Policlinico Universitario', 'Ospedale Cervello',
+                'Ospedale Cannizzaro', 'Policlinico Universitario Catania', 'Ospedale Garibaldi'
+            ],
+            'Tipo': [
+                'Ospedale', 'Policlinico Universitario', 'Ospedale',
+                'Ospedale', 'Policlinico Universitario', 'Ospedale'
+            ],
+            'Indirizzo': [
+                'Piazza Nicola Leotta 4', 'Via del Vespro 129', 'Via Trabucco 180',
+                'Via Messina 829', 'Via Santa Sofia 78', 'Piazza Santa Maria di Gesù 5'
+            ],
+            'Città': [
+                'Palermo', 'Palermo', 'Palermo',
+                'Catania', 'Catania', 'Catania'
+            ],
+            'Telefono': [
+                '091 6661111', '091 6551111', '091 7803111',
+                '095 7261111', '095 3781111', '095 7591111'
+            ],
+            'Specialità': [
+                'Cardiologia, Medicina Generale, Pediatria', 
+                'Chirurgia, Neurologia, Ortopedia',
+                'Pneumologia, Malattie Infettive',
+                'Medicina Generale, Oncologia',
+                'Pediatria, Ginecologia, Neurologia',
+                'Medicina Generale, Cardiologia'
+            ]
+        }
+        return pd.DataFrame(data)
+        
+    # For all other regions, generate generic region-specific sample data
+    else:
+        # Extract region name from URL if possible
+        region_name = None
+        for region_key, region_data in DATA_SOURCES.items():
+            if region_key in str(url).lower():
+                region_name = region_data['region_name']
+                break
+                
+        if not region_name:
+            region_name = "Generic Region"
+            
+        logger.info(f"Creating generic sample data for {region_name}")
+        
+        # Generate sample hospital names based on the region
+        hospital_names = [
+            f"Ospedale {region_name} Centrale", 
+            f"Policlinico Universitario di {region_name}",
+            f"Ospedale San Giovanni di {region_name}",
+            f"Centro Medico {region_name}",
+            f"Clinica Santa Maria di {region_name}"
+        ]
+        
+        # Generate sample cities based on the region
+        cities = [f"Città di {region_name}", f"{region_name} Centro", f"{region_name} Est", f"{region_name} Ovest"]
+        
+        # Generate sample data
+        data = {
+            'Nome': hospital_names,
+            'Tipo': ['Ospedale', 'Policlinico Universitario', 'Ospedale', 'Centro Medico', 'Clinica Privata'],
+            'Indirizzo': [
+                f'Via Roma 1, {cities[0]}', 
+                f'Viale Università 10, {cities[0]}', 
+                f'Via San Giovanni 15, {cities[1]}',
+                f'Corso Italia 25, {cities[2]}',
+                f'Via Santa Maria 30, {cities[3]}'
+            ],
+            'Città': [cities[0], cities[0], cities[1], cities[2], cities[3]],
+            'Telefono': [
+                '0XX 123456', '0XX 234567', '0XX 345678', '0XX 456789', '0XX 567890'
+            ],
+            'Specialità': [
+                'Cardiologia, Pediatria, Medicina Generale', 
+                'Oncologia, Neurologia, Chirurgia', 
+                'Medicina Generale, Ortopedia, Urologia',
+                'Dermatologia, Oculistica, Fisioterapia',
+                'Ginecologia, Ostetricia, Pediatria'
+            ]
         }
         return pd.DataFrame(data)
 
@@ -901,14 +1182,15 @@ def load_generic_data(data_source):
     facilities_added = 0
     
     # Try to detect column names in the DataFrame
-    name_cols = ['nome', 'name', 'denominazione', 'denomstruttura', 'facility_name', 'hospital_name']
-    type_cols = ['tipo', 'type', 'tipologia', 'tipologiastruttura', 'facility_type']
-    address_cols = ['indirizzo', 'address', 'via', 'street']
-    city_cols = ['città', 'city', 'citta', 'comune', 'town']
-    phone_cols = ['telefono', 'phone', 'tel']
-    email_cols = ['email', 'e-mail', 'mail', 'posta_elettronica']
-    web_cols = ['website', 'web', 'sito', 'sitoweb', 'url']
-    specialty_cols = ['specialties', 'specialità', 'specialita', 'brancheautorizzate', 'prestazioni', 'servizi', 'specializzazioni', 'specialità']
+    name_cols = ['nome', 'name', 'denominazione', 'denomstruttura', 'facility_name', 'hospital_name', 'structurename', 'name_structure', 'ospedale']
+    type_cols = ['tipo', 'type', 'tipologia', 'tipologiastruttura', 'facility_type', 'categoría', 'category', 'tipostruttura']
+    address_cols = ['indirizzo', 'address', 'via', 'street', 'ubicazione', 'location', 'sede']
+    city_cols = ['città', 'city', 'citta', 'comune', 'town', 'località', 'localita', 'municipio', 'provincia']
+    phone_cols = ['telefono', 'phone', 'tel', 'numero_telefono', 'contatto', 'contact', 'recapito']
+    email_cols = ['email', 'e-mail', 'mail', 'posta_elettronica', 'posta_el', 'pec', 'e_mail']
+    web_cols = ['website', 'web', 'sito', 'sitoweb', 'url', 'sito_internet', 'homepage', 'web_site']
+    specialty_cols = ['specialties', 'specialità', 'specialita', 'brancheautorizzate', 'prestazioni', 'servizi', 
+                    'specializzazioni', 'attività', 'attivita', 'discipline', 'branches', 'branche', 'reparti']
     
     # Find the actual column names in the DataFrame
     name_col = next((col for col in df.columns if col.lower() in name_cols), None)

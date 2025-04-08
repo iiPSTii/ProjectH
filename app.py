@@ -99,6 +99,9 @@ with app.app_context():
             import data_loader
             data_loader.USE_WEB_SCRAPING = use_web_scraping
             
+            # Update the data sources based on the new setting
+            data_loader.update_data_sources()
+            
             # Clear the current database before loading new data to avoid duplicates
             try:
                 logger.info("Clearing existing database entries...")
