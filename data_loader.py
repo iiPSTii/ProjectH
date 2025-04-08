@@ -16,17 +16,17 @@ logger = logging.getLogger(__name__)
 # Original URLs are no longer valid, so we'll use built-in sample data instead
 DATA_SOURCES = {
     'puglia': {
-        'url': 'sample_data',  # Not used for sample data
+        'url': 'puglia_sample_data',  # Each region has its own identifier
         'attribution': 'Regione Puglia - Anagrafe strutture sanitarie - IODL 2.0',
         'region_name': 'Puglia'
     },
     'trento': {
-        'url': 'sample_data',  # Not used for sample data
+        'url': 'trento_sample_data',  # Each region has its own identifier
         'attribution': 'Provincia Autonoma di Trento - Strutture sanitarie - CC-BY',
         'region_name': 'Trentino'
     },
     'toscana': {
-        'url': 'sample_data',  # Not used for sample data
+        'url': 'toscana_sample_data',  # Each region has its own identifier
         'attribution': 'Regione Toscana - Strutture ospedaliere - IODL 2.0',
         'region_name': 'Toscana'
     }
