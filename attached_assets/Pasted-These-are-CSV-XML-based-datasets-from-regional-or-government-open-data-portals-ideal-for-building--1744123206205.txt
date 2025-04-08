@@ -1,0 +1,110 @@
+These are CSV/XML-based datasets from regional or government open data portals — ideal for building your initial database.
+
+🔹 Regione Puglia
+Dataset: Anagrafe Strutture Sanitarie
+
+Type: CSV/XML
+
+Includes: Hospitals, clinics, consultori, emergency departments
+
+License: Italian Open Data License (IODL 2.0)
+
+Link:
+👉 https://www.dati.puglia.it/dataset/anagrafe-strutture-sanitarie
+
+🔹 Provincia Autonoma di Trento
+Dataset: Strutture sanitarie pubbliche e accreditate
+
+Type: CSV
+
+Includes: Public and private health centers, clinics, with coordinates
+
+License: Open (can be reused with attribution)
+
+Link:
+👉 https://dati.trentino.it/dataset/strutture-sanitarie-pubbliche-e-accreditate
+
+🔹 Regione Toscana
+Dataset: Strutture ospedaliere (and others)
+
+Type: CSV, broken down by facility type
+
+Includes: Hospital name, location, contact, services
+
+License: CC-BY
+
+Link:
+👉 https://www.opendata.toscana.it/dataset/strutture-ospedaliere
+
+🔹 Regione Lazio
+Site: Servizi Sanitari Accreditati
+
+Type: Web list, partially structured
+
+Includes: Accredited public/private facilities
+
+Scrapable: Yes, but no CSV
+
+Link:
+👉 https://www.salutelazio.it/strutture-sanitarie
+
+🔹 Regione Lombardia
+Dataset: Elenco delle strutture sanitarie accreditate
+
+Type: PDF/XML + Web
+
+Link:
+👉 https://www.dati.lombardia.it/
+
+🔹 AGENAS – Atlante Sanitario
+Type: Web map
+
+Includes: All active facilities by region
+
+Scrapable: Partially, via HTML or contact AGENAS
+
+Link:
+👉 https://atlante.agenas.it/
+
+🔹 ISTAT – Italian National Statistics
+Dataset: Health institutions by region/municipality
+
+Type: XLS/CSV
+
+Link:
+👉 https://www.istat.it/it/archivio/sanita-e-salute
+
+🟡 SEMI-SCRAPABLE PRIVATE DIRECTORIES (use with care)
+These websites do not offer open datasets, but data is available via structured HTML. Scrape only publicly visible, non-personal information and always check robots.txt and terms of service.
+
+🟡 Doveecomemicuro.it (Micuro)
+Includes: Over 1,300 hospitals and clinics, treatment quality indicators
+
+Data: Rich, structured, hospital-specific with quality scores
+
+Scrapable: Technically yes, but has copyright limitations
+
+Link:
+👉 https://www.doveecomemicuro.it/
+
+⚠️ Best used to understand what data to model in your DB (like quality metrics) or to cross-reference, not to scrape large datasets without permission.
+
+🟡 QSalute.it
+Includes: Crowdsourced reviews for hospital departments (Reparti)
+
+Scrapable: Yes, for aggregate data (like average rating per facility/specialty)
+
+Link:
+👉 https://www.qsalute.it/classifiche/
+
+⚠️ Avoid scraping raw user reviews (due to copyright/GDPR). Use star ratings + review count.
+
+🟡 Pagine Gialle (Yellow Pages)
+Includes: Clinics, labs, doctors, diagnostic centers
+
+Scrapable: Yes (with care), useful for smaller or private structures
+
+Link Example:
+👉 https://www.paginegialle.it/lombardia/ospedali.html
+
+⚠️ Treat as supplementary to fill gaps (e.g. private diagnostic labs not listed in open data). Avoid scraping phone/email in bulk.
