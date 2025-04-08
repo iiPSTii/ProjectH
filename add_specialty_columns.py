@@ -8,6 +8,7 @@ medical_facilities table in the PostgreSQL database.
 import os
 import sys
 import logging
+import sqlalchemy
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -34,12 +35,12 @@ def add_specialty_columns():
             
             for specialty in specialties:
                 column_name = f"{specialty}_rating"
-                alter_query = f"ALTER TABLE medical_facilities ADD COLUMN IF NOT EXISTS {column_name} FLOAT"
+                alter_query = sqlalchemy.text(f"ALTER TABLE medical_facilities ADD COLUMN IF NOT EXISTS {column_name} FLOAT")
                 conn.execute(alter_query)
                 logger.info(f"Added column: {column_name}")
             
             # Add strengths summary column
-            alter_query = "ALTER TABLE medical_facilities ADD COLUMN IF NOT EXISTS strengths_summary TEXT"
+            alter_query = sqlalchemy.text("ALTER TABLE medical_facilities ADD COLUMN IF NOT EXISTS strengths_summary TEXT")
             conn.execute(alter_query)
             logger.info("Added column: strengths_summary")
             
