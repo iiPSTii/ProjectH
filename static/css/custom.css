@@ -300,6 +300,26 @@ footer h5::after {
     color: #e0e0e0 !important;
 }
 
+/* Specialty ratings styling */
+.specialty-ratings .badge {
+    min-width: 90px;
+    display: inline-block;
+    text-align: center;
+}
+
+.specialty-ratings .stars {
+    font-size: 0.85rem;
+}
+
+.specialty-ratings .col-6 {
+    margin-bottom: 0.5rem;
+}
+
+/* Strengths summary highlight */
+.text-info {
+    color: var(--medical-light-blue) !important;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .facility-card {
@@ -308,5 +328,14 @@ footer h5::after {
     
     .facility-rating .stars {
         font-size: 0.9rem;
+    }
+    
+    .specialty-ratings .stars {
+        font-size: 0.8rem;
+    }
+    
+    .specialty-ratings .badge {
+        min-width: 80px;
+        font-size: 0.75rem;
     }
 }
