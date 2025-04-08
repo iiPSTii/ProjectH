@@ -344,6 +344,14 @@ def get_or_create_specialty(specialty_name):
         return None
     
     try:
+        # Make sure the input is a proper string
+        if not isinstance(specialty_name, str):
+            try:
+                specialty_name = str(specialty_name)
+            except:
+                return None
+        
+        # Clean and normalize the specialty name
         normalized_name = normalize_specialty(specialty_name)
         
         # In case we get back None or an empty string, use a default
@@ -353,6 +361,13 @@ def get_or_create_specialty(specialty_name):
         # Limit the length to avoid database errors (name column is String(100))
         if len(normalized_name) > 90:
             normalized_name = normalized_name[:90]
+            
+        # Remove any non-ASCII characters that might cause encoding issues
+        normalized_name = ''.join(c for c in normalized_name if ord(c) < 128)
+        
+        # If string is empty after cleaning, use default
+        if not normalized_name:
+            normalized_name = "Specialty"
             
         try:
             specialty = Specialty.query.filter_by(name=normalized_name).first()
