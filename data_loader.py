@@ -1098,6 +1098,12 @@ def load_data():
         'lazio': load_lazio_data
     }
     
+    # Add generic loaders for all regions in DATA_SOURCES that don't have specific loaders
+    for source_key in DATA_SOURCES.keys():
+        if source_key not in loaders:
+            loaders[source_key] = load_generic_data
+            logger.info(f"Added generic loader for {source_key}")
+    
     # Check if web scraping is enabled
     if USE_WEB_SCRAPING:
         # Import web_scraper and get all available scrapers
