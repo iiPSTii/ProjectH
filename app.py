@@ -89,25 +89,42 @@ with app.app_context():
         })
 
     @app.route('/load-data')
-    def load_data_route():
+    @app.route('/load-data/<int:batch>')
+    def load_data_route(batch=0):
         try:
-            # We've simplified the data loading to always use sample data
-            logger.info(f"Loading data with sample data")
+            # We now support batch loading to avoid timeouts
+            logger.info(f"Loading data batch {batch}")
             
             # Import the data_loader module
             import data_loader
             
-            # Database clearing is now handled in the load_data function
-            logger.info("Preparing to load data...")
+            # Only clear database on the first batch
+            if batch == 0:
+                logger.info("This is the first batch, clearing database...")
+            else:
+                logger.info(f"Loading batch {batch}, continuing from previous batches")
             
-            # Load the data with appropriate error handling
-            stats = load_data()
-            flash(f"Data loaded successfully using sample data! Added {stats['total']} facilities from {stats['regions']} regions.", "success")
+            # Load the data with batch parameter for limiting regions
+            stats = load_data(batch=batch)
+            
+            # Provide info about continuing the loading process
+            total_batches = 4  # We'll split the 20 regions into 4 batches of 5 each
+            
+            if batch < total_batches - 1:
+                next_batch = batch + 1
+                flash(f"Batch {batch} loaded successfully! Added {stats['total']} facilities from {stats['regions']} regions. " +
+                      f"Continue loading with batch {next_batch}.", "success")
+                # Add a link to the next batch
+                next_batch_url = f"/load-data/{next_batch}"
+                flash(f"<a href='{next_batch_url}' class='btn btn-primary'>Load Next Batch</a>", "info")
+            else:
+                flash(f"Final batch loaded successfully! Added {stats['total']} facilities from {stats['regions']} regions. " +
+                      f"All regions are now loaded.", "success")
         except Exception as e:
-            logger.error(f"Error loading data: {str(e)}")
+            logger.error(f"Error loading data batch {batch}: {str(e)}")
             logger.exception(e)  # Log the full exception for debugging
             db.session.rollback()
-            flash(f"Error loading data: {str(e)}", "danger")
+            flash(f"Error loading data batch {batch}: {str(e)}", "danger")
         
         return render_template('index.html', regions=get_regions(), specialties=get_specialties())
 

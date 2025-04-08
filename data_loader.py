@@ -1344,28 +1344,39 @@ def create_sample_facility(region, name, facility_type, address, city, specialti
         db.session.rollback()
         return None
 
-def load_data():
-    """Load data from all sources - extreme simplification to avoid encoding issues"""
+def load_data(batch=0):
+    """
+    Load data from all sources with batch support to avoid timeouts
+    
+    Args:
+        batch (int): The batch number to load (0-3), with 5 regions per batch
+    
+    Returns:
+        dict: Statistics about the loaded data
+    """
     stats = {
         'regions': 0,
         'total': 0
     }
     
-    # Clear all existing data
-    try:
-        logger.info("Clearing existing database data")
-        FacilitySpecialty.query.delete()
-        db.session.commit()
-        MedicalFacility.query.delete()
-        db.session.commit()
-        Specialty.query.delete()
-        db.session.commit()
-        Region.query.delete()
-        db.session.commit()
-        logger.info("Database cleared successfully")
-    except Exception as e:
-        logger.error(f"Error clearing database: {str(e)}")
-        db.session.rollback()
+    # Clear all existing data only if this is the first batch
+    if batch == 0:
+        try:
+            logger.info("Batch 0: Clearing existing database data")
+            FacilitySpecialty.query.delete()
+            db.session.commit()
+            MedicalFacility.query.delete()
+            db.session.commit()
+            Specialty.query.delete()
+            db.session.commit()
+            Region.query.delete()
+            db.session.commit()
+            logger.info("Database cleared successfully")
+        except Exception as e:
+            logger.error(f"Error clearing database: {str(e)}")
+            db.session.rollback()
+    else:
+        logger.info(f"Batch {batch}: Continuing with existing data")
     
     import random
     
@@ -1395,14 +1406,21 @@ def load_data():
             # Get scrapers directly and limit how many we process at once to avoid timeouts
             import web_scraper
             all_scrapers = web_scraper.get_available_scrapers()
-            # Limit to just a few scrapers per request
-            max_scrapers_per_request = 5
-            limited_scrapers = all_scrapers[:max_scrapers_per_request] 
             
-            logger.info(f"Processing {len(limited_scrapers)} regions in this request (out of {len(all_scrapers)} total)")
+            # Calculate which scrapers to process based on the batch number
+            # We'll process 5 scrapers per batch, out of a total of 20 regions
+            # Batch 0: Regions 0-4, Batch 1: Regions 5-9, Batch 2: Regions 10-14, Batch 3: Regions 15-19
+            max_scrapers_per_batch = 5
+            start_idx = batch * max_scrapers_per_batch
+            end_idx = min(start_idx + max_scrapers_per_batch, len(all_scrapers))
+            
+            # Get the appropriate slice of scrapers for this batch
+            batch_scrapers = all_scrapers[start_idx:end_idx]
+            
+            logger.info(f"Batch {batch}: Processing regions {start_idx}-{end_idx-1} (out of {len(all_scrapers)} total regions)")
             
             # Process each scraper directly
-            for scraper in limited_scrapers:
+            for scraper in batch_scrapers:
                 try:
                     # Begin a nested transaction for each region
                     db.session.begin_nested()
