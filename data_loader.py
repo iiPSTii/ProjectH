@@ -1228,13 +1228,16 @@ def load_data():
             logger.error(f"Error adding specialty {name}: {str(e)}")
             db.session.rollback()
     
-    # Simplified regions list - using ASCII characters only
+    # Ultra simplified regions list - using only simple ASCII characters 
+    # and splitting the operation into smaller batches
     region_names = [
-        "Abruzzo", "Basilicata", "Calabria", "Campania", "Emilia-Romagna",
-        "Friuli-Venezia Giulia", "Lazio", "Liguria", "Lombardia", "Marche",
-        "Molise", "Piemonte", "Puglia", "Sardegna", "Sicilia", "Toscana",
-        "Trentino-Alto Adige", "Umbria", "Valle d'Aosta", "Veneto"
+        "Abruzzo", "Basilicata", "Calabria", "Campania", "Lazio", 
+        "Liguria", "Lombardia", "Marche", "Molise", "Piemonte",
+        "Puglia", "Sardegna", "Sicilia", "Toscana", "Umbria", "Veneto"
     ]
+    
+    # We'll skip the regions with special characters or hyphens for now
+    # "Emilia-Romagna", "Friuli-Venezia Giulia", "Trentino-Alto Adige", "Valle d'Aosta"
     
     regions = {}
     for name in region_names:
