@@ -5,6 +5,20 @@
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-lg-10">
+        {% if db_status and db_status.status == 'initialized' %}
+        <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+            <strong>Database Inizializzato!</strong> 
+            Il database contiene strutture da {{ db_status.total_regions }} regioni con {{ db_status.total_facilities }} strutture sanitarie disponibili.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% elif not db_status or db_status.status != 'initialized' %}
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <strong>Attenzione!</strong> Il database non è stato completamente inizializzato. 
+            <a href="/data-manager" class="alert-link">Vai alla pagina di gestione dati</a> per inizializzare il database.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+        
         <div class="text-center mb-5">
             <h1 class="display-4 fw-bold">Trova la Struttura Sanitaria Ideale in Italia</h1>
             <p class="lead">Confronta ospedali, cliniche e centri specializzati in base a specialità, costi e qualità.</p>

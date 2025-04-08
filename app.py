@@ -35,17 +35,33 @@ db.init_app(app)
 # Import routes after app initialization to avoid circular imports
 with app.app_context():
     # Import models and create tables
-    from models import MedicalFacility, Specialty, FacilitySpecialty, Region
+    from models import MedicalFacility, Specialty, FacilitySpecialty, Region, DatabaseStatus
     db.create_all()
     
     # Import and register route functions
     from data_loader import load_data, get_regions, get_specialties, normalize_specialty
+    
+    # Check database status
+    def get_database_status():
+        """Get the current database status"""
+        try:
+            status = DatabaseStatus.get_status()
+            if status:
+                logger.info(f"Database status: {status.status} (Last updated: {status.last_updated})")
+                return status
+            else:
+                logger.warning("No database status found. Database may not be initialized.")
+                return None
+        except Exception as e:
+            logger.error(f"Error getting database status: {str(e)}")
+            return None
 
     @app.route('/')
     def index():
         regions = get_regions()
         specialties = get_specialties()
-        return render_template('index.html', regions=regions, specialties=specialties)
+        db_status = get_database_status()
+        return render_template('index.html', regions=regions, specialties=specialties, db_status=db_status)
 
     @app.route('/search')
     def search():
@@ -56,6 +72,9 @@ with app.app_context():
         max_cost = request.args.get('max_cost', 1000000, type=float)
         
         logger.debug(f"Search params: specialty={specialty}, region={region}, min_quality={min_quality}, max_cost={max_cost}")
+        
+        # Get database status
+        db_status = get_database_status()
         
         # Build the query
         query = db.session.query(MedicalFacility)
@@ -81,7 +100,7 @@ with app.app_context():
         logger.debug(f"Found {len(facilities)} facilities matching criteria")
         
         # Return results template
-        return render_template('results.html', facilities=facilities, search_params={
+        return render_template('results.html', facilities=facilities, db_status=db_status, search_params={
             'specialty': specialty,
             'region': region,
             'min_quality': min_quality,
@@ -94,6 +113,9 @@ with app.app_context():
         # Get statistics about current data
         regions = get_regions()
         specialties = get_specialties()
+        
+        # Get database status
+        db_status = get_database_status()
         
         # Count facilities
         try:
@@ -125,6 +147,9 @@ with app.app_context():
         
         all_batches_loaded = all(batch_status.values())
         
+        # Add command to run full database initialization
+        full_db_init_command = "python initialize_database.py"
+        
         return render_template(
             'data_manager.html',
             total_regions=total_regions_count,
@@ -132,7 +157,9 @@ with app.app_context():
             total_specialties=len(specialties),
             progress_percentage=progress_percentage,
             batch_status=batch_status,
-            all_batches_loaded=all_batches_loaded
+            all_batches_loaded=all_batches_loaded,
+            db_status=db_status,
+            full_db_init_command=full_db_init_command
         )
 
     @app.route('/load-data')

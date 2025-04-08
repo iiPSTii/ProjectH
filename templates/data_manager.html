@@ -25,10 +25,25 @@
             
             <div class="card mb-4">
                 <div class="card-header bg-primary text-white">
-                    <h3 class="card-title mb-0">Data Loading Progress</h3>
+                    <h3 class="card-title mb-0">Database Status</h3>
                 </div>
                 <div class="card-body">
-                    <h5>Current Status:</h5>
+                    {% if db_status %}
+                    <div class="alert alert-{{ 'success' if db_status.status == 'initialized' else 'warning' }}">
+                        <h5>Status: {{ db_status.status|title }}</h5>
+                        <p>Last Updated: {{ db_status.last_updated.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                        {% if db_status.notes %}
+                        <p>Notes: {{ db_status.notes }}</p>
+                        {% endif %}
+                    </div>
+                    {% else %}
+                    <div class="alert alert-warning">
+                        <h5>Status: Not Initialized</h5>
+                        <p>The database has not been initialized yet. Please run the initialization script or load data in batches.</p>
+                    </div>
+                    {% endif %}
+                    
+                    <h5>Current Statistics:</h5>
                     <ul class="list-group list-group-flush mb-4">
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             Total Regions Loaded:
@@ -45,7 +60,7 @@
                     </ul>
                     
                     <div class="progress mb-4" style="height: 25px;">
-                        <div class="progress-bar progress-bar-striped" 
+                        <div class="progress-bar progress-bar-striped {{ 'bg-success' if progress_percentage >= 100 else '' }}" 
                              role="progressbar" 
                              style="width: {{ progress_percentage }}%;" 
                              aria-valuenow="{{ progress_percentage }}" 
@@ -53,6 +68,35 @@
                              aria-valuemax="100">
                             {{ progress_percentage }}% Complete
                         </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h3 class="card-title mb-0">Full Database Initialization</h3>
+                </div>
+                <div class="card-body">
+                    <p class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> For better performance, use the standalone initialization script. This runs outside the web request cycle and can process many more facilities without timeouts.
+                    </p>
+                    
+                    <div class="card mb-3 bg-light">
+                        <div class="card-body">
+                            <h5 class="card-title">Command to run in terminal:</h5>
+                            <pre class="bg-dark text-light p-3 rounded"><code>{{ full_db_init_command }}</code></pre>
+                            <p class="card-text mt-3">This will initialize the database with all available medical facilities from all 20 Italian regions.</p>
+                            <p class="card-text"><small class="text-muted">Note: This may take several minutes to complete.</small></p>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-warning">
+                        <h5><i class="bi bi-exclamation-triangle"></i> Web Request Timeout Risk</h5>
+                        <p>Using the batch loading system below may lead to timeouts because web requests have limited execution time. For best results:</p>
+                        <ol>
+                            <li>Use the terminal command above for a complete initialization</li>
+                            <li>Or use the batch loading system below for smaller incremental loads</li>
+                        </ol>
                     </div>
                 </div>
             </div>
@@ -150,12 +194,39 @@
             <div class="d-flex justify-content-between mt-4">
                 <a href="/" class="btn btn-secondary">Back to Home</a>
                 
-                {% if all_batches_loaded %}
-                <a href="/" class="btn btn-success">
-                    <i class="bi bi-search"></i> Search Medical Facilities
-                </a>
-                {% endif %}
+                <div>
+                    {% if db_status and db_status.status == 'initialized' %}
+                    <a href="/" class="btn btn-success mx-2">
+                        <i class="bi bi-search"></i> Search Medical Facilities
+                    </a>
+                    <button class="btn btn-outline-primary" onclick="copyCommand()">
+                        <i class="bi bi-clipboard"></i> Copy Init Command
+                    </button>
+                    {% else %}
+                    <div class="d-flex">
+                        {% if all_batches_loaded %}
+                        <a href="/" class="btn btn-success mx-2">
+                            <i class="bi bi-search"></i> Search Medical Facilities
+                        </a>
+                        {% endif %}
+                        <button class="btn btn-primary" onclick="copyCommand()">
+                            <i class="bi bi-clipboard"></i> Copy Init Command
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
             </div>
+            
+            <script>
+            function copyCommand() {
+                var command = "{{ full_db_init_command }}";
+                navigator.clipboard.writeText(command).then(function() {
+                    alert("Command copied to clipboard: " + command);
+                }, function() {
+                    alert("Failed to copy command. Please copy it manually from the page.");
+                });
+            }
+            </script>
         </div>
     </div>
 </div>

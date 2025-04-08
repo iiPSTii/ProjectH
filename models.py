@@ -1,6 +1,7 @@
 from app import db
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, Table
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, Table, DateTime
 from sqlalchemy.orm import relationship
+import datetime
 
 class Region(db.Model):
     __tablename__ = 'regions'
@@ -68,3 +69,42 @@ class MedicalFacility(db.Model):
     def specialties_list(self):
         """Return a list of specialty names for this facility"""
         return [fs.specialty.name for fs in self.specialties]
+
+
+class DatabaseStatus(db.Model):
+    """
+    Tracks the status of database initialization and updates.
+    This allows us to load data only once and then use it for all subsequent requests.
+    """
+    __tablename__ = 'database_status'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    status = db.Column(db.String(50), nullable=False)  # initialized, updating, error
+    last_updated = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    total_facilities = db.Column(db.Integer, default=0)
+    total_regions = db.Column(db.Integer, default=0)
+    total_specialties = db.Column(db.Integer, default=0)
+    initialized_by = db.Column(db.String(100))
+    notes = db.Column(db.String(500))
+    
+    @classmethod
+    def get_status(cls):
+        """Get the current database status"""
+        return cls.query.order_by(cls.last_updated.desc()).first()
+    
+    @classmethod
+    def update_status(cls, status, total_facilities=None, total_regions=None, 
+                     total_specialties=None, notes=None, initialized_by=None):
+        """Update the database status"""
+        new_status = cls(
+            status=status,
+            last_updated=datetime.datetime.utcnow(),
+            total_facilities=total_facilities,
+            total_regions=total_regions,
+            total_specialties=total_specialties,
+            notes=notes,
+            initialized_by=initialized_by
+        )
+        db.session.add(new_status)
+        db.session.commit()
+        return new_status
