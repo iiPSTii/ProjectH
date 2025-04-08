@@ -9,7 +9,7 @@
     justify-content: center;
 }
 
-/* Star rating visualization */
+/* Star rating visualization - completely revised */
 .facility-rating {
     display: flex;
     align-items: center;
@@ -17,25 +17,29 @@
 
 .facility-rating .stars {
     position: relative;
-    display: inline-flex;
-    color: var(--bs-gray-600);
+    font-size: 1rem;
+    display: inline-block;
     white-space: nowrap;
 }
 
+/* Empty (gray) stars */
 .facility-rating .stars i {
-    font-style: normal;
+    color: var(--bs-gray-500);
+    margin-right: 2px;
 }
 
-.facility-rating .stars::after {
+/* Yellow stars overlay */
+.facility-rating .stars .overlay {
     position: absolute;
-    content: "\f005\f005\f005\f005\f005";
-    font-family: "Font Awesome 6 Free";
-    font-weight: 900;
-    color: var(--bs-warning);
     top: 0;
     left: 0;
-    width: calc(var(--rating) * 20%);
+    white-space: nowrap;
     overflow: hidden;
+    width: calc(var(--rating) * 20%);
+}
+
+.facility-rating .stars .overlay i {
+    color: var(--bs-warning);
 }
 
 /* Cards and list items hover effect */
