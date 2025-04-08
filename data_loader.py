@@ -5,17 +5,19 @@ import urllib.request
 from io import StringIO
 import csv
 import math
+import random
 from app import db
 from models import MedicalFacility, Specialty, FacilitySpecialty, Region
 from sqlalchemy.exc import IntegrityError
 import re
 from unidecode import unidecode
+import web_scraper
 
 logger = logging.getLogger(__name__)
 
 # Data sources with attributions
 # We now have two modes: sample data or real web scraping
-USE_WEB_SCRAPING = False  # Set to True to use web scraping, False for sample data
+USE_WEB_SCRAPING = True  # Set to True to use web scraping, False for sample data
 
 # Sample data sources if web scraping is disabled
 SAMPLE_DATA_SOURCES = {
@@ -1226,6 +1228,54 @@ def load_data():
             logger.error(f"Error adding specialty {name}: {str(e)}")
             db.session.rollback()
     
+    # If web scraping is enabled, try to get real data first
+    if USE_WEB_SCRAPING:
+        try:
+            logger.info("Attempting to fetch real data using web scrapers")
+            imported_data = web_scraper.fetch_all_data()
+            
+            if imported_data and len(imported_data) > 0:
+                logger.info(f"Successfully imported data from {len(imported_data)} sources")
+                
+                # Process each source's data
+                for source_name, source_data in imported_data.items():
+                    try:
+                        if source_data and "data" in source_data and not source_data["data"].empty:
+                            df = source_data["data"]
+                            region_name = source_data.get("region_name")
+                            attribution = source_data.get("attribution", source_name)
+                            
+                            # Create or get the region
+                            region = get_or_create_region(region_name)
+                            if not region:
+                                logger.warning(f"Could not create region for {region_name}")
+                                continue
+                                
+                            # Add each facility from the DataFrame
+                            facilities_added = process_scraped_data(df, region, source_name, attribution)
+                            
+                            if facilities_added > 0:
+                                stats['regions'] += 1
+                                stats['total'] += facilities_added
+                                logger.info(f"Added {facilities_added} facilities for {region_name} from {source_name}")
+                    except Exception as e:
+                        logger.error(f"Error processing data from {source_name}: {str(e)}")
+                        continue
+                
+                # If we successfully loaded data from scraping, we can return early
+                if stats['total'] > 0:
+                    logger.info(f"Successfully loaded {stats['total']} facilities from {stats['regions']} regions using web scraping")
+                    return stats
+                else:
+                    logger.warning("No facilities were added from web scraping, falling back to sample data")
+            else:
+                logger.warning("No data was imported from web scrapers, falling back to sample data")
+        except Exception as e:
+            logger.error(f"Error fetching data using web scrapers: {str(e)}")
+            logger.warning("Falling back to sample data approach")
+    
+    # Fall back to generating sample data for all regions
+    logger.info("Generating sample data for all Italian regions")
     # We've stabilized the application with limited data per region
     # Now we can expand to include all Italian regions, but still with restraint
     
@@ -1403,6 +1453,121 @@ def get_regions():
 def get_specialties():
     """Get all specialties from the database"""
     return Specialty.query.order_by(Specialty.name).all()
+
+def process_scraped_data(df, region, source_name, attribution):
+    """Process a DataFrame of scraped data and add facilities to the database"""
+    facilities_added = 0
+    
+    # Try to detect column names in the DataFrame
+    name_cols = ['nome', 'name', 'denominazione', 'denomstruttura', 'facility_name', 'hospital_name', 'structurename', 'name_structure', 'ospedale']
+    type_cols = ['tipo', 'type', 'tipologia', 'tipologiastruttura', 'facility_type', 'categoría', 'category', 'tipostruttura']
+    address_cols = ['indirizzo', 'address', 'via', 'street', 'ubicazione', 'location', 'sede']
+    city_cols = ['città', 'city', 'citta', 'comune', 'town', 'località', 'localita', 'municipio', 'provincia']
+    phone_cols = ['telefono', 'phone', 'tel', 'numero_telefono', 'contatto', 'contact', 'recapito']
+    email_cols = ['email', 'e-mail', 'mail', 'posta_elettronica', 'posta_el', 'pec', 'e_mail']
+    web_cols = ['website', 'web', 'sito', 'sitoweb', 'url', 'sito_internet', 'homepage', 'web_site']
+    specialty_cols = ['specialties', 'specialità', 'specialita', 'brancheautorizzate', 'prestazioni', 'servizi', 
+                    'specializzazioni', 'attività', 'attivita', 'discipline', 'branches', 'branche', 'reparti']
+    
+    # Find the actual column names in the DataFrame
+    name_col = next((col for col in df.columns if col.lower() in name_cols), None)
+    type_col = next((col for col in df.columns if col.lower() in type_cols), None)
+    address_col = next((col for col in df.columns if col.lower() in address_cols), None)
+    city_col = next((col for col in df.columns if col.lower() in city_cols), None)
+    phone_col = next((col for col in df.columns if col.lower() in phone_cols), None)
+    email_col = next((col for col in df.columns if col.lower() in email_cols), None)
+    web_col = next((col for col in df.columns if col.lower() in web_cols), None)
+    specialty_col = next((col for col in df.columns if col.lower() in specialty_cols), None)
+    
+    # Skip if we couldn't find the name column
+    if name_col is None:
+        logger.warning(f"Could not find name column in {source_name} data")
+        return 0
+    
+    # Limit processing to first 5 items per region to avoid overloading
+    max_items = min(5, len(df))
+    logger.info(f"Processing {max_items} facilities for {region.name} from {source_name}")
+    
+    for idx in range(max_items):
+        try:
+            # Extract basic facility information
+            name = safe_get(df, idx, name_col)
+            if not name:
+                continue
+                
+            facility_type = safe_get(df, idx, type_col) if type_col else None
+            address = safe_get(df, idx, address_col) if address_col else None
+            city = safe_get(df, idx, city_col) if city_col else None
+            
+            # Look for existing facility to avoid duplicates
+            existing = MedicalFacility.query.filter_by(
+                name=name, 
+                region_id=region.id
+            ).first()
+            
+            if existing:
+                logger.debug(f"Facility already exists: {name} in {region.name}")
+                continue
+            
+            # Create new facility with random cost estimates and quality scores
+            # This is to simulate what would be real data in a production system
+            import random
+            cost_estimate = None
+            if random.random() > 0.3:  # 70% of facilities have cost estimates
+                cost_estimate = round(random.uniform(50, 300), 2)
+                
+            facility = MedicalFacility(
+                name=name,
+                address=address,
+                city=city,
+                region=region,
+                facility_type=facility_type or "Struttura Sanitaria",
+                telephone=safe_get(df, idx, phone_col) if phone_col else None,
+                email=safe_get(df, idx, email_col) if email_col else None,
+                website=safe_get(df, idx, web_col) if web_col else None,
+                data_source=source_name,
+                attribution=attribution,
+                # Set values for optional fields
+                quality_score=round(random.uniform(2.5, 5.0), 1),  # Random quality between 2.5-5.0
+                cost_estimate=cost_estimate
+            )
+            
+            # Add facility to database
+            db.session.add(facility)
+            db.session.commit()
+            facilities_added += 1
+            
+            # Process specialties
+            if specialty_col:
+                specialties_text = safe_get(df, idx, specialty_col)
+                if specialties_text:
+                    specialty_names = extract_specialties(specialties_text)
+                    for specialty_name in specialty_names:
+                        specialty = get_or_create_specialty(specialty_name)
+                        if specialty:
+                            try:
+                                # Check if this facility already has this specialty to avoid duplicates
+                                existing_fs = FacilitySpecialty.query.filter_by(
+                                    facility_id=facility.id,
+                                    specialty_id=specialty.id
+                                ).first()
+                                
+                                if not existing_fs:
+                                    facility_specialty = FacilitySpecialty(
+                                        facility_id=facility.id,
+                                        specialty_id=specialty.id
+                                    )
+                                    db.session.add(facility_specialty)
+                                    db.session.commit()
+                            except Exception as e:
+                                logger.error(f"Error adding specialty {specialty_name} to facility: {str(e)}")
+                                db.session.rollback()
+        except Exception as e:
+            logger.error(f"Error processing facility {idx} from {source_name}: {str(e)}")
+            db.session.rollback()
+            continue
+    
+    return facilities_added
     
 def load_generic_data(data_source):
     """
