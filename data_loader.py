@@ -303,15 +303,18 @@ def normalize_specialty(specialty_name):
             except:
                 return "Specialty"
                 
-        # Remove non-ASCII characters first to avoid encoding issues
-        ascii_only = ''.join(c for c in specialty_name if ord(c) < 128)
-        
-        # If nothing left after cleaning, use a safe default
-        if not ascii_only:
-            return "Specialty"
-            
-        # Try to normalize with unidecode
+        # Try to normalize with unidecode first
         try:
+            # Transliterate accented characters to ASCII equivalents
+            from unidecode import unidecode
+            specialty_name = unidecode(specialty_name)
+            
+            # Remove any remaining non-ASCII characters to avoid encoding issues
+            ascii_only = ''.join(c for c in specialty_name if ord(c) < 128)
+            
+            # If nothing left after cleaning, use a safe default
+            if not ascii_only:
+                return "Specialty"
             # Convert to lowercase, remove accents, and strip whitespace
             normalized = unidecode(ascii_only.lower().strip())
         except:
@@ -405,7 +408,10 @@ def get_or_create_specialty(specialty_name):
                 db.session.rollback()
                 return None
         
-        # Remove any non-ASCII characters first to avoid encoding issues
+        # Use Unidecode to handle non-ASCII characters
+        from unidecode import unidecode
+        specialty_name = unidecode(specialty_name)
+        # Additional safety check to remove any remaining non-ASCII characters
         specialty_name = ''.join(c for c in specialty_name if ord(c) < 128)
         
         # Clean and normalize the specialty name
@@ -514,9 +520,13 @@ def extract_specialties(text):
     if not text:
         return []
     
-    # Remove any non-ASCII characters first to avoid encoding issues
+    # Use Unidecode to handle non-ASCII characters for better results
     try:
-        text = ''.join(c for c in str(text) if ord(c) < 128)
+        from unidecode import unidecode
+        text = unidecode(str(text))
+        
+        # Additional safety check to remove any remaining non-ASCII characters
+        text = ''.join(c for c in text if ord(c) < 128)
         if not text:
             return []
     except Exception as e:
@@ -1691,9 +1701,9 @@ def process_scraped_data(df, region, source_name, attribution):
         logger.warning(f"Could not find name column in {source_name} data")
         return 0
     
-    # Process more facilities per region since we now load in batches
-    # Aim for 10 per region or all available if fewer
-    max_items = min(10, len(df))
+    # Process more facilities per region, but not too many to avoid timeouts
+    # Aim for 6 per region or all available if fewer (up from original 3)
+    max_items = min(6, len(df))
     logger.info(f"Processing {max_items} facilities for {region.name} from {source_name} (out of {len(df)} available)")
     
     for idx in range(max_items):
@@ -1709,7 +1719,11 @@ def process_scraped_data(df, region, source_name, attribution):
                 
             # Clean strings to ensure they don't have encoding issues
             try:
-                name = ''.join(c for c in str(name) if ord(c) < 128)
+                # Use Unidecode to transliterate non-ASCII characters to ASCII equivalents
+                from unidecode import unidecode
+                name = unidecode(str(name))
+                # Final ASCII-only safety check
+                name = ''.join(c for c in name if ord(c) < 128)
                 if not name:
                     logger.warning(f"Name became empty after cleaning for row {idx}. Skipping.")
                     db.session.rollback()
@@ -1836,8 +1850,11 @@ def process_scraped_data(df, region, source_name, attribution):
                 try:
                     specialties_text = safe_get(df, idx, specialty_col)
                     if specialties_text:
-                        # Clean specialties text
-                        specialties_text = ''.join(c for c in str(specialties_text) if ord(c) < 128)
+                        # Clean specialties text with Unidecode
+                        from unidecode import unidecode
+                        specialties_text = unidecode(str(specialties_text))
+                        # Additional ASCII-only safety check
+                        specialties_text = ''.join(c for c in specialties_text if ord(c) < 128)
                         specialty_names = extract_specialties(specialties_text)
                         
                         # Limit number of specialties to process - increased from 3 to 5
