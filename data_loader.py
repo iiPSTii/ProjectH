@@ -1691,9 +1691,10 @@ def process_scraped_data(df, region, source_name, attribution):
         logger.warning(f"Could not find name column in {source_name} data")
         return 0
     
-    # Limit processing to fewer items per region to avoid timeouts (reduce from 5 to 3)
-    max_items = min(3, len(df))
-    logger.info(f"Processing {max_items} facilities for {region.name} from {source_name}")
+    # Process more facilities per region since we now load in batches
+    # Aim for 10 per region or all available if fewer
+    max_items = min(10, len(df))
+    logger.info(f"Processing {max_items} facilities for {region.name} from {source_name} (out of {len(df)} available)")
     
     for idx in range(max_items):
         # Start a new transaction for each facility
@@ -1829,7 +1830,7 @@ def process_scraped_data(df, region, source_name, attribution):
                 db.session.rollback()
                 continue
             
-            # Process specialties - limit to max 3 specialties per facility to avoid timeouts
+            # Process specialties - increased limit from 3 to 5 per facility
             if specialty_col:
                 specialties_processed = 0
                 try:
@@ -1839,13 +1840,13 @@ def process_scraped_data(df, region, source_name, attribution):
                         specialties_text = ''.join(c for c in str(specialties_text) if ord(c) < 128)
                         specialty_names = extract_specialties(specialties_text)
                         
-                        # Limit number of specialties to process
-                        specialty_names = specialty_names[:3] if len(specialty_names) > 3 else specialty_names
+                        # Limit number of specialties to process - increased from 3 to 5
+                        specialty_names = specialty_names[:5] if len(specialty_names) > 5 else specialty_names
                         
                         # Add specialties one by one to avoid batch issues
                         processed_specialty_ids = set()
                         for specialty_name in specialty_names:
-                            if specialties_processed >= 3:  # Limit to 3 specialties per facility
+                            if specialties_processed >= 5:  # Increased limit from 3 to 5 specialties per facility
                                 break
                                 
                             # Start a new nested transaction for each specialty
