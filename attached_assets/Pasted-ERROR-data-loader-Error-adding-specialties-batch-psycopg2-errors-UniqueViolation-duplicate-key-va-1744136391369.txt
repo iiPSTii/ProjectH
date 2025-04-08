@@ -1,0 +1,126 @@
+ERROR:data_loader:Error adding specialties batch: (psycopg2.errors.UniqueViolation) duplicate key value violates unique constraint "facility_specialty_pkey"
+DETAIL:  Key (facility_id, specialty_id)=(1294, 490) already exists.
+
+[SQL: INSERT INTO facility_specialty (facility_id, specialty_id) VALUES (%(facility_id__0)s, %(specialty_id__0)s), (%(facility_id__1)s, %(specialty_id__1)s), (%(facility_id__2)s, %(specialty_id__2)s), (%(facility_id__3)s, %(specialty_id__3)s), (%(facility_id__4)s, %(specialty_id__4)s)]
+[parameters: {'specialty_id__0': 490, 'facility_id__0': 1294, 'specialty_id__1': 485, 'facility_id__1': 1294, 'specialty_id__2': 490, 'facility_id__2': 1294, 'specialty_id__3': 482, 'facility_id__3': 1294, 'specialty_id__4': 495, 'facility_id__4': 1294}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+INFO:data_loader:Added 5 facilities for Trentino from Trentino Open Data
+INFO:data_loader:Processing 5 facilities for Toscana from Toscana Open Data
+INFO:data_loader:Added 5 facilities for Toscana from Toscana Open Data
+INFO:data_loader:Processing 5 facilities for Lazio from Salute Lazio
+INFO:data_loader:Added 5 facilities for Lazio from Salute Lazio
+INFO:data_loader:Processing 5 facilities for Lombardia from Lombardia Open Data
+INFO:data_loader:Added 5 facilities for Lombardia from Lombardia Open Data
+INFO:data_loader:Processing 5 facilities for Sicilia from Sicilia Open Data
+INFO:data_loader:Added 5 facilities for Sicilia from Sicilia Open Data
+INFO:data_loader:Processing 5 facilities for Emilia-Romagna from Emilia-Romagna Open Data
+ERROR:data_loader:Error adding specialties batch: (psycopg2.errors.UniqueViolation) duplicate key value violates unique constraint "facility_specialty_pkey"
+DETAIL:  Key (facility_id, specialty_id)=(1321, 506) already exists.
+
+[SQL: INSERT INTO facility_specialty (facility_id, specialty_id) VALUES (%(facility_id__0)s, %(specialty_id__0)s), (%(facility_id__1)s, %(specialty_id__1)s), (%(facility_id__2)s, %(specialty_id__2)s), (%(facility_id__3)s, %(specialty_id__3)s), (%(facility_id__4)s, %(specialty_id__4)s), (%(facility_id__5)s, %(specialty_id__5)s)]
+[parameters: {'specialty_id__0': 489, 'facility_id__0': 1321, 'specialty_id__1': 483, 'facility_id__1': 1321, 'specialty_id__2': 491, 'facility_id__2': 1321, 'specialty_id__3': 506, 'facility_id__3': 1321, 'specialty_id__4': 506, 'facility_id__4': 1321, 'specialty_id__5': 492, 'facility_id__5': 1321}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+INFO:data_loader:Added 5 facilities for Emilia-Romagna from Emilia-Romagna Open Data
+INFO:data_loader:Processing 5 facilities for Campania from Campania Open Data
+INFO:data_loader:Added 5 facilities for Campania from Campania Open Data
+INFO:data_loader:Processing 5 facilities for Veneto from Veneto Open Data
+INFO:data_loader:Added 5 facilities for Veneto from Veneto Open Data
+INFO:data_loader:Processing 5 facilities for Piemonte from Piemonte Open Data
+ERROR:data_loader:Error adding specialties batch: (psycopg2.errors.UniqueViolation) duplicate key value violates unique constraint "facility_specialty_pkey"
+DETAIL:  Key (facility_id, specialty_id)=(1336, 506) already exists.
+
+[SQL: INSERT INTO facility_specialty (facility_id, specialty_id) VALUES (%(facility_id__0)s, %(specialty_id__0)s), (%(facility_id__1)s, %(specialty_id__1)s), (%(facility_id__2)s, %(specialty_id__2)s), (%(facility_id__3)s, %(specialty_id__3)s), (%(facility_id__4)s, %(specialty_id__4)s)]
+[parameters: {'specialty_id__0': 489, 'facility_id__0': 1336, 'specialty_id__1': 506, 'facility_id__1': 1336, 'specialty_id__2': 484, 'facility_id__2': 1336, 'specialty_id__3': 482, 'facility_id__3': 1336, 'specialty_id__4': 506, 'facility_id__4': 1336}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+ERROR:data_loader:Error adding specialties batch: (psycopg2.errors.UniqueViolation) duplicate key value violates unique constraint "facility_specialty_pkey"
+DETAIL:  Key (facility_id, specialty_id)=(1337, 490) already exists.
+
+[SQL: INSERT INTO facility_specialty (facility_id, specialty_id) VALUES (%(facility_id__0)s, %(specialty_id__0)s), (%(facility_id__1)s, %(specialty_id__1)s), (%(facility_id__2)s, %(specialty_id__2)s), (%(facility_id__3)s, %(specialty_id__3)s)]
+[parameters: {'specialty_id__0': 509, 'facility_id__0': 1337, 'specialty_id__1': 490, 'facility_id__1': 1337, 'specialty_id__2': 510, 'facility_id__2': 1337, 'specialty_id__3': 490, 'facility_id__3': 1337}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+INFO:data_loader:Added 5 facilities for Piemonte from Piemonte Open Data
+INFO:data_loader:Processing 5 facilities for Liguria from Liguria Open Data
+ERROR:data_loader:Error adding specialties batch: (psycopg2.errors.UniqueViolation) duplicate key value violates unique constraint "facility_specialty_pkey"
+DETAIL:  Key (facility_id, specialty_id)=(1341, 506) already exists.
+
+[SQL: INSERT INTO facility_specialty (facility_id, specialty_id) VALUES (%(facility_id__0)s, %(specialty_id__0)s), (%(facility_id__1)s, %(specialty_id__1)s), (%(facility_id__2)s, %(specialty_id__2)s), (%(facility_id__3)s, %(specialty_id__3)s), (%(facility_id__4)s, %(specialty_id__4)s)]
+[parameters: {'specialty_id__0': 489, 'facility_id__0': 1341, 'specialty_id__1': 506, 'facility_id__1': 1341, 'specialty_id__2': 484, 'facility_id__2': 1341, 'specialty_id__3': 482, 'facility_id__3': 1341, 'specialty_id__4': 506, 'facility_id__4': 1341}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+INFO:data_loader:Added 5 facilities for Liguria from Liguria Open Data
+INFO:data_loader:Processing 5 facilities for Abruzzo from Abruzzo Open Data
+[2025-04-08 18:18:41 +0000] [2899] [CRITICAL] WORKER TIMEOUT (pid:2910)
+[2025-04-08 18:18:41 +0000] [2910] [ERROR] Error handling request /load-data
+Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 1536, in __call__
+    return self.wsgi_app(environ, start_response)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/werkzeug/middleware/proxy_fix.py", line 183, in __call__
+    return self.app(environ, start_response)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/app.py", line 104, in load_data_route
+    stats = load_data()
+            ^^^^^^^^^^^
+  File "/home/runner/workspace/data_loader.py", line 1320, in load_data
+    facilities_added = process_scraped_data(df, region, source_name, attribution)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/data_loader.py", line 1692, in process_scraped_data
+    specialty = get_or_create_specialty(specialty_name)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/data_loader.py", line 423, in get_or_create_specialty
+    specialty = Specialty.query.filter_by(name=normalized_name).first()
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/orm/query.py", line 2759, in first
+    return self.limit(1)._iter().first()  # type: ignore
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/orm/query.py", line 2858, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2365, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2251, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/orm/context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+             ^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1416, in execute
+    return meth(
+           ^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/sql/elements.py", line 523, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1638, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1843, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1983, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2355, in _handle_dbapi_exception
+    raise exc_info[1].with_traceback(exc_info[2])
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1964, in _exec_single_context
+    self.dialect.do_execute(
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 945, in do_execute
+    cursor.execute(statement, parameters)
+  File "/nix/store/clx0mcir7qw8zk36zbr4jra789g3knf6-python3-3.11.10/lib/python3.11/encodings/utf_8.py", line 15, in decode
+    def decode(input, errors='strict'):
+    
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/gunicorn/workers/base.py", line 204, in handle_abort
+    sys.exit(1)
+SystemExit: 1

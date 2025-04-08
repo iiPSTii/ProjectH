@@ -401,40 +401,70 @@ def get_or_create_specialty(specialty_name):
             except:
                 return None
         
+        # Remove any non-ASCII characters first to avoid encoding issues
+        specialty_name = ''.join(c for c in specialty_name if ord(c) < 128)
+        
         # Clean and normalize the specialty name
         normalized_name = normalize_specialty(specialty_name)
         
         # In case we get back None or an empty string, use a default
         if not normalized_name:
-            normalized_name = "Specialty"
+            return None
             
         # Limit the length to avoid database errors (name column is String(100))
         if len(normalized_name) > 90:
             normalized_name = normalized_name[:90]
-            
-        # Remove any non-ASCII characters that might cause encoding issues
-        normalized_name = ''.join(c for c in normalized_name if ord(c) < 128)
         
-        # If string is empty after cleaning, use default
-        if not normalized_name:
-            normalized_name = "Specialty"
+        # If string is empty after cleaning, skip this specialty
+        if not normalized_name or normalized_name.strip() == "":
+            return None
             
+        # Try to find the specialty in the database
+        try:
+            # Use a SQL query instead of SQLAlchemy's filter_by to avoid encoding issues
+            from sqlalchemy import text
+            query = text("SELECT id FROM specialties WHERE name = :name")
+            result = db.session.execute(query, {"name": normalized_name}).fetchone()
+            
+            if result:
+                # We found the specialty, get it by ID
+                specialty_id = result[0]
+                specialty = Specialty.query.get(specialty_id)
+                return specialty
+        except Exception as e:
+            logger.error(f"Error querying specialty with raw SQL: {str(e)}")
+            # Continue and try the filter_by approach as fallback
+            pass
+            
+        # Fallback to SQLAlchemy's filter_by if raw SQL approach failed
         try:
             specialty = Specialty.query.filter_by(name=normalized_name).first()
         except Exception as e:
-            logger.error(f"Error querying specialty: {str(e)}")
+            logger.error(f"Error querying specialty with filter_by: {str(e)}")
             specialty = None
-            
+        
+        # If specialty doesn't exist, create it
         if not specialty:
             try:
                 specialty = Specialty(name=normalized_name)
                 db.session.add(specialty)
                 db.session.commit()
+                logger.debug(f"Created new specialty: {normalized_name}")
             except Exception as e:
                 logger.error(f"Error creating specialty: {str(e)}")
                 db.session.rollback()
-                return None
-                
+                # Try one more time with a really basic name
+                try:
+                    fallback_name = f"Specialty-{abs(hash(normalized_name) % 1000)}"
+                    specialty = Specialty(name=fallback_name)
+                    db.session.add(specialty)
+                    db.session.commit()
+                    logger.info(f"Created fallback specialty: {fallback_name}")
+                except Exception as inner_e:
+                    logger.error(f"Error creating fallback specialty: {str(inner_e)}")
+                    db.session.rollback()
+                    return None
+        
         return specialty
     except Exception as e:
         logger.error(f"Error in get_or_create_specialty: {str(e)}")
@@ -443,6 +473,15 @@ def get_or_create_specialty(specialty_name):
 def extract_specialties(text):
     """Extract multiple specialties from text"""
     if not text:
+        return []
+    
+    # Remove any non-ASCII characters first to avoid encoding issues
+    try:
+        text = ''.join(c for c in str(text) if ord(c) < 128)
+        if not text:
+            return []
+    except Exception as e:
+        logger.error(f"Error cleaning specialties text: {str(e)}")
         return []
     
     # Convert non-string inputs to strings
@@ -458,7 +497,7 @@ def extract_specialties(text):
     # Split by common separators and clean up
     specialties = []
     # Only use clean separators - commas, semicolons, and slashes - to avoid breaking words
-    separators = [',', ';', '/', '|', '\n']
+    separators = [',', ';', '/', '|', '\n', '-', '+']
     
     # First try to split by separators
     parts = [text]
@@ -480,7 +519,9 @@ def extract_specialties(text):
         'Reumatologia', 'Ematologia', 'Nefrologia', 'Diabetologia', 
         'Anestesia', 'Terapia Intensiva', 'Medicina dello Sport',
         'Neuropsichiatria', 'Dietologia', 'Malattie Infettive',
-        'Otorinolaringoiatria', 'Odontostomatologia'
+        'Otorinolaringoiatria', 'Odontostomatologia',
+        'Riabilitazione', 'Radioterapia', 'Cardiochirurgia', 'Neurochirurgia',
+        'Chirurgia Vascolare', 'Chirurgia Plastica', 'Chirurgia Pediatrica'
     ]
     
     # Look for complete specialty names in each part
@@ -493,19 +534,33 @@ def extract_specialties(text):
         
         # First try exact match with our known specialties (case insensitive)
         for specialty in known_specialties:
-            specialty_lower = specialty.lower()
-            if specialty_lower in part_lower or part_lower in specialty_lower:
-                specialties.append(specialty)
-                matched = True
+            try:
+                specialty_lower = specialty.lower()
+                if specialty_lower in part_lower or part_lower in specialty_lower:
+                    specialties.append(specialty)
+                    matched = True
+                    break  # Once matched, no need to check other specialties
+            except Exception as e:
+                logger.error(f"Error matching specialty {specialty}: {str(e)}")
+                continue
                 
         # If no match, try to normalize with our mapping
         if not matched:
-            norm_part = normalize_specialty(part)
-            if norm_part:
-                specialties.append(norm_part)
+            try:
+                norm_part = normalize_specialty(part)
+                if norm_part:
+                    specialties.append(norm_part)
+            except Exception as e:
+                logger.error(f"Error normalizing specialty {part}: {str(e)}")
+                continue
     
     # Deduplicate and sort for consistency
-    return sorted(list(set(specialties)))
+    unique_specialties = []
+    for specialty in specialties:
+        if specialty not in unique_specialties:
+            unique_specialties.append(specialty)
+    
+    return sorted(unique_specialties)
 
 def download_csv(url):
     """
@@ -1686,32 +1741,41 @@ def process_scraped_data(df, region, source_name, attribution):
                         specialties_text = ''.join(c for c in str(specialties_text) if ord(c) < 128)
                         specialty_names = extract_specialties(specialties_text)
                         
-                        # Add all specialties as a batch
-                        specialties_to_add = []
+                        # Add specialties one by one to avoid batch issues
+                        # First, get unique specialty names to avoid duplicates
+                        processed_specialty_ids = set()
                         for specialty_name in specialty_names:
-                            specialty = get_or_create_specialty(specialty_name)
-                            if specialty:
+                            try:
+                                specialty = get_or_create_specialty(specialty_name)
+                                if not specialty:
+                                    continue
+                                    
+                                # Skip if we've already processed this specialty for this facility
+                                if specialty.id in processed_specialty_ids:
+                                    continue
+                                    
+                                processed_specialty_ids.add(specialty.id)
+                                    
                                 # Check if this specialty is already associated with this facility
-                                existing_fs = FacilitySpecialty.query.filter_by(
-                                    facility_id=facility.id,
-                                    specialty_id=specialty.id
-                                ).first()
-                                
-                                if not existing_fs:
-                                    facility_specialty = FacilitySpecialty(
+                                try:
+                                    existing_fs = FacilitySpecialty.query.filter_by(
                                         facility_id=facility.id,
                                         specialty_id=specialty.id
-                                    )
-                                    specialties_to_add.append(facility_specialty)
-                        
-                        # Add all specialties in one batch if there are any
-                        if specialties_to_add:
-                            try:
-                                db.session.add_all(specialties_to_add)
-                                db.session.commit()
+                                    ).first()
+                                    
+                                    if not existing_fs:
+                                        facility_specialty = FacilitySpecialty(
+                                            facility_id=facility.id,
+                                            specialty_id=specialty.id
+                                        )
+                                        db.session.add(facility_specialty)
+                                        db.session.commit()
+                                except Exception as e:
+                                    logger.error(f"Error adding specialty {specialty_name} to facility: {str(e)}")
+                                    db.session.rollback()
                             except Exception as e:
-                                logger.error(f"Error adding specialties batch: {str(e)}")
-                                db.session.rollback()
+                                logger.error(f"Error processing specialty {specialty_name}: {str(e)}")
+                                continue
                 except Exception as e:
                     logger.error(f"Error processing specialties: {str(e)}")
                     # Don't rollback the entire transaction - the facility is already saved
