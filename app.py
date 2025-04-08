@@ -358,16 +358,26 @@ with app.app_context():
 
     @app.route('/download-db')
     def download_database():
-        """Download the SQLite database file"""
+        """Download the PostgreSQL database as SQL export"""
         import os
+        import tempfile
         from flask import send_file
-
-        db_path = app.config["SQLALCHEMY_DATABASE_URI"].replace('sqlite:///', '')
-        if os.path.exists(db_path):
-            return send_file(
-                db_path,
-                mimetype='application/x-sqlite3',
-                as_attachment=True,
-                download_name='medical_facilities.db'
-            )
-        return "Database file not found", 404
+        from export_database import export_database
+        
+        try:
+            # Export the database to a SQL file
+            export_file = export_database()
+            
+            if export_file and os.path.exists(export_file):
+                # Return the file for download
+                return send_file(
+                    export_file,
+                    mimetype='application/sql',
+                    as_attachment=True,
+                    download_name=export_file
+                )
+            else:
+                return "Failed to export database", 500
+        except Exception as e:
+            logger.error(f"Error exporting database: {str(e)}")
+            return f"Error exporting database: {str(e)}", 500
