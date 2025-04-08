@@ -292,17 +292,27 @@ def normalize_specialty(specialty_name):
     """Normalize specialty names to standard format"""
     if not specialty_name:
         return None
-    
-    # Convert to lowercase, remove accents, and strip whitespace
-    normalized = unidecode(specialty_name.lower().strip())
-    
-    # Check if it matches any key in the mapping
-    for key, value in SPECIALTY_MAPPING.items():
-        if key in normalized:
-            return value
-    
-    # If no match found, return capitalized version of original
-    return specialty_name.capitalize()
+        
+    try:
+        # Try to normalize with unidecode
+        try:
+            # Convert to lowercase, remove accents, and strip whitespace
+            normalized = unidecode(specialty_name.lower().strip())
+        except:
+            # If unidecode fails, just use lowercase
+            normalized = specialty_name.lower().strip()
+        
+        # Check if it matches any key in the mapping
+        for key, value in SPECIALTY_MAPPING.items():
+            if key in normalized:
+                return value
+        
+        # If no match found, return capitalized version of original
+        return specialty_name.capitalize()
+    except Exception as e:
+        logger.error(f"Error normalizing specialty name: {str(e)}")
+        # Return a safe value
+        return "Specialty"
 
 def safe_get(df, row_idx, col_name, default=None):
     """Safely get a value from a dataframe with error handling"""
@@ -331,13 +341,37 @@ def get_or_create_specialty(specialty_name):
     if not specialty_name:
         return None
     
-    normalized_name = normalize_specialty(specialty_name)
-    specialty = Specialty.query.filter_by(name=normalized_name).first()
-    if not specialty:
-        specialty = Specialty(name=normalized_name)
-        db.session.add(specialty)
-        db.session.commit()
-    return specialty
+    try:
+        normalized_name = normalize_specialty(specialty_name)
+        
+        # In case we get back None or an empty string, use a default
+        if not normalized_name:
+            normalized_name = "Specialty"
+            
+        # Limit the length to avoid database errors (name column is String(100))
+        if len(normalized_name) > 90:
+            normalized_name = normalized_name[:90]
+            
+        try:
+            specialty = Specialty.query.filter_by(name=normalized_name).first()
+        except Exception as e:
+            logger.error(f"Error querying specialty: {str(e)}")
+            specialty = None
+            
+        if not specialty:
+            try:
+                specialty = Specialty(name=normalized_name)
+                db.session.add(specialty)
+                db.session.commit()
+            except Exception as e:
+                logger.error(f"Error creating specialty: {str(e)}")
+                db.session.rollback()
+                return None
+                
+        return specialty
+    except Exception as e:
+        logger.error(f"Error in get_or_create_specialty: {str(e)}")
+        return None
 
 def extract_specialties(text):
     """Extract multiple specialties from text"""
@@ -1277,14 +1311,19 @@ def load_generic_data(data_source):
                 
                 # Look for existing facility to avoid duplicates
                 try:
-                    existing = MedicalFacility.query.filter_by(
-                        name=name, 
-                        region_id=region.id
-                    ).first()
-                    
-                    if existing:
-                        logger.debug(f"Facility already exists: {name} in {region.name}")
-                        continue
+                    if region:
+                        existing = MedicalFacility.query.filter_by(
+                            name=name, 
+                            region_id=region.id
+                        ).first()
+                        
+                        if existing:
+                            logger.debug(f"Facility already exists: {name} in {region.name}")
+                            continue
+                    else:
+                        logger.warning(f"Region is None for {data_source['region_name']}, skipping duplicate check")
+                        # Create a fallback region
+                        region = get_or_create_region(data_source['region_name'])
                 except Exception as e:
                     logger.error(f"Error checking for existing facility: {str(e)}")
                     continue
@@ -1312,8 +1351,13 @@ def load_generic_data(data_source):
                 )
                 
                 # Add facility to database
-                db.session.add(facility)
-                db.session.commit()
+                try:
+                    db.session.add(facility)
+                    db.session.commit()
+                except Exception as e:
+                    logger.error(f"Error adding facility to database: {str(e)}")
+                    db.session.rollback()
+                    continue
                 
                 # Process specialties
                 if specialty_col:
