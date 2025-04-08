@@ -1228,15 +1228,36 @@ def load_data():
             logger.error(f"Error adding specialty {name}: {str(e)}")
             db.session.rollback()
     
-    # Ultra simplified regions list - only the most basic names to avoid any encoding issues
-    region_names = [
+    # Add all regions but in batches to avoid potential encoding issues
+    # First batch - the ones we've already confirmed working
+    first_batch = [
         "Lazio", "Lombardia", "Puglia", "Toscana", "Veneto"
     ]
     
-    # We'll add more regions in a future update after resolving encoding issues
-    # "Abruzzo", "Basilicata", "Calabria", "Campania", "Marche", "Molise", "Piemonte", 
-    # "Sardegna", "Sicilia", "Umbria", "Liguria"
-    # "Emilia-Romagna", "Friuli-Venezia Giulia", "Trentino-Alto Adige", "Valle d'Aosta"
+    # Second batch - simple names that should work fine
+    second_batch = [
+        "Abruzzo", "Basilicata", "Calabria", "Campania", 
+        "Marche", "Molise", "Piemonte", "Sardegna", 
+        "Sicilia", "Umbria", "Liguria"
+    ]
+    
+    # Third batch - complex names with hyphens or apostrophes 
+    # Modified to avoid encoding issues
+    third_batch = [
+        "Emilia Romagna", "Friuli Venezia Giulia", "Trentino Alto Adige", "Valle d Aosta"
+    ]
+    
+    # Process all batches sequentially
+    region_names = []
+    
+    # First add and process the confirmed working regions
+    region_names.extend(first_batch)
+    
+    # Then add the second batch of simple names
+    region_names.extend(second_batch)
+    
+    # Finally add the complex names (modified to avoid special characters)
+    region_names.extend(third_batch)
     
     regions = {}
     for name in region_names:
