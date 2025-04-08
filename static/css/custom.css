@@ -1,5 +1,68 @@
 /* Custom styles for FindMyCure Italia */
 
+/* Global theme colors and styling */
+:root {
+    --medical-blue: #0077cc;
+    --medical-green: #00b894;
+    --medical-light-blue: #73c2fb;
+    --medical-soft-bg: rgba(0, 119, 204, 0.03);
+}
+
+/* Set background patterns and gradients */
+body {
+    background: linear-gradient(135deg, #12131480 0%, #1e1f2b80 100%);
+    background-attachment: fixed;
+    background-size: cover;
+    position: relative;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%230077cc' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0.6;
+}
+
+/* Custom styling for navbar */
+.navbar {
+    background: linear-gradient(90deg, #1a1b26 0%, #242736 100%) !important;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.navbar-brand {
+    font-weight: bold;
+    color: var(--medical-light-blue) !important;
+    letter-spacing: 0.5px;
+}
+
+.navbar-brand i {
+    color: var(--medical-green);
+}
+
+.navbar .nav-link:hover {
+    color: var(--medical-green) !important;
+}
+
+/* Card styling with medical theme */
+.card, .list-group-item {
+    background: rgba(26, 27, 38, 0.9) !important;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+.card-header, .card-footer {
+    background: rgba(22, 23, 34, 0.8) !important;
+    border-color: rgba(255, 255, 255, 0.05) !important;
+}
+
 /* Feature icons on homepage */
 .feature-icon {
     width: 60px;
@@ -7,6 +70,88 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    background: linear-gradient(135deg, #0077cc30 0%, #00b89430 100%) !important;
+    border-radius: 50%;
+    color: var(--medical-green) !important;
+}
+
+/* Search form styling with medical feel */
+.form-control, .form-select {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 8px;
+    color: #fff !important;
+}
+
+.form-control:focus, .form-select:focus {
+    box-shadow: 0 0 0 0.25rem rgba(0, 119, 204, 0.25) !important;
+    border-color: var(--medical-blue) !important;
+}
+
+.input-group-text {
+    background-color: rgba(0, 119, 204, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    color: var(--medical-light-blue) !important;
+}
+
+/* Button styling */
+.btn-primary {
+    background: linear-gradient(135deg, var(--medical-blue) 0%, var(--medical-green) 100%) !important;
+    border: none !important;
+    box-shadow: 0 4px 15px rgba(0, 119, 204, 0.3);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, var(--medical-green) 0%, var(--medical-blue) 100%) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 119, 204, 0.4);
+}
+
+.btn-outline-primary {
+    border-color: var(--medical-blue) !important;
+    color: var(--medical-light-blue) !important;
+}
+
+.btn-outline-primary:hover {
+    background-color: rgba(0, 119, 204, 0.1) !important;
+    color: var(--medical-green) !important;
+}
+
+/* Medical pulsing effect for important elements */
+@keyframes medical-pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(0, 184, 148, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(0, 184, 148, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(0, 184, 148, 0);
+    }
+}
+
+.btn-primary:focus {
+    animation: medical-pulse 1.5s infinite;
+}
+
+/* Badge styling */
+.badge {
+    border-radius: 6px;
+    padding: 0.4em 0.8em;
+    font-weight: 500;
+}
+
+.badge.bg-primary {
+    background-color: var(--medical-blue) !important;
+}
+
+.badge.bg-success {
+    background-color: var(--medical-green) !important;
+}
+
+.badge.bg-info {
+    background-color: var(--medical-light-blue) !important;
+    color: #212529 !important;
 }
 
 /* Star rating visualization - completely revised */
@@ -24,7 +169,7 @@
 
 /* Empty (gray) stars */
 .facility-rating .stars i {
-    color: var(--bs-gray-500);
+    color: rgba(255, 255, 255, 0.2);
     margin-right: 2px;
 }
 
@@ -39,7 +184,7 @@
 }
 
 .facility-rating .stars .overlay i {
-    color: var(--bs-warning);
+    color: var(--medical-green);
 }
 
 /* Cards and list items hover effect */
@@ -65,13 +210,94 @@
     background: var(--bs-primary);
 }
 
-/* Customize footer */
+/* Customize footer with medical theme */
 footer {
     margin-top: 4rem;
+    background: linear-gradient(90deg, #1a1b26 0%, #242736 100%) !important;
+    border-top: 1px solid rgba(115, 194, 251, 0.1);
+    box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.1);
+}
+
+footer a {
+    color: var(--medical-light-blue) !important;
+    transition: all 0.3s ease;
 }
 
 footer a:hover {
-    text-decoration: underline;
+    text-decoration: none !important;
+    color: var(--medical-green) !important;
+}
+
+footer h5 {
+    color: var(--medical-light-blue);
+    font-weight: 600;
+    margin-bottom: 1.2rem;
+    position: relative;
+    padding-bottom: 0.5rem;
+}
+
+footer h5::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 2px;
+    width: 40px;
+    background: linear-gradient(90deg, var(--medical-blue), var(--medical-green));
+}
+
+/* Medical icons and decorative elements */
+.medical-divider {
+    height: 50px;
+    background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M9 3h2v14H9V3zm4 0h2v14h-2V3zM5 3h2v14H5V3z' fill='%230077cc' fill-opacity='0.08' fill-rule='evenodd'/%3E%3C/svg%3E");
+    margin: 2rem 0;
+    opacity: 0.5;
+}
+
+/* Breadcrumb styling */
+.breadcrumb {
+    background-color: rgba(0, 119, 204, 0.05);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    border-left: 3px solid var(--medical-green);
+}
+
+.breadcrumb-item a {
+    color: var(--medical-light-blue);
+    text-decoration: none;
+}
+
+.breadcrumb-item a:hover {
+    color: var(--medical-green);
+}
+
+.breadcrumb-item.active {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Alert styling */
+.alert {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.alert-success {
+    background-color: rgba(0, 184, 148, 0.1) !important;
+    border-left: 4px solid var(--medical-green) !important;
+    color: #e0e0e0 !important;
+}
+
+.alert-info {
+    background-color: rgba(0, 119, 204, 0.1) !important;
+    border-left: 4px solid var(--medical-blue) !important;
+    color: #e0e0e0 !important;
+}
+
+.alert-warning {
+    background-color: rgba(255, 159, 67, 0.1) !important;
+    border-left: 4px solid #ff9f43 !important;
+    color: #e0e0e0 !important;
 }
 
 /* Responsive adjustments */

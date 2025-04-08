@@ -8,17 +8,31 @@
     <link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Poppins for modern medical look -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+    </style>
     {% block extra_css %}{% endblock %}
 </head>
 <body>
+    <!-- Medical Cross Line Decorations -->
+    <div class="position-fixed top-0 start-0 w-100" style="height: 5px; background: linear-gradient(90deg, var(--medical-green), var(--medical-blue)); z-index: 1030;"></div>
+    
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
-            <a class="navbar-brand" href="/">
-                <i class="fas fa-hospital-alt me-2"></i>
-                FindMyCure Italia
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <!-- Medical Cross Logo SVG -->
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="me-2">
+                    <rect x="9" y="2" width="6" height="20" rx="2" fill="#00b894"/>
+                    <rect x="2" y="9" width="20" height="6" rx="2" fill="#0077cc"/>
+                </svg>
+                <span class="fw-bold">FindMyCure Italia</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -26,7 +40,9 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/">Home</a>
+                        <a class="nav-link" href="/">
+                            <i class="fas fa-home me-1"></i> Home
+                        </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/data-manager">
@@ -37,6 +53,9 @@
             </div>
         </div>
     </nav>
+    
+    <!-- Medical pattern separator -->
+    <div class="medical-divider d-none d-md-block" style="height: 5px; margin: 0;"></div>
 
     <!-- Main Content -->
     <div class="container my-5">
@@ -56,41 +75,85 @@
         {% block content %}{% endblock %}
     </div>
 
+    <!-- Medical pattern separator before footer -->
+    <div class="medical-divider" style="height: 5px; margin: 3rem 0 0 0;"></div>
+    
     <!-- Footer -->
-    <footer class="bg-dark text-light py-4 mt-5">
+    <footer class="text-light py-5">
         <div class="container">
             <div class="row">
-                <div class="col-md-6">
-                    <h5>FindMyCure Italia</h5>
-                    <p>Un servizio per trovare e confrontare le strutture sanitarie in Italia</p>
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <div class="d-flex align-items-center mb-3">
+                        <!-- Medical Cross Logo SVG -->
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="me-2">
+                            <rect x="9" y="2" width="6" height="20" rx="2" fill="#00b894"/>
+                            <rect x="2" y="9" width="20" height="6" rx="2" fill="#0077cc"/>
+                        </svg>
+                        <h5 class="mb-0">FindMyCure Italia</h5>
+                    </div>
+                    <p class="mb-3">Un servizio moderno per trovare e confrontare le strutture sanitarie in tutta Italia. Semplice, veloce e accurato.</p>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="btn btn-sm btn-outline-primary rounded-circle">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="btn btn-sm btn-outline-primary rounded-circle">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="btn btn-sm btn-outline-primary rounded-circle">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                    </div>
                 </div>
-                <div class="col-md-6 text-md-end">
+                
+                <div class="col-md-3 mb-4 mb-md-0">
+                    <h5>Collegamenti Rapidi</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="/"><i class="fas fa-chevron-right me-1 small"></i> Home</a></li>
+                        <li class="mb-2"><a href="/data-manager"><i class="fas fa-chevron-right me-1 small"></i> Gestione Dati</a></li>
+                        <li class="mb-2"><a href="#"><i class="fas fa-chevron-right me-1 small"></i> Informazioni</a></li>
+                        <li class="mb-2"><a href="#"><i class="fas fa-chevron-right me-1 small"></i> Contatti</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-md-5">
                     <h5>Fonti Dati</h5>
                     <div class="row">
                         <div class="col-sm-6">
                             <ul class="list-unstyled">
-                                <li><a href="https://www.dati.puglia.it/dataset/anagrafe-strutture-sanitarie" class="text-light">Regione Puglia</a></li>
-                                <li><a href="https://dati.trentino.it/dataset/strutture-sanitarie-pubbliche-e-accreditate" class="text-light">Provincia di Trento</a></li>
-                                <li><a href="https://www.opendata.toscana.it/dataset/strutture-ospedaliere" class="text-light">Regione Toscana</a></li>
-                                <li><a href="https://www.dati.lombardia.it/Sanit-/Strutture-di-ricovero-e-cura/pmvk-2y7d" class="text-light">Regione Lombardia</a></li>
-                                <li><a href="https://www.dati.salute.gov.it/dataset/strutture" class="text-light">Ministero della Salute</a></li>
+                                <li class="mb-1"><a href="https://www.dati.puglia.it/dataset/anagrafe-strutture-sanitarie">Regione Puglia</a></li>
+                                <li class="mb-1"><a href="https://dati.trentino.it/dataset/strutture-sanitarie-pubbliche-e-accreditate">Provincia di Trento</a></li>
+                                <li class="mb-1"><a href="https://www.opendata.toscana.it/dataset/strutture-ospedaliere">Regione Toscana</a></li>
+                                <li class="mb-1"><a href="https://www.dati.lombardia.it/Sanit-/Strutture-di-ricovero-e-cura/pmvk-2y7d">Regione Lombardia</a></li>
+                                <li class="mb-1"><a href="https://www.dati.salute.gov.it/dataset/strutture">Ministero della Salute</a></li>
                             </ul>
                         </div>
                         <div class="col-sm-6">
                             <ul class="list-unstyled">
-                                <li><a href="https://dati.emilia-romagna.it/dataset/strutture-sanitarie" class="text-light">Emilia-Romagna</a></li>
-                                <li><a href="https://www.dati.friuliveneziagiulia.it/Salute" class="text-light">Friuli Venezia Giulia</a></li>
-                                <li><a href="https://dati.regione.sardegna.it/dataset" class="text-light">Regione Sardegna</a></li>
-                                <li><a href="https://dati.regione.sicilia.it/dataset" class="text-light">Regione Sicilia</a></li>
-                                <li><a href="http://www.salute.lazio.it" class="text-light">Salute Lazio</a></li>
+                                <li class="mb-1"><a href="https://dati.emilia-romagna.it/dataset/strutture-sanitarie">Emilia-Romagna</a></li>
+                                <li class="mb-1"><a href="https://www.dati.friuliveneziagiulia.it/Salute">Friuli Venezia Giulia</a></li>
+                                <li class="mb-1"><a href="https://dati.regione.sardegna.it/dataset">Regione Sardegna</a></li>
+                                <li class="mb-1"><a href="https://dati.regione.sicilia.it/dataset">Regione Sicilia</a></li>
+                                <li class="mb-1"><a href="http://www.salute.lazio.it">Salute Lazio</a></li>
                             </ul>
                         </div>
                     </div>
                 </div>
             </div>
-            <hr>
-            <div class="text-center">
-                <p>&copy; 2023 FindMyCure Italia. Tutti i dati sono forniti sotto licenza <a href="https://creativecommons.org/licenses/by/4.0/" class="text-light">CC-BY</a> e <a href="https://www.dati.gov.it/content/italian-open-data-license-v20" class="text-light">IODL 2.0</a>.</p>
+            
+            <hr class="my-4" style="opacity: 0.1;">
+            
+            <div class="row align-items-center">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="mb-md-0">
+                        <i class="fas fa-heartbeat me-1 text-danger"></i> 
+                        &copy; 2025 FindMyCure Italia. Tutti i diritti riservati.
+                    </p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <p class="mb-0 text-light-50">
+                        <small>Dati forniti sotto licenza <a href="https://creativecommons.org/licenses/by/4.0/">CC-BY</a> e <a href="https://www.dati.gov.it/content/italian-open-data-license-v20">IODL 2.0</a>.</small>
+                    </p>
+                </div>
             </div>
         </div>
     </footer>
