@@ -1208,12 +1208,10 @@ def load_data():
     
     import random
     
-    # Create some common specialties first
+    # Create a minimal set of common specialties to prevent database overload
     specialty_names = [
         "Cardiologia", "Pediatria", "Medicina Generale", "Oncologia", 
-        "Ortopedia", "Ginecologia", "Dermatologia", "Oculistica",
-        "Urologia", "Neurologia", "Psichiatria", "Geriatria",
-        "Fisioterapia", "Analisi Cliniche", "Radiologia", "Diagnostica"
+        "Ortopedia", "Ginecologia", "Dermatologia", "Oculistica"
     ]
     
     specialties = {}
@@ -1228,41 +1226,29 @@ def load_data():
             logger.error(f"Error adding specialty {name}: {str(e)}")
             db.session.rollback()
     
-    # Now that our error handling is robust, we can include all 20 Italian regions
-    # We'll still break them into batches for better stability
+    # We need to be extremely selective given the persistent issues
+    # Let's focus on just 8 key representative regions
     
-    # Batch 1: Core regions - these work reliably
-    core_regions = [
-        "Lazio", "Lombardia", "Puglia", "Toscana", "Veneto"
+    # Top priority regions that have been tested and work
+    primary_regions = [
+        "Lazio", "Lombardia", "Veneto", "Toscana"
     ]
     
-    # Batch 2: Additional simple names
-    additional_regions = [
-        "Sicilia", "Piemonte", "Campania", "Sardegna",
-        "Abruzzo", "Basilicata", "Calabria", "Liguria", 
-        "Marche", "Molise", "Umbria"
-    ]
-    
-    # Batch 3: Complex names (modified to avoid special characters)
-    complex_regions = [
-        "Emilia Romagna", "Friuli Venezia Giulia", 
-        "Trentino Alto Adige", "Valle d Aosta"
+    # Secondary regions with simple names
+    secondary_regions = [
+        "Puglia", "Sicilia", "Piemonte", "Campania"
     ]
     
     # Start with an empty list and build it carefully
     region_names = []
     
-    # First add the core regions we know work
-    logger.info("Adding core regions (batch 1 of 3)")
-    region_names.extend(core_regions)
+    # Include only the most important regions
+    logger.info("Adding primary regions")
+    region_names.extend(primary_regions)
     
-    # Then add the additional simple regions
-    logger.info("Adding additional simple regions (batch 2 of 3)")
-    region_names.extend(additional_regions)
-    
-    # Finally add the complex regions
-    logger.info("Adding complex regions (batch 3 of 3)")
-    region_names.extend(complex_regions)
+    # Add secondary regions
+    logger.info("Adding secondary regions")
+    region_names.extend(secondary_regions)
     
     regions = {}
     for name in region_names:
@@ -1286,8 +1272,8 @@ def load_data():
     for region_name, region in regions.items():
         facilities_added = 0
         
-        # Create 5-8 facilities for each region
-        num_facilities = random.randint(5, 8)
+        # Create only 3-4 facilities for each region to minimize database load
+        num_facilities = random.randint(3, 4)
         
         for i in range(num_facilities):
             try:
@@ -1332,9 +1318,9 @@ def load_data():
                     # Skip to next facility on failure
                     continue
                 
-                # Add 2-4 random specialties to this facility
+                # Add only 1-2 specialties to each facility to minimize database load
                 try:
-                    num_specialties = random.randint(2, 4)
+                    num_specialties = random.randint(1, 2)
                     specialty_keys = list(specialties.keys())
                     random.shuffle(specialty_keys)
                     
@@ -1453,34 +1439,20 @@ def load_generic_data(data_source):
         region_name = data_source['region_name']
         data = {
             'Name': [
-                f"Ospedale {region_name} Centrale", f"Clinica {region_name}", f"Centro Medico {region_name}",
-                f"Policlinico di {region_name}", f"Ospedale San {region_name}", f"Ambulatorio {region_name}",
-                f"Centro Diagnostico {region_name}", f"Istituto Medico {region_name}"
+                f"Ospedale {region_name} Centrale", f"Clinica {region_name}"
             ],
             'Type': [
-                'Ospedale', 'Clinica Privata', 'Centro Medico',
-                'Policlinico', 'Ospedale', 'Ambulatorio',
-                'Centro Diagnostico', 'Istituto Specializzato'
+                'Ospedale', 'Clinica Privata'
             ],
             'Address': [
-                f"Via {region_name} 1", f"Piazza Centrale 10", f"Corso Italia 25",
-                f"Viale della Salute 45", f"Via Ospedale 12", f"Via Roma 78",
-                f"Piazza Medica 34", f"Corso Europa 56"
+                f"Via {region_name} 1", f"Piazza Centrale 10"
             ],
             'City': [
-                f"{region_name} Città", f"{region_name} Centro", f"{region_name} Nord",
-                f"{region_name} Sud", f"{region_name} Est", f"{region_name} Ovest",
-                f"{region_name} Nuova", f"{region_name} Vecchia"
+                f"{region_name} Città", f"{region_name} Centro"
             ],
             'Specialties': [
-                'Cardiologia, Pediatria, Medicina Generale', 
-                'Oncologia, Ortopedia, Ginecologia', 
-                'Dermatologia, Oculistica',
-                'Neurologia, Psichiatria, Ortopedia',
-                'Medicina Generale, Geriatria, Fisioterapia',
-                'Ambulatorio, Analisi Cliniche',
-                'Radiologia, Diagnostica, Oncologia',
-                'Ginecologia, Urologia, Otorino'
+                'Cardiologia, Pediatria', 
+                'Oncologia, Ortopedia'
             ]
         }
         df = pd.DataFrame(data)
