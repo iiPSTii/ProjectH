@@ -99,13 +99,31 @@ with app.app_context():
             import data_loader
             data_loader.USE_WEB_SCRAPING = use_web_scraping
             
-            # Load the data
+            # Clear the current database before loading new data to avoid duplicates
+            try:
+                logger.info("Clearing existing database entries...")
+                FacilitySpecialty.query.delete()
+                MedicalFacility.query.delete()
+                Specialty.query.delete()
+                Region.query.delete()
+                db.session.commit()
+                logger.info("Database cleared successfully")
+            except Exception as e:
+                logger.error(f"Error clearing database: {str(e)}")
+                db.session.rollback()
+                flash(f"Error clearing database: {str(e)}", "danger")
+                return render_template('index.html', regions=get_regions(), specialties=get_specialties())
+            
+            # Load the data with appropriate error handling
             stats = load_data()
             mode = "web scraping" if use_web_scraping else "sample data"
             flash(f"Data loaded successfully using {mode}! Added {stats['total']} facilities from {stats['regions']} regions.", "success")
         except Exception as e:
             logger.error(f"Error loading data: {str(e)}")
+            logger.exception(e)  # Log the full exception for debugging
+            db.session.rollback()
             flash(f"Error loading data: {str(e)}", "danger")
+        
         return render_template('index.html', regions=get_regions(), specialties=get_specialties())
 
     @app.context_processor

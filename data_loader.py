@@ -4,6 +4,7 @@ import pandas as pd
 import urllib.request
 from io import StringIO
 import csv
+import math
 from app import db
 from models import MedicalFacility, Specialty, FacilitySpecialty, Region
 from sqlalchemy.exc import IntegrityError
@@ -165,13 +166,23 @@ def get_or_create_specialty(specialty_name):
 
 def extract_specialties(text):
     """Extract multiple specialties from text"""
-    if not text or not isinstance(text, str):
+    if not text:
         return []
+    
+    # Convert non-string inputs to strings
+    if not isinstance(text, str):
+        try:
+            if pd.isna(text):  # Handle pandas NaN values
+                return []
+            text = str(text)
+        except:
+            logger.warning(f"Could not convert specialty value to string: {type(text)}")
+            return []
     
     # Split by common separators and clean up
     specialties = []
     # Only use clean separators - commas, semicolons, and slashes - to avoid breaking words
-    separators = [',', ';', '/', '|']
+    separators = [',', ';', '/', '|', '\n']
     
     # First try to split by separators
     parts = [text]
@@ -181,24 +192,33 @@ def extract_specialties(text):
             new_parts.extend([p.strip() for p in part.split(sep) if p.strip()])
         parts = new_parts
     
-    # Prevent partial word matches by mapping complete words
+    # Extended known specialties list
     known_specialties = [
         'Cardiologia', 'Neurologia', 'Pediatria', 'Ortopedia', 
         'Medicina Generale', 'Ginecologia', 'Ostetricia', 
         'Dermatologia', 'Oculistica', 'Oncologia', 'Radiologia',
         'Diagnostica', 'Fisioterapia', 'Urologia', 'Psichiatria',
         'Traumatologia', 'Pronto Soccorso', 'Ambulatorio',
-        'Geriatria', 'Chirurgia', 'Analisi Cliniche'
+        'Geriatria', 'Chirurgia', 'Analisi Cliniche', 'Endocrinologia',
+        'Allergologia', 'Immunologia', 'Pneumologia', 'Gastroenterologia', 
+        'Reumatologia', 'Ematologia', 'Nefrologia', 'Diabetologia', 
+        'Anestesia', 'Terapia Intensiva', 'Medicina dello Sport',
+        'Neuropsichiatria', 'Dietologia', 'Malattie Infettive',
+        'Otorinolaringoiatria', 'Odontostomatologia'
     ]
     
     # Look for complete specialty names in each part
     for part in parts:
+        if len(part) < 3:  # Skip very short parts
+            continue
+            
         part_lower = part.lower()
         matched = False
         
-        # First try exact match with our known specialties
+        # First try exact match with our known specialties (case insensitive)
         for specialty in known_specialties:
-            if specialty.lower() in part_lower:
+            specialty_lower = specialty.lower()
+            if specialty_lower in part_lower or part_lower in specialty_lower:
                 specialties.append(specialty)
                 matched = True
                 
@@ -208,8 +228,8 @@ def extract_specialties(text):
             if norm_part:
                 specialties.append(norm_part)
     
-    # Deduplicate
-    return list(set(specialties))
+    # Deduplicate and sort for consistency
+    return sorted(list(set(specialties)))
 
 def download_csv(url):
     """
@@ -224,15 +244,51 @@ def download_csv(url):
         try:
             import web_scraper
             
-            # Create the appropriate scraper based on the URL
-            scraper = None
+            # Check if the URL is for a specific region
+            region_from_url = None
+            region_prefixes = {
+                'puglia': 'Puglia',
+                'trento': 'Trentino',
+                'toscana': 'Toscana',
+                'lazio': 'Lazio',
+                'lombardia': 'Lombardia',
+                'sicilia': 'Sicilia',
+                'emiliaromagna': 'Emilia-Romagna',
+                'campania': 'Campania',
+                'veneto': 'Veneto',
+                'piemonte': 'Piemonte',
+                'liguria': 'Liguria',
+                'abruzzo': 'Abruzzo',
+                'marche': 'Marche',
+                'umbria': 'Umbria',
+                'calabria': 'Calabria',
+                'sardegna': 'Sardegna',
+                'basilicata': 'Basilicata',
+                'molise': 'Molise',
+                'valledaosta': 'Valle d\'Aosta',
+                'friuliveneziagiulia': 'Friuli-Venezia Giulia'
+            }
             
-            # Use all available scrapers from the web_scraper module
+            # Normalize the URL for comparison
+            url_lower = str(url).lower()
+            for prefix, region_name in region_prefixes.items():
+                if prefix in url_lower:
+                    region_from_url = region_name
+                    break
+            
+            # Find the matching scraper
+            scraper = None
             for available_scraper in web_scraper.get_available_scrapers():
-                # Extract region name from the scraper and check if it's in the URL
-                region_name = available_scraper.region_name
-                if region_name and region_name.lower() in str(url).lower():
+                # If we found a region from the URL, use the matching scraper
+                if region_from_url and available_scraper.region_name == region_from_url:
                     scraper = available_scraper
+                    logger.info(f"Found scraper for region {region_from_url}")
+                    break
+                    
+                # Otherwise, try to match by URL
+                elif url_lower in str(available_scraper.source_url).lower():
+                    scraper = available_scraper
+                    logger.info(f"Found scraper for URL {url}")
                     break
             
             if scraper:
@@ -245,6 +301,7 @@ def download_csv(url):
             logger.warning(f"Web scraping failed for {url}, using sample data instead")
         except Exception as e:
             logger.error(f"Error during web scraping for {url}: {str(e)}")
+            logger.exception(e)  # Add full exception for debugging
             logger.warning("Falling back to sample data")
     
     # Generate sample data (used when web scraping is disabled or failed)
@@ -770,31 +827,41 @@ def load_data():
             # For each scraper, create a corresponding data source entry
             for scraper in available_scrapers:
                 region_name = scraper.region_name
-                if region_name and region_name not in DATA_SOURCES:
-                    # Create a new entry in DATA_SOURCES for this region
+                if region_name:
+                    # Create a standardized key from the region name
                     region_key = region_name.lower().replace('-', '').replace(' ', '')
-                    DATA_SOURCES[region_key] = {
-                        'url': scraper.source_url,
-                        'attribution': scraper.attribution,
-                        'region_name': region_name
-                    }
                     
-                    # Use the generic loader for this region
+                    # Add the source if it's not already in DATA_SOURCES
+                    if region_key not in DATA_SOURCES:
+                        DATA_SOURCES[region_key] = {
+                            'url': scraper.source_url,
+                            'attribution': scraper.attribution,
+                            'region_name': region_name
+                        }
+                    
+                    # Use the generic loader for this region if we don't have a specific one
                     if region_key not in loaders:
-                        loaders[region_key] = load_generic_data
-                        
+                        # Only use our standard loaders for the regions we've already defined
+                        # For all other regions, use our generic loader
+                        if region_name not in ['Puglia', 'Trentino', 'Toscana', 'Lazio']:
+                            loaders[region_key] = load_generic_data
+            
             logger.info(f"Added {len(available_scrapers)} scrapers for data loading")
         except Exception as e:
             logger.error(f"Error initializing web scrapers: {str(e)}")
+            logger.exception(e)  # Log the full exception for debugging
     
     # Load data from each source
     for source_key, loader_func in loaders.items():
         try:
             # Skip if the source doesn't exist in DATA_SOURCES
             if source_key not in DATA_SOURCES:
+                logger.warning(f"Source key '{source_key}' not found in DATA_SOURCES, skipping")
                 continue
                 
             source = DATA_SOURCES[source_key]
+            logger.info(f"Loading data from {source['region_name']} using {loader_func.__name__}")
+            
             count = loader_func(source)
             logger.info(f"Added {count} facilities from {source['region_name']}")
             
@@ -804,6 +871,7 @@ def load_data():
                 
         except Exception as e:
             logger.error(f"Error loading data from {source_key}: {str(e)}")
+            logger.exception(e)  # Log the full exception for debugging
     
     return stats
 
@@ -840,7 +908,7 @@ def load_generic_data(data_source):
     phone_cols = ['telefono', 'phone', 'tel']
     email_cols = ['email', 'e-mail', 'mail', 'posta_elettronica']
     web_cols = ['website', 'web', 'sito', 'sitoweb', 'url']
-    specialty_cols = ['specialties', 'specialità', 'specialita', 'brancheautorizzate', 'prestazioni', 'servizi', 'specializzazioni']
+    specialty_cols = ['specialties', 'specialità', 'specialita', 'brancheautorizzate', 'prestazioni', 'servizi', 'specializzazioni', 'specialità']
     
     # Find the actual column names in the DataFrame
     name_col = next((col for col in df.columns if col.lower() in name_cols), None)
