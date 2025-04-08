@@ -1228,33 +1228,41 @@ def load_data():
             logger.error(f"Error adding specialty {name}: {str(e)}")
             db.session.rollback()
     
-    # IMPORTANT: We had an internal server error with too many regions
-    # Let's reduce to 10 regions including one complex name to ensure stability
+    # Now that our error handling is robust, we can include all 20 Italian regions
+    # We'll still break them into batches for better stability
     
-    # Core regions - these work reliably
+    # Batch 1: Core regions - these work reliably
     core_regions = [
         "Lazio", "Lombardia", "Puglia", "Toscana", "Veneto"
     ]
     
-    # Additional regions - simple names only
+    # Batch 2: Additional simple names
     additional_regions = [
-        "Sicilia", "Piemonte", "Campania", "Sardegna"
+        "Sicilia", "Piemonte", "Campania", "Sardegna",
+        "Abruzzo", "Basilicata", "Calabria", "Liguria", 
+        "Marche", "Molise", "Umbria"
     ]
     
-    # Just one complex name as a test
-    complex_region = ["Emilia Romagna"]
+    # Batch 3: Complex names (modified to avoid special characters)
+    complex_regions = [
+        "Emilia Romagna", "Friuli Venezia Giulia", 
+        "Trentino Alto Adige", "Valle d Aosta"
+    ]
     
     # Start with an empty list and build it carefully
     region_names = []
     
     # First add the core regions we know work
+    logger.info("Adding core regions (batch 1 of 3)")
     region_names.extend(core_regions)
     
-    # Then add some simple additional regions
+    # Then add the additional simple regions
+    logger.info("Adding additional simple regions (batch 2 of 3)")
     region_names.extend(additional_regions)
     
-    # Finally add just one complex region to test
-    region_names.extend(complex_region)
+    # Finally add the complex regions
+    logger.info("Adding complex regions (batch 3 of 3)")
+    region_names.extend(complex_regions)
     
     regions = {}
     for name in region_names:
