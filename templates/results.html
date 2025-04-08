@@ -12,22 +12,7 @@
             </ol>
         </nav>
         
-        {% if db_status and db_status.status == 'initialized' %}
-        <div class="alert alert-success alert-dismissible fade show d-flex justify-content-between align-items-center" role="alert">
-            <div>
-                <strong>Database Completo!</strong> 
-                Risultati da {{ db_status.total_facilities }} strutture sanitarie in {{ db_status.total_regions }} regioni.
-            </div>
-            <a href="/data-manager" class="btn btn-sm btn-outline-success">Dettagli</a>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        {% elif not db_status or db_status.status != 'initialized' %}
-        <div class="alert alert-warning alert-dismissible fade show" role="alert">
-            <strong>Dati Parziali!</strong> Il database non è stato completamente inizializzato, i risultati potrebbero essere incompleti.
-            <a href="/data-manager" class="alert-link">Vai alla pagina di gestione dati</a> per inizializzare completamente il database.
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        {% endif %}
+        <!-- Database initialization alerts removed -->
         
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="mb-0">Strutture Sanitarie</h1>
