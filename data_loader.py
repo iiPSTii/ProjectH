@@ -1176,12 +1176,17 @@ def load_generic_data(data_source):
     This function will try to detect common column names in the data
     and map them to the corresponding fields in the database.
     """
-    logger.info(f"Processing {data_source['region_name']} data using generic loader")
-    
-    # Get the data from the source URL
-    df = download_csv(data_source['url'])
-    if df is None or df.empty:
-        logger.warning(f"No data found for {data_source['region_name']}")
+    try:
+        logger.info(f"Processing {data_source['region_name']} data using generic loader")
+        
+        # Get the data from the source URL
+        df = download_csv(data_source['url'])
+        if df is None or df.empty:
+            logger.warning(f"No data found for {data_source['region_name']}")
+            return 0
+    except Exception as e:
+        logger.error(f"Error in load_generic_data initial setup: {str(e)}")
+        logger.exception(e)
         return 0
         
     region = get_or_create_region(data_source['region_name'])
@@ -1213,75 +1218,137 @@ def load_generic_data(data_source):
         logger.warning(f"Could not find name column in {data_source['region_name']} data")
         return 0
         
+    # Generate generic sample data if none available and using sample data mode
+    if not USE_WEB_SCRAPING and (df is None or len(df) < 3):
+        logger.info(f"Creating generic sample data for {data_source['region_name']}")
+        # Generate sample data with region-specific names
+        region_name = data_source['region_name']
+        data = {
+            'Name': [
+                f"Ospedale {region_name} Centrale", f"Clinica {region_name}", f"Centro Medico {region_name}",
+                f"Policlinico di {region_name}", f"Ospedale San {region_name}", f"Ambulatorio {region_name}",
+                f"Centro Diagnostico {region_name}", f"Istituto Medico {region_name}"
+            ],
+            'Type': [
+                'Ospedale', 'Clinica Privata', 'Centro Medico',
+                'Policlinico', 'Ospedale', 'Ambulatorio',
+                'Centro Diagnostico', 'Istituto Specializzato'
+            ],
+            'Address': [
+                f"Via {region_name} 1", f"Piazza Centrale 10", f"Corso Italia 25",
+                f"Viale della Salute 45", f"Via Ospedale 12", f"Via Roma 78",
+                f"Piazza Medica 34", f"Corso Europa 56"
+            ],
+            'City': [
+                f"{region_name} Città", f"{region_name} Centro", f"{region_name} Nord",
+                f"{region_name} Sud", f"{region_name} Est", f"{region_name} Ovest",
+                f"{region_name} Nuova", f"{region_name} Vecchia"
+            ],
+            'Specialties': [
+                'Cardiologia, Pediatria, Medicina Generale', 
+                'Oncologia, Ortopedia, Ginecologia', 
+                'Dermatologia, Oculistica',
+                'Neurologia, Psichiatria, Ortopedia',
+                'Medicina Generale, Geriatria, Fisioterapia',
+                'Ambulatorio, Analisi Cliniche',
+                'Radiologia, Diagnostica, Oncologia',
+                'Ginecologia, Urologia, Otorino'
+            ]
+        }
+        df = pd.DataFrame(data)
+        name_col = "Name"
+        type_col = "Type"
+        address_col = "Address"
+        city_col = "City"
+        specialty_col = "Specialties"
+    
     # Process each row in the DataFrame
-    for idx in range(len(df)):
-        # Extract basic facility information
-        name = safe_get(df, idx, name_col)
-        if not name:
-            continue
-            
-        facility_type = safe_get(df, idx, type_col) if type_col else None
-        address = safe_get(df, idx, address_col) if address_col else None
-        city = safe_get(df, idx, city_col) if city_col else None
-        
-        # Look for existing facility to avoid duplicates
-        existing = MedicalFacility.query.filter_by(
-            name=name, 
-            city=city if city else None
-        ).first()
-        
-        if existing:
-            logger.debug(f"Facility already exists: {name} in {city}")
-            continue
-        
-        # Create new facility with random cost estimates for some facilities
-        import random
-        cost_estimate = None
-        if random.random() > 0.3:  # 70% of facilities have cost estimates
-            cost_estimate = round(random.uniform(50, 300), 2)
-            
-        facility = MedicalFacility(
-            name=name,
-            address=address,
-            city=city,
-            region=region,
-            facility_type=facility_type,
-            telephone=safe_get(df, idx, phone_col) if phone_col else None,
-            email=safe_get(df, idx, email_col) if email_col else None,
-            website=safe_get(df, idx, web_col) if web_col else None,
-            data_source=f"{data_source['region_name']} Open Data",
-            attribution=data_source['attribution'],
-            # Set values for optional fields
-            quality_score=round(random.uniform(2.5, 5.0), 1),  # Random quality between 2.5-5.0
-            cost_estimate=cost_estimate
-        )
-        
-        # Add facility to database
-        db.session.add(facility)
-        db.session.commit()
-        
-        # Process specialties
-        if specialty_col:
-            specialties_text = safe_get(df, idx, specialty_col)
-            if specialties_text:
-                specialty_names = extract_specialties(specialties_text)
-                for specialty_name in specialty_names:
-                    specialty = get_or_create_specialty(specialty_name)
-                    if specialty:
-                        # Check if this facility already has this specialty to avoid duplicates
-                        existing_fs = FacilitySpecialty.query.filter_by(
-                            facility_id=facility.id,
-                            specialty_id=specialty.id
-                        ).first()
-                        
-                        if not existing_fs:
-                            facility_specialty = FacilitySpecialty(
-                                facility_id=facility.id,
-                                specialty_id=specialty.id
-                            )
-                            db.session.add(facility_specialty)
-        
-        db.session.commit()
-        facilities_added += 1
+    try:
+        for idx in range(len(df)):
+            try:
+                # Extract basic facility information
+                name = safe_get(df, idx, name_col)
+                if not name:
+                    continue
+                    
+                facility_type = safe_get(df, idx, type_col) if type_col else None
+                address = safe_get(df, idx, address_col) if address_col else None
+                city = safe_get(df, idx, city_col) if city_col else None
+                
+                # Look for existing facility to avoid duplicates
+                try:
+                    existing = MedicalFacility.query.filter_by(
+                        name=name, 
+                        region_id=region.id
+                    ).first()
+                    
+                    if existing:
+                        logger.debug(f"Facility already exists: {name} in {region.name}")
+                        continue
+                except Exception as e:
+                    logger.error(f"Error checking for existing facility: {str(e)}")
+                    continue
+                
+                # Create new facility with random cost estimates for some facilities
+                import random
+                cost_estimate = None
+                if random.random() > 0.3:  # 70% of facilities have cost estimates
+                    cost_estimate = round(random.uniform(50, 300), 2)
+                    
+                facility = MedicalFacility(
+                    name=name,
+                    address=address,
+                    city=city,
+                    region=region,
+                    facility_type=facility_type,
+                    telephone=safe_get(df, idx, phone_col) if phone_col else None,
+                    email=safe_get(df, idx, email_col) if email_col else None,
+                    website=safe_get(df, idx, web_col) if web_col else None,
+                    data_source=f"{data_source['region_name']} Open Data",
+                    attribution=data_source['attribution'],
+                    # Set values for optional fields
+                    quality_score=round(random.uniform(2.5, 5.0), 1),  # Random quality between 2.5-5.0
+                    cost_estimate=cost_estimate
+                )
+                
+                # Add facility to database
+                db.session.add(facility)
+                db.session.commit()
+                
+                # Process specialties
+                if specialty_col:
+                    specialties_text = safe_get(df, idx, specialty_col)
+                    if specialties_text:
+                        specialty_names = extract_specialties(specialties_text)
+                        for specialty_name in specialty_names:
+                            specialty = get_or_create_specialty(specialty_name)
+                            if specialty:
+                                try:
+                                    # Check if this facility already has this specialty to avoid duplicates
+                                    existing_fs = FacilitySpecialty.query.filter_by(
+                                        facility_id=facility.id,
+                                        specialty_id=specialty.id
+                                    ).first()
+                                    
+                                    if not existing_fs:
+                                        facility_specialty = FacilitySpecialty(
+                                            facility_id=facility.id,
+                                            specialty_id=specialty.id
+                                        )
+                                        db.session.add(facility_specialty)
+                                except Exception as e:
+                                    logger.error(f"Error adding specialty to facility: {str(e)}")
+                                    continue
+                
+                db.session.commit()
+                facilities_added += 1
+            except Exception as e:
+                logger.error(f"Error processing row {idx}: {str(e)}")
+                db.session.rollback()
+                continue
+    except Exception as e:
+        logger.error(f"Error processing DataFrame: {str(e)}")
+        logger.exception(e)
+        db.session.rollback()
     
     return facilities_added
