@@ -4,6 +4,7 @@ from flask import Flask, render_template, request, jsonify, flash, redirect
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 from werkzeug.middleware.proxy_fix import ProxyFix
+from medical_mapping import map_query_to_specialties
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -79,38 +80,55 @@ with app.app_context():
         # Build the query
         query = db.session.query(MedicalFacility)
         
-        # Apply filters
+        # Apply specialty filter if provided by form
         if specialty:
             normalized_specialty = normalize_specialty(specialty)
             query = query.join(MedicalFacility.specialties).join(FacilitySpecialty.specialty).filter(
                 Specialty.name.ilike(f'%{normalized_specialty}%')
             )
+            specialty_filter_applied = True
+        else:
+            specialty_filter_applied = False
         
+        # Apply region filter if provided
         if region:
-            query = query.join(MedicalFacility.region).filter(Region.name.ilike(f'%{region}%'))
+            query = query.join(MedicalFacility.region, isouter=True).filter(Region.name.ilike(f'%{region}%'))
         
+        # Apply quality filter if provided
         if min_quality is not None and min_quality > 0:
             query = query.filter(MedicalFacility.quality_score >= min_quality)
         
         # Apply text search if provided
+        mapped_specialties = []
         if query_text:
-            # Search in facility name, address, specialties, and conditions
-            search_term = f"%{query_text.lower()}%"
+            # First, check if we can map this query to medical specialties
+            mapped_specialties = map_query_to_specialties(query_text)
+            logger.debug(f"Mapped query '{query_text}' to specialties: {mapped_specialties}")
             
-            # Join with specialties only if not already joined
-            if not specialty:
-                query = query.outerjoin(MedicalFacility.specialties).outerjoin(FacilitySpecialty.specialty)
-            
-            # Search in facility name, facility type, address, city or specialty name
-            query = query.filter(
-                db.or_(
-                    db.func.lower(MedicalFacility.name).like(search_term),
-                    db.func.lower(MedicalFacility.facility_type).like(search_term),
-                    db.func.lower(MedicalFacility.address).like(search_term),
-                    db.func.lower(MedicalFacility.city).like(search_term),
-                    db.func.lower(Specialty.name).like(search_term)
+            # If not already filtered by specialty form field and we have mapped specialties
+            if not specialty_filter_applied and mapped_specialties:
+                query = query.join(MedicalFacility.specialties).join(FacilitySpecialty.specialty).filter(
+                    Specialty.name.in_(mapped_specialties)
                 )
-            )
+            # If no medical mapping found or specialty already filtered, do regular text search
+            else:
+                # Search in facility name, address, specialties, and conditions
+                search_term = f"%{query_text.lower()}%"
+                
+                # Join with specialties only if not already joined
+                if not specialty_filter_applied:
+                    query = query.outerjoin(MedicalFacility.specialties).outerjoin(FacilitySpecialty.specialty)
+                
+                # Search in facility name, facility type, address, city or specialty name
+                query = query.filter(
+                    db.or_(
+                        db.func.lower(MedicalFacility.name).like(search_term),
+                        db.func.lower(MedicalFacility.facility_type).like(search_term),
+                        db.func.lower(MedicalFacility.address).like(search_term),
+                        db.func.lower(MedicalFacility.city).like(search_term),
+                        db.func.lower(Specialty.name).like(search_term)
+                    )
+                )
         
         # Execute query
         facilities = query.all()
@@ -121,7 +139,8 @@ with app.app_context():
             'specialty': specialty,
             'region': region,
             'min_quality': min_quality,
-            'query_text': query_text
+            'query_text': query_text,
+            'mapped_specialties': mapped_specialties
         })
 
     @app.route('/data-manager')

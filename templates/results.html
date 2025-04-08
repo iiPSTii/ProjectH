@@ -45,6 +45,15 @@
                     <div class="col-md-12 mb-2">
                         <p class="mb-1"><strong>Ricerca Testuale:</strong></p>
                         <p>"{{ search_params.query_text }}"</p>
+                        {% if search_params.mapped_specialties %}
+                        <p class="mb-1 mt-2"><strong>Specialità associate alla ricerca:</strong></p>
+                        <div class="d-flex flex-wrap gap-1 mt-1">
+                            {% for specialty in search_params.mapped_specialties %}
+                            <span class="badge bg-info">{{ specialty }}</span>
+                            {% endfor %}
+                        </div>
+                        <small class="text-muted mt-1 d-block">La tua ricerca è stata associata a queste specialità mediche</small>
+                        {% endif %}
                     </div>
                     {% endif %}
                     <div class="col-md-3">
