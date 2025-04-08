@@ -69,8 +69,9 @@ with app.app_context():
         specialty = request.args.get('specialty', '')
         region = request.args.get('region', '')
         min_quality = request.args.get('min_quality', 0, type=float)
+        query_text = request.args.get('query_text', '')
         
-        logger.debug(f"Search params: specialty={specialty}, region={region}, min_quality={min_quality}")
+        logger.debug(f"Search params: specialty={specialty}, region={region}, min_quality={min_quality}, query_text={query_text}")
         
         # Get database status
         db_status = get_database_status()
@@ -91,6 +92,26 @@ with app.app_context():
         if min_quality is not None and min_quality > 0:
             query = query.filter(MedicalFacility.quality_score >= min_quality)
         
+        # Apply text search if provided
+        if query_text:
+            # Search in facility name, address, specialties, and conditions
+            search_term = f"%{query_text.lower()}%"
+            
+            # Join with specialties only if not already joined
+            if not specialty:
+                query = query.outerjoin(MedicalFacility.specialties).outerjoin(FacilitySpecialty.specialty)
+            
+            # Search in facility name, facility type, address, city or specialty name
+            query = query.filter(
+                db.or_(
+                    db.func.lower(MedicalFacility.name).like(search_term),
+                    db.func.lower(MedicalFacility.facility_type).like(search_term),
+                    db.func.lower(MedicalFacility.address).like(search_term),
+                    db.func.lower(MedicalFacility.city).like(search_term),
+                    db.func.lower(Specialty.name).like(search_term)
+                )
+            )
+        
         # Execute query
         facilities = query.all()
         logger.debug(f"Found {len(facilities)} facilities matching criteria")
@@ -99,7 +120,8 @@ with app.app_context():
         return render_template('results.html', facilities=facilities, db_status=db_status, search_params={
             'specialty': specialty,
             'region': region,
-            'min_quality': min_quality
+            'min_quality': min_quality,
+            'query_text': query_text
         })
 
     @app.route('/data-manager')

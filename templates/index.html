@@ -30,6 +30,18 @@
                 
                 <form action="/search" method="get" id="searchForm">
                     <div class="row g-3">
+                        <div class="col-12 mb-2">
+                            <label for="query_text" class="form-label">Cerca per nome, condizione medica o località</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                <input type="text" class="form-control form-control-lg" id="query_text" name="query_text" 
+                                       placeholder="Es: ospedale, cardiologia, mal di schiena, artrosi, Roma..." aria-label="Cerca">
+                            </div>
+                            <small class="form-text text-muted">
+                                Cerca strutture per nome, condizione medica, specialità o indirizzo
+                            </small>
+                        </div>
+                        
                         <div class="col-md-6">
                             <label for="specialty" class="form-label">Specialità Medica</label>
                             <select class="form-select" id="specialty" name="specialty">
@@ -112,12 +124,19 @@
                         <div class="accordion-item bg-dark">
                             <h2 class="accordion-header">
                                 <button class="accordion-button collapsed bg-dark text-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                                    <i class="fas fa-search me-2"></i> Cerca per Specialità o Regione
+                                    <i class="fas fa-search me-2"></i> Cerca per Nome, Condizione o Località
                                 </button>
                             </h2>
                             <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#howItWorksAccordion">
                                 <div class="accordion-body">
-                                    Seleziona la specialità medica che ti interessa (cardiologia, ortopedia, ecc.) e/o la regione in cui desideri trovare la struttura sanitaria. Puoi anche lasciare vuoti questi campi per visualizzare tutte le strutture disponibili.
+                                    Puoi cercare strutture sanitarie in diversi modi:
+                                    <ul>
+                                        <li>Digitando il nome di una struttura (es. "Ospedale Santa Maria")</li>
+                                        <li>Cercando una condizione medica o un sintomo (es. "mal di schiena", "diabete")</li>
+                                        <li>Inserendo una specialità medica (es. "cardiologia", "ortopedia")</li>
+                                        <li>Cercando per città o indirizzo (es. "Roma", "Via Garibaldi")</li>
+                                    </ul>
+                                    Puoi anche usare i filtri di specialità e regione per rendere la ricerca più precisa.
                                 </div>
                             </div>
                         </div>

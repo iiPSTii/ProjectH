@@ -41,6 +41,12 @@
             <div class="card-body">
                 <h5 class="card-title">Filtri Applicati</h5>
                 <div class="row">
+                    {% if search_params.query_text %}
+                    <div class="col-md-12 mb-2">
+                        <p class="mb-1"><strong>Ricerca Testuale:</strong></p>
+                        <p>"{{ search_params.query_text }}"</p>
+                    </div>
+                    {% endif %}
                     <div class="col-md-3">
                         <p class="mb-1"><strong>Specialità:</strong></p>
                         <p>{{ search_params.specialty if search_params.specialty else 'Tutte' }}</p>
