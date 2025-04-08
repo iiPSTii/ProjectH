@@ -1226,29 +1226,49 @@ def load_data():
             logger.error(f"Error adding specialty {name}: {str(e)}")
             db.session.rollback()
     
-    # We need to be extremely selective given the persistent issues
-    # Let's focus on just 8 key representative regions
+    # We've stabilized the application with limited data per region
+    # Now we can expand to include all Italian regions, but still with restraint
     
-    # Top priority regions that have been tested and work
+    # Group 1: Primary regions already tested and working well
     primary_regions = [
         "Lazio", "Lombardia", "Veneto", "Toscana"
     ]
     
-    # Secondary regions with simple names
+    # Group 2: Secondary regions that have been tested
     secondary_regions = [
         "Puglia", "Sicilia", "Piemonte", "Campania"
     ]
     
-    # Start with an empty list and build it carefully
+    # Group 3: Additional regions with simple names
+    additional_regions = [
+        "Sardegna", "Liguria", "Marche", "Umbria", 
+        "Abruzzo", "Basilicata", "Calabria", "Molise"
+    ]
+    
+    # Group 4: Regions with special characters (simplified)
+    special_regions = [
+        "Emilia Romagna", "Friuli Venezia Giulia", 
+        "Trentino Alto Adige", "Valle d Aosta"
+    ]
+    
+    # Start with an empty list and build it carefully in batches
     region_names = []
     
-    # Include only the most important regions
-    logger.info("Adding primary regions")
+    # Add primary regions first
+    logger.info("Adding primary regions (Group 1)")
     region_names.extend(primary_regions)
     
-    # Add secondary regions
-    logger.info("Adding secondary regions")
+    # Add secondary regions already tested
+    logger.info("Adding secondary regions (Group 2)")
     region_names.extend(secondary_regions)
+    
+    # Add additional simple regions
+    logger.info("Adding additional regions (Group 3)")
+    region_names.extend(additional_regions)
+    
+    # Add special regions last
+    logger.info("Adding regions with special characters (Group 4)")
+    region_names.extend(special_regions)
     
     regions = {}
     for name in region_names:
