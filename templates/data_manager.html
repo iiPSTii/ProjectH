@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+
+{% block title %}Data Loading Management{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">Data Loading Management</h1>
+            
+            <div class="alert alert-info">
+                <p>This page allows you to load medical facility data for all 20 Italian regions in manageable batches to prevent timeouts.</p>
+                <p><strong>Important:</strong> Load the batches in sequence (0, 1, 2, 3) for best results.</p>
+            </div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                  <div class="alert alert-{{ category }}">
+                    {{ message | safe }}
+                  </div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+            
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title mb-0">Data Loading Progress</h3>
+                </div>
+                <div class="card-body">
+                    <h5>Current Status:</h5>
+                    <ul class="list-group list-group-flush mb-4">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Total Regions Loaded:
+                            <span class="badge bg-primary rounded-pill">{{ total_regions }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Total Facilities:
+                            <span class="badge bg-primary rounded-pill">{{ total_facilities }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Total Specialties:
+                            <span class="badge bg-primary rounded-pill">{{ total_specialties }}</span>
+                        </li>
+                    </ul>
+                    
+                    <div class="progress mb-4" style="height: 25px;">
+                        <div class="progress-bar progress-bar-striped" 
+                             role="progressbar" 
+                             style="width: {{ progress_percentage }}%;" 
+                             aria-valuenow="{{ progress_percentage }}" 
+                             aria-valuemin="0" 
+                             aria-valuemax="100">
+                            {{ progress_percentage }}% Complete
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-6 col-xl-3 mb-3">
+                    <div class="card h-100 {{ 'border-success' if batch_status.0 else '' }}">
+                        <div class="card-header {{ 'bg-success text-white' if batch_status.0 else '' }}">
+                            <h5 class="card-title mb-0">Batch 0</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">Initial batch: Clears database and loads the first 5 regions.</p>
+                            <p><strong>Regions:</strong> Puglia, Trentino, Toscana, Lazio, Lombardia</p>
+                            {% if batch_status.0 %}
+                                <div class="alert alert-success">
+                                    <i class="bi bi-check-circle-fill"></i> Loaded successfully
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="card-footer">
+                            <a href="/load-data/0" class="btn btn-primary w-100">
+                                {% if batch_status.0 %}Reload Batch 0{% else %}Load Batch 0{% endif %}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-xl-3 mb-3">
+                    <div class="card h-100 {{ 'border-success' if batch_status.1 else '' }}">
+                        <div class="card-header {{ 'bg-success text-white' if batch_status.1 else '' }}">
+                            <h5 class="card-title mb-0">Batch 1</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">Second batch: Adds 5 more regions to the database.</p>
+                            <p><strong>Regions:</strong> Sicilia, Piemonte, Campania, Veneto, Liguria</p>
+                            {% if batch_status.1 %}
+                                <div class="alert alert-success">
+                                    <i class="bi bi-check-circle-fill"></i> Loaded successfully
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="card-footer">
+                            <a href="/load-data/1" class="btn btn-primary w-100 {{ 'disabled' if not batch_status.0 }}">
+                                {% if batch_status.1 %}Reload Batch 1{% else %}Load Batch 1{% endif %}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-xl-3 mb-3">
+                    <div class="card h-100 {{ 'border-success' if batch_status.2 else '' }}">
+                        <div class="card-header {{ 'bg-success text-white' if batch_status.2 else '' }}">
+                            <h5 class="card-title mb-0">Batch 2</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">Third batch: Adds 5 more regions to the database.</p>
+                            <p><strong>Regions:</strong> Emilia-Romagna, Sardegna, Marche, Abruzzo, Calabria</p>
+                            {% if batch_status.2 %}
+                                <div class="alert alert-success">
+                                    <i class="bi bi-check-circle-fill"></i> Loaded successfully
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="card-footer">
+                            <a href="/load-data/2" class="btn btn-primary w-100 {{ 'disabled' if not batch_status.1 }}">
+                                {% if batch_status.2 %}Reload Batch 2{% else %}Load Batch 2{% endif %}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-xl-3 mb-3">
+                    <div class="card h-100 {{ 'border-success' if batch_status.3 else '' }}">
+                        <div class="card-header {{ 'bg-success text-white' if batch_status.3 else '' }}">
+                            <h5 class="card-title mb-0">Batch 3</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">Final batch: Adds the last 5 regions to complete the database.</p>
+                            <p><strong>Regions:</strong> Friuli-Venezia Giulia, Umbria, Basilicata, Molise, Valle d'Aosta</p>
+                            {% if batch_status.3 %}
+                                <div class="alert alert-success">
+                                    <i class="bi bi-check-circle-fill"></i> Loaded successfully
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="card-footer">
+                            <a href="/load-data/3" class="btn btn-primary w-100 {{ 'disabled' if not batch_status.2 }}">
+                                {% if batch_status.3 %}Reload Batch 3{% else %}Load Batch 3{% endif %}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="d-flex justify-content-between mt-4">
+                <a href="/" class="btn btn-secondary">Back to Home</a>
+                
+                {% if all_batches_loaded %}
+                <a href="/" class="btn btn-success">
+                    <i class="bi bi-search"></i> Search Medical Facilities
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

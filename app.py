@@ -1,6 +1,6 @@
 import os
 import logging
-from flask import Flask, render_template, request, jsonify, flash
+from flask import Flask, render_template, request, jsonify, flash, redirect
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 from werkzeug.middleware.proxy_fix import ProxyFix
@@ -88,6 +88,53 @@ with app.app_context():
             'max_cost': max_cost
         })
 
+    @app.route('/data-manager')
+    def data_manager():
+        """Data loading management dashboard"""
+        # Get statistics about current data
+        regions = get_regions()
+        specialties = get_specialties()
+        
+        # Count facilities
+        try:
+            total_facilities = db.session.query(MedicalFacility).count()
+        except:
+            total_facilities = 0
+        
+        # Calculate progress percentage (assume 20 regions is 100%)
+        total_regions_count = len(regions)
+        progress_percentage = min(int((total_regions_count / 20) * 100), 100)
+        
+        # Check which batches have been loaded
+        # This is a simple check based on expected regions in each batch
+        batch_regions = {
+            0: ["Puglia", "Trentino", "Toscana", "Lazio", "Lombardia"],
+            1: ["Sicilia", "Piemonte", "Campania", "Veneto", "Liguria"],
+            2: ["Emilia Romagna", "Sardegna", "Marche", "Abruzzo", "Calabria"],
+            3: ["Friuli Venezia Giulia", "Umbria", "Basilicata", "Molise", "Valle d Aosta"]
+        }
+        
+        batch_status = {}
+        region_names = [r.name for r in regions]
+        
+        for batch_num, expected_regions in batch_regions.items():
+            # Check if at least 3 regions from this batch exist in the database
+            # (allowing for some flexibility if certain regions fail to load)
+            found_regions = [r for r in expected_regions if any(er in r for er in region_names)]
+            batch_status[batch_num] = len(found_regions) >= 3
+        
+        all_batches_loaded = all(batch_status.values())
+        
+        return render_template(
+            'data_manager.html',
+            total_regions=total_regions_count,
+            total_facilities=total_facilities,
+            total_specialties=len(specialties),
+            progress_percentage=progress_percentage,
+            batch_status=batch_status,
+            all_batches_loaded=all_batches_loaded
+        )
+
     @app.route('/load-data')
     @app.route('/load-data/<int:batch>')
     def load_data_route(batch=0):
@@ -126,7 +173,8 @@ with app.app_context():
             db.session.rollback()
             flash(f"Error loading data batch {batch}: {str(e)}", "danger")
         
-        return render_template('index.html', regions=get_regions(), specialties=get_specialties())
+        # Redirect to the data manager page instead of index
+        return redirect('/data-manager')
 
     @app.context_processor
     def utility_processor():
