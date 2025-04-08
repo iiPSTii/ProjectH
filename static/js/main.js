@@ -31,6 +31,35 @@ document.addEventListener('DOMContentLoaded', function() {
             bsAlert.close();
         });
     }, 5000);
+    
+    // Grid/List view toggle
+    const viewGridBtn = document.getElementById('viewGrid');
+    const viewListBtn = document.getElementById('viewList');
+    const facilitiesGrid = document.getElementById('facilitiesGrid');
+    const facilitiesList = document.getElementById('facilitiesList');
+    
+    if (viewGridBtn && viewListBtn && facilitiesGrid && facilitiesList) {
+        // Default view is grid
+        facilitiesGrid.style.display = 'flex';
+        facilitiesList.style.display = 'none';
+        viewGridBtn.classList.add('active');
+        
+        // Switch to grid view
+        viewGridBtn.addEventListener('click', function() {
+            facilitiesGrid.style.display = 'flex';
+            facilitiesList.style.display = 'none';
+            viewGridBtn.classList.add('active');
+            viewListBtn.classList.remove('active');
+        });
+        
+        // Switch to list view
+        viewListBtn.addEventListener('click', function() {
+            facilitiesGrid.style.display = 'none';
+            facilitiesList.style.display = 'block';
+            viewListBtn.classList.add('active');
+            viewGridBtn.classList.remove('active');
+        });
+    }
 });
 
 // Update quality slider value display
