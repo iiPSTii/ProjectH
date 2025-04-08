@@ -226,14 +226,14 @@ def download_csv(url):
             
             # Create the appropriate scraper based on the URL
             scraper = None
-            if 'puglia' in str(url).lower():
-                scraper = web_scraper.PugliaDataScraper()
-            elif 'trento' in str(url).lower() or 'trentino' in str(url).lower():
-                scraper = web_scraper.TrentinoDataScraper()
-            elif 'toscana' in str(url).lower():
-                scraper = web_scraper.ToscanaDataScraper()
-            elif 'lazio' in str(url).lower():
-                scraper = web_scraper.SaluteLazioScraper()
+            
+            # Use all available scrapers from the web_scraper module
+            for available_scraper in web_scraper.get_available_scrapers():
+                # Extract region name from the scraper and check if it's in the URL
+                region_name = available_scraper.region_name
+                if region_name and region_name.lower() in str(url).lower():
+                    scraper = available_scraper
+                    break
             
             if scraper:
                 logger.info(f"Using web scraper for {url}")
@@ -752,7 +752,7 @@ def load_data():
         'total': 0
     }
     
-    # Load data from each source
+    # Initialize the standard loaders we already have
     loaders = {
         'puglia': load_puglia_data,
         'trento': load_trento_data,
@@ -760,8 +760,40 @@ def load_data():
         'lazio': load_lazio_data
     }
     
+    # Check if web scraping is enabled
+    if USE_WEB_SCRAPING:
+        # Import web_scraper and get all available scrapers
+        try:
+            import web_scraper
+            available_scrapers = web_scraper.get_available_scrapers()
+            
+            # For each scraper, create a corresponding data source entry
+            for scraper in available_scrapers:
+                region_name = scraper.region_name
+                if region_name and region_name not in DATA_SOURCES:
+                    # Create a new entry in DATA_SOURCES for this region
+                    region_key = region_name.lower().replace('-', '').replace(' ', '')
+                    DATA_SOURCES[region_key] = {
+                        'url': scraper.source_url,
+                        'attribution': scraper.attribution,
+                        'region_name': region_name
+                    }
+                    
+                    # Use the generic loader for this region
+                    if region_key not in loaders:
+                        loaders[region_key] = load_generic_data
+                        
+            logger.info(f"Added {len(available_scrapers)} scrapers for data loading")
+        except Exception as e:
+            logger.error(f"Error initializing web scrapers: {str(e)}")
+    
+    # Load data from each source
     for source_key, loader_func in loaders.items():
         try:
+            # Skip if the source doesn't exist in DATA_SOURCES
+            if source_key not in DATA_SOURCES:
+                continue
+                
             source = DATA_SOURCES[source_key]
             count = loader_func(source)
             logger.info(f"Added {count} facilities from {source['region_name']}")
@@ -782,3 +814,118 @@ def get_regions():
 def get_specialties():
     """Get all specialties from the database"""
     return Specialty.query.order_by(Specialty.name).all()
+    
+def load_generic_data(data_source):
+    """
+    Generic loader for regions that don't have specific loaders.
+    This function will try to detect common column names in the data
+    and map them to the corresponding fields in the database.
+    """
+    logger.info(f"Processing {data_source['region_name']} data using generic loader")
+    
+    # Get the data from the source URL
+    df = download_csv(data_source['url'])
+    if df is None or df.empty:
+        logger.warning(f"No data found for {data_source['region_name']}")
+        return 0
+        
+    region = get_or_create_region(data_source['region_name'])
+    facilities_added = 0
+    
+    # Try to detect column names in the DataFrame
+    name_cols = ['nome', 'name', 'denominazione', 'denomstruttura', 'facility_name', 'hospital_name']
+    type_cols = ['tipo', 'type', 'tipologia', 'tipologiastruttura', 'facility_type']
+    address_cols = ['indirizzo', 'address', 'via', 'street']
+    city_cols = ['città', 'city', 'citta', 'comune', 'town']
+    phone_cols = ['telefono', 'phone', 'tel']
+    email_cols = ['email', 'e-mail', 'mail', 'posta_elettronica']
+    web_cols = ['website', 'web', 'sito', 'sitoweb', 'url']
+    specialty_cols = ['specialties', 'specialità', 'specialita', 'brancheautorizzate', 'prestazioni', 'servizi', 'specializzazioni']
+    
+    # Find the actual column names in the DataFrame
+    name_col = next((col for col in df.columns if col.lower() in name_cols), None)
+    type_col = next((col for col in df.columns if col.lower() in type_cols), None)
+    address_col = next((col for col in df.columns if col.lower() in address_cols), None)
+    city_col = next((col for col in df.columns if col.lower() in city_cols), None)
+    phone_col = next((col for col in df.columns if col.lower() in phone_cols), None)
+    email_col = next((col for col in df.columns if col.lower() in email_cols), None)
+    web_col = next((col for col in df.columns if col.lower() in web_cols), None)
+    specialty_col = next((col for col in df.columns if col.lower() in specialty_cols), None)
+    
+    # Skip if we couldn't find the name column
+    if name_col is None:
+        logger.warning(f"Could not find name column in {data_source['region_name']} data")
+        return 0
+        
+    # Process each row in the DataFrame
+    for idx in range(len(df)):
+        # Extract basic facility information
+        name = safe_get(df, idx, name_col)
+        if not name:
+            continue
+            
+        facility_type = safe_get(df, idx, type_col) if type_col else None
+        address = safe_get(df, idx, address_col) if address_col else None
+        city = safe_get(df, idx, city_col) if city_col else None
+        
+        # Look for existing facility to avoid duplicates
+        existing = MedicalFacility.query.filter_by(
+            name=name, 
+            city=city if city else None
+        ).first()
+        
+        if existing:
+            logger.debug(f"Facility already exists: {name} in {city}")
+            continue
+        
+        # Create new facility with random cost estimates for some facilities
+        import random
+        cost_estimate = None
+        if random.random() > 0.3:  # 70% of facilities have cost estimates
+            cost_estimate = round(random.uniform(50, 300), 2)
+            
+        facility = MedicalFacility(
+            name=name,
+            address=address,
+            city=city,
+            region=region,
+            facility_type=facility_type,
+            telephone=safe_get(df, idx, phone_col) if phone_col else None,
+            email=safe_get(df, idx, email_col) if email_col else None,
+            website=safe_get(df, idx, web_col) if web_col else None,
+            data_source=f"{data_source['region_name']} Open Data",
+            attribution=data_source['attribution'],
+            # Set values for optional fields
+            quality_score=round(random.uniform(2.5, 5.0), 1),  # Random quality between 2.5-5.0
+            cost_estimate=cost_estimate
+        )
+        
+        # Add facility to database
+        db.session.add(facility)
+        db.session.commit()
+        
+        # Process specialties
+        if specialty_col:
+            specialties_text = safe_get(df, idx, specialty_col)
+            if specialties_text:
+                specialty_names = extract_specialties(specialties_text)
+                for specialty_name in specialty_names:
+                    specialty = get_or_create_specialty(specialty_name)
+                    if specialty:
+                        # Check if this facility already has this specialty to avoid duplicates
+                        existing_fs = FacilitySpecialty.query.filter_by(
+                            facility_id=facility.id,
+                            specialty_id=specialty.id
+                        ).first()
+                        
+                        if not existing_fs:
+                            facility_specialty = FacilitySpecialty(
+                                facility_id=facility.id,
+                                specialty_id=specialty.id
+                            )
+                            db.session.add(facility_specialty)
+        
+        db.session.commit()
+        facilities_added += 1
+    
+    return facilities_added
