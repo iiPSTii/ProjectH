@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 from werkzeug.middleware.proxy_fix import ProxyFix
 from medical_mapping import map_query_to_specialties
+from location_mapping import detect_location_in_query
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -71,6 +72,26 @@ with app.app_context():
         region = request.args.get('region', '')
         min_quality = request.args.get('min_quality', 0, type=float)
         query_text = request.args.get('query_text', '')
+        
+        # Process the search query to extract location information
+        detected_location = None
+        original_query = query_text
+        
+        if query_text:
+            # Try to detect location/city references in the query
+            cleaned_query, detected_region = detect_location_in_query(query_text)
+            
+            if detected_region:
+                logger.debug(f"Detected location in query: '{query_text}' -> region: '{detected_region}'")
+                detected_location = detected_region
+                
+                # Only update the query text if we found location
+                if cleaned_query != query_text and cleaned_query.strip():
+                    query_text = cleaned_query
+                
+                # If no region was specified in the form, use the detected one
+                if not region:
+                    region = detected_region
         
         logger.debug(f"Search params: specialty={specialty}, region={region}, min_quality={min_quality}, query_text={query_text}")
         
@@ -186,6 +207,8 @@ with app.app_context():
             'region': region,
             'min_quality': min_quality,
             'query_text': query_text,
+            'original_query': original_query if detected_location else query_text,
+            'detected_location': detected_location,
             'mapped_specialties': mapped_specialties
         })
 

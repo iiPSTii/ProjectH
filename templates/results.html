@@ -44,7 +44,14 @@
                     {% if search_params.query_text %}
                     <div class="col-md-12 mb-2">
                         <p class="mb-1"><strong>Ricerca Testuale:</strong></p>
-                        <p>"{{ search_params.query_text }}"</p>
+                        <p>"{{ search_params.original_query if search_params.original_query else search_params.query_text }}"</p>
+                        
+                        {% if search_params.detected_location %}
+                        <p class="mb-1 mt-2"><strong>Abbiamo rilevato la località:</strong></p>
+                        <span class="badge bg-success">{{ search_params.detected_location }}</span>
+                        <small class="text-muted mt-1 d-block">Stiamo mostrando le strutture nella regione {{ search_params.detected_location }}</small>
+                        {% endif %}
+                        
                         {% if search_params.mapped_specialties %}
                         <p class="mb-1 mt-2"><strong>Specialità associate alla ricerca:</strong></p>
                         <div class="d-flex flex-wrap gap-1 mt-1">
