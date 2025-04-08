@@ -135,7 +135,8 @@ def extract_specialties(text):
     
     # Split by common separators and clean up
     specialties = []
-    separators = [',', ';', '/', '|', 'e', 'ed', 'and', '-']
+    # Only use clean separators - commas, semicolons, and slashes - to avoid breaking words
+    separators = [',', ';', '/', '|']
     
     # First try to split by separators
     parts = [text]
@@ -145,11 +146,32 @@ def extract_specialties(text):
             new_parts.extend([p.strip() for p in part.split(sep) if p.strip()])
         parts = new_parts
     
-    # Then try to match with known specialties
+    # Prevent partial word matches by mapping complete words
+    known_specialties = [
+        'Cardiologia', 'Neurologia', 'Pediatria', 'Ortopedia', 
+        'Medicina Generale', 'Ginecologia', 'Ostetricia', 
+        'Dermatologia', 'Oculistica', 'Oncologia', 'Radiologia',
+        'Diagnostica', 'Fisioterapia', 'Urologia', 'Psichiatria',
+        'Traumatologia', 'Pronto Soccorso', 'Ambulatorio',
+        'Geriatria', 'Chirurgia', 'Analisi Cliniche'
+    ]
+    
+    # Look for complete specialty names in each part
     for part in parts:
-        norm_part = normalize_specialty(part)
-        if norm_part:
-            specialties.append(norm_part)
+        part_lower = part.lower()
+        matched = False
+        
+        # First try exact match with our known specialties
+        for specialty in known_specialties:
+            if specialty.lower() in part_lower:
+                specialties.append(specialty)
+                matched = True
+                
+        # If no match, try to normalize with our mapping
+        if not matched:
+            norm_part = normalize_specialty(part)
+            if norm_part:
+                specialties.append(norm_part)
     
     # Deduplicate
     return list(set(specialties))
@@ -363,11 +385,18 @@ def load_puglia_data(data_source):
             for specialty_name in specialty_names:
                 specialty = get_or_create_specialty(specialty_name)
                 if specialty:
-                    facility_specialty = FacilitySpecialty(
+                    # Check if this facility already has this specialty to avoid duplicates
+                    existing_fs = FacilitySpecialty.query.filter_by(
                         facility_id=facility.id,
                         specialty_id=specialty.id
-                    )
-                    db.session.add(facility_specialty)
+                    ).first()
+                    
+                    if not existing_fs:
+                        facility_specialty = FacilitySpecialty(
+                            facility_id=facility.id,
+                            specialty_id=specialty.id
+                        )
+                        db.session.add(facility_specialty)
         
         db.session.commit()
         facilities_added += 1
@@ -435,11 +464,18 @@ def load_trento_data(data_source):
             for specialty_name in specialty_names:
                 specialty = get_or_create_specialty(specialty_name)
                 if specialty:
-                    facility_specialty = FacilitySpecialty(
+                    # Check if this facility already has this specialty to avoid duplicates
+                    existing_fs = FacilitySpecialty.query.filter_by(
                         facility_id=facility.id,
                         specialty_id=specialty.id
-                    )
-                    db.session.add(facility_specialty)
+                    ).first()
+                    
+                    if not existing_fs:
+                        facility_specialty = FacilitySpecialty(
+                            facility_id=facility.id,
+                            specialty_id=specialty.id
+                        )
+                        db.session.add(facility_specialty)
         
         db.session.commit()
         facilities_added += 1
@@ -505,11 +541,18 @@ def load_toscana_data(data_source):
             for specialty_name in specialty_names:
                 specialty = get_or_create_specialty(specialty_name)
                 if specialty:
-                    facility_specialty = FacilitySpecialty(
+                    # Check if this facility already has this specialty to avoid duplicates
+                    existing_fs = FacilitySpecialty.query.filter_by(
                         facility_id=facility.id,
                         specialty_id=specialty.id
-                    )
-                    db.session.add(facility_specialty)
+                    ).first()
+                    
+                    if not existing_fs:
+                        facility_specialty = FacilitySpecialty(
+                            facility_id=facility.id,
+                            specialty_id=specialty.id
+                        )
+                        db.session.add(facility_specialty)
         
         db.session.commit()
         facilities_added += 1
