@@ -146,6 +146,14 @@
                             </div>
                         </div>
                         
+                        <!-- Strengths Summary if available -->
+                        {% if facility.strengths_summary %}
+                        <div class="mb-3">
+                            <h6 class="mb-2">Punti di Forza:</h6>
+                            <p class="small text-light">{{ facility.strengths_summary }}</p>
+                        </div>
+                        {% endif %}
+                        
                         <div class="row mb-2">
                             <div class="col-6">
                                 <h6 class="mb-1">Qualità:</h6>
@@ -178,6 +186,57 @@
                                 </span>
                             </div>
                         </div>
+                        
+                        <!-- Specialty Ratings if available -->
+                        {% set specialties = [
+                            ('cardiology_rating', 'Cardiologia', 'heart'),
+                            ('orthopedics_rating', 'Ortopedia', 'bone'),
+                            ('oncology_rating', 'Oncologia', 'radiation'),
+                            ('neurology_rating', 'Neurologia', 'brain'),
+                            ('surgery_rating', 'Chirurgia', 'scalpel-line-dashed'),
+                            ('urology_rating', 'Urologia', 'kidneys'),
+                            ('pediatrics_rating', 'Pediatria', 'baby'),
+                            ('gynecology_rating', 'Ginecologia', 'venus')
+                        ] %}
+                        
+                        {% set has_ratings = false %}
+                        {% for rating_field, label, icon in specialties %}
+                            {% if facility[rating_field] %}
+                                {% set has_ratings = true %}
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if has_ratings %}
+                        <div class="mt-3 pt-3 border-top">
+                            <h6 class="mb-2">Valutazioni per Specialità:</h6>
+                            <div class="row g-2">
+                                {% for rating_field, label, icon in specialties %}
+                                    {% if facility[rating_field] %}
+                                    <div class="col-6">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-{{ icon }} me-1"></i>
+                                            <span class="small me-2">{{ label }}:</span>
+                                            <div class="stars small" style="--rating: {{ facility[rating_field] }};">
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <div class="overlay">
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="fas fa-star"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
                         
                         {% if facility.telephone %}
                         <div class="contact-info mt-3 pt-3 border-top">
@@ -224,6 +283,13 @@
                                 <span class="badge bg-secondary">Informazione non disponibile</span>
                                 {% endfor %}
                             </div>
+                            
+                            <!-- Strengths Summary if available -->
+                            {% if facility.strengths_summary %}
+                            <div class="mb-2">
+                                <p class="small text-light mb-0"><strong>Punti di Forza:</strong> {{ facility.strengths_summary }}</p>
+                            </div>
+                            {% endif %}
                         </div>
                         <div class="col-md-3">
                             <div class="mt-2 mt-md-0">
@@ -250,6 +316,52 @@
                                     {% endif %}
                                 </div>
                             </div>
+                            
+                            <!-- Top Specialty Ratings (only 2 best ones if available) -->
+                            {% set specialties = [
+                                ('cardiology_rating', 'Cardiologia', 'heart'),
+                                ('orthopedics_rating', 'Ortopedia', 'bone'),
+                                ('oncology_rating', 'Oncologia', 'radiation'),
+                                ('neurology_rating', 'Neurologia', 'brain'),
+                                ('surgery_rating', 'Chirurgia', 'scalpel-line-dashed'),
+                                ('urology_rating', 'Urologia', 'kidneys'),
+                                ('pediatrics_rating', 'Pediatria', 'baby'),
+                                ('gynecology_rating', 'Ginecologia', 'venus')
+                            ] %}
+                            
+                            {% set top_ratings = [] %}
+                            {% for rating_field, label, icon in specialties %}
+                                {% if facility[rating_field] %}
+                                    {% set _ = top_ratings.append((rating_field, label, icon, facility[rating_field])) %}
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if top_ratings %}
+                                {% set top_ratings = top_ratings|sort(attribute=3, reverse=True)[:2] %}
+                                <div class="mt-2">
+                                    <h6 class="mb-1 small">Eccellenze:</h6>
+                                    {% for rating_field, label, icon, rating in top_ratings %}
+                                    <div class="d-flex align-items-center mb-1">
+                                        <i class="fas fa-{{ icon }} me-1 small"></i>
+                                        <span class="small me-1">{{ label }}:</span>
+                                        <div class="stars small" style="--rating: {{ rating }};">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <div class="overlay">
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
                         </div>
                         <div class="col-md-3">
                             <div class="mt-2 mt-md-0">

@@ -1,0 +1,44 @@
+[
+    {
+        "facility": "Ospedale SS. Annunziata",
+        "city": "Chieti",
+        "region": "Abruzzo",
+        "cardiology_rating": 5,
+        "orthopedics_rating": 4,
+        "oncology_rating": 4,
+        "neurology_rating": 4,
+        "surgery_rating": 4,
+        "urology_rating": 4,
+        "pediatrics_rating": 1,
+        "gynecology_rating": 4,
+        "strengths_summary": "Outstanding in cardiology."
+    },
+    {
+        "facility": "Ospedale San Pio",
+        "city": "Vasto",
+        "region": "Abruzzo",
+        "cardiology_rating": 3,
+        "orthopedics_rating": 3,
+        "oncology_rating": 1,
+        "neurology_rating": 1,
+        "surgery_rating": 3,
+        "urology_rating": 3,
+        "pediatrics_rating": 1,
+        "gynecology_rating": 3,
+        "strengths_summary": ""
+    },
+    {
+        "facility": "Policlinico Gemelli",
+        "city": "Roma",
+        "region": "Lazio",
+        "cardiology_rating": 5,
+        "orthopedics_rating": 4,
+        "oncology_rating": 5,
+        "neurology_rating": 4,
+        "surgery_rating": 4,
+        "urology_rating": 4,
+        "pediatrics_rating": 4,
+        "gynecology_rating": 4,
+        "strengths_summary": "Excels in cardiology and oncology."
+    }
+]

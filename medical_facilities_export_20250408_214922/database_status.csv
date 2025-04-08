@@ -1,0 +1,2 @@
+id,status,last_updated,total_facilities,total_regions,total_specialties,initialized_by,notes
+4,initialized,2025-04-08 21:42:35.330187,200,20,43,initialize_database.py,Database initialized with 200 facilities from 20 regions in 233.2 seconds
