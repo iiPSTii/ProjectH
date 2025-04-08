@@ -91,36 +91,18 @@ with app.app_context():
     @app.route('/load-data')
     def load_data_route():
         try:
-            # Check if we want to use web scraping
-            use_web_scraping = request.args.get('web_scraping', 'false').lower() == 'true'
-            logger.info(f"Loading data with web scraping: {use_web_scraping}")
+            # We've simplified the data loading to always use sample data
+            logger.info(f"Loading data with sample data")
             
-            # Set the USE_WEB_SCRAPING flag in data_loader
+            # Import the data_loader module
             import data_loader
-            data_loader.USE_WEB_SCRAPING = use_web_scraping
             
-            # Update the data sources based on the new setting
-            data_loader.update_data_sources()
-            
-            # Clear the current database before loading new data to avoid duplicates
-            try:
-                logger.info("Clearing existing database entries...")
-                FacilitySpecialty.query.delete()
-                MedicalFacility.query.delete()
-                Specialty.query.delete()
-                Region.query.delete()
-                db.session.commit()
-                logger.info("Database cleared successfully")
-            except Exception as e:
-                logger.error(f"Error clearing database: {str(e)}")
-                db.session.rollback()
-                flash(f"Error clearing database: {str(e)}", "danger")
-                return render_template('index.html', regions=get_regions(), specialties=get_specialties())
+            # Database clearing is now handled in the load_data function
+            logger.info("Preparing to load data...")
             
             # Load the data with appropriate error handling
             stats = load_data()
-            mode = "web scraping" if use_web_scraping else "sample data"
-            flash(f"Data loaded successfully using {mode}! Added {stats['total']} facilities from {stats['regions']} regions.", "success")
+            flash(f"Data loaded successfully using sample data! Added {stats['total']} facilities from {stats['regions']} regions.", "success")
         except Exception as e:
             logger.error(f"Error loading data: {str(e)}")
             logger.exception(e)  # Log the full exception for debugging

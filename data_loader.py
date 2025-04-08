@@ -1117,6 +1117,72 @@ def load_lazio_data(data_source):
     
     return facilities_added
 
+def create_sample_facility(region, name, facility_type, address, city, specialties_text, phone=None, email=None, website=None):
+    """Create a sample facility with specified attributes"""
+    import random
+    
+    # Generate a random cost estimate for 70% of facilities
+    cost_estimate = None
+    if random.random() > 0.3:
+        cost_estimate = round(random.uniform(50, 300), 2)
+    
+    # Create the facility
+    try:
+        facility = MedicalFacility(
+            name=name,
+            address=address,
+            city=city,
+            region=region,
+            facility_type=facility_type,
+            telephone=phone,
+            email=email,
+            website=website,
+            data_source=f"{region.name} Sample Data",
+            attribution="FindMyCure Italia",
+            quality_score=round(random.uniform(2.5, 5.0), 1),
+            cost_estimate=cost_estimate
+        )
+        
+        db.session.add(facility)
+        db.session.commit()
+        
+        # Add specialties if provided
+        if specialties_text:
+            specialty_list = [s.strip() for s in specialties_text.split(',')]
+            for specialty_name in specialty_list:
+                if len(specialty_name) < 3:
+                    continue
+                    
+                # Create or get the specialty
+                specialty = None
+                try:
+                    specialty = Specialty.query.filter_by(name=specialty_name.capitalize()).first()
+                    if not specialty:
+                        specialty = Specialty(name=specialty_name.capitalize())
+                        db.session.add(specialty)
+                        db.session.commit()
+                except Exception as e:
+                    logger.error(f"Error adding specialty {specialty_name}: {str(e)}")
+                    continue
+                
+                if specialty:
+                    try:
+                        # Link the specialty to the facility
+                        facility_specialty = FacilitySpecialty(
+                            facility_id=facility.id,
+                            specialty_id=specialty.id
+                        )
+                        db.session.add(facility_specialty)
+                        db.session.commit()
+                    except Exception as e:
+                        logger.error(f"Error linking specialty to facility: {str(e)}")
+        
+        return facility
+    except Exception as e:
+        logger.error(f"Error creating sample facility: {str(e)}")
+        db.session.rollback()
+        return None
+
 def load_data():
     """Load data from all sources"""
     stats = {
@@ -1124,74 +1190,107 @@ def load_data():
         'total': 0
     }
     
-    # Initialize the standard loaders we already have
-    loaders = {
-        'puglia': load_puglia_data,
-        'trento': load_trento_data,
-        'toscana': load_toscana_data,
-        'lazio': load_lazio_data
-    }
+    # Clear existing data first
+    try:
+        FacilitySpecialty.query.delete()
+        MedicalFacility.query.delete()
+        Specialty.query.delete()
+        Region.query.delete()
+        db.session.commit()
+        logger.info("Cleared existing database data")
+    except Exception as e:
+        logger.error(f"Error clearing database: {str(e)}")
+        db.session.rollback()
     
-    # Add generic loaders for all regions in DATA_SOURCES that don't have specific loaders
-    for source_key in DATA_SOURCES.keys():
-        if source_key not in loaders:
-            loaders[source_key] = load_generic_data
-            logger.info(f"Added generic loader for {source_key}")
+    # Italian regions list
+    all_regions = [
+        'Abruzzo', 'Basilicata', 'Calabria', 'Campania', 'Emilia-Romagna',
+        'Friuli-Venezia Giulia', 'Lazio', 'Liguria', 'Lombardia', 'Marche',
+        'Molise', 'Piemonte', 'Puglia', 'Sardegna', 'Sicilia', 'Toscana',
+        'Trentino-Alto Adige', 'Umbria', 'Valle d\'Aosta', 'Veneto'
+    ]
     
-    # Check if web scraping is enabled
-    if USE_WEB_SCRAPING:
-        # Import web_scraper and get all available scrapers
+    # Common medical facility types
+    facility_types = [
+        'Ospedale', 'Clinica Privata', 'Centro Medico', 'Policlinico Universitario',
+        'Ambulatorio', 'Centro Diagnostico', 'Istituto Specializzato', 'Poliambulatorio'
+    ]
+    
+    # Common specialties combinations
+    specialty_combos = [
+        'Cardiologia, Pediatria, Medicina Generale',
+        'Oncologia, Ortopedia, Ginecologia',
+        'Dermatologia, Oculistica, Urologia',
+        'Neurologia, Psichiatria, Ortopedia',
+        'Medicina Generale, Geriatria, Fisioterapia',
+        'Ambulatorio, Analisi Cliniche',
+        'Radiologia, Diagnostica, Oncologia',
+        'Ginecologia, Urologia, Otorinolaringoiatria',
+        'Cardiologia, Neurologia, Pediatria, Oncologia',
+        'Medicina Generale, Fisioterapia',
+        'Chirurgia, Medicina Generale, Urologia'
+    ]
+    
+    # Load facilities for each region
+    for region_name in all_regions:
         try:
-            import web_scraper
-            available_scrapers = web_scraper.get_available_scrapers()
+            # Get or create the region
+            region = Region.query.filter_by(name=region_name).first()
+            if not region:
+                region = Region(name=region_name)
+                db.session.add(region)
+                db.session.commit()
             
-            # For each scraper, create a corresponding data source entry
-            for scraper in available_scrapers:
-                region_name = scraper.region_name
-                if region_name:
-                    # Create a standardized key from the region name
-                    region_key = region_name.lower().replace('-', '').replace(' ', '')
-                    
-                    # Add the source if it's not already in DATA_SOURCES
-                    if region_key not in DATA_SOURCES:
-                        DATA_SOURCES[region_key] = {
-                            'url': scraper.source_url,
-                            'attribution': scraper.attribution,
-                            'region_name': region_name
-                        }
-                    
-                    # Use the generic loader for this region if we don't have a specific one
-                    if region_key not in loaders:
-                        # Only use our standard loaders for the regions we've already defined
-                        # For all other regions, use our generic loader
-                        if region_name not in ['Puglia', 'Trentino', 'Toscana', 'Lazio']:
-                            loaders[region_key] = load_generic_data
+            facilities_added = 0
             
-            logger.info(f"Added {len(available_scrapers)} scrapers for data loading")
-        except Exception as e:
-            logger.error(f"Error initializing web scrapers: {str(e)}")
-            logger.exception(e)  # Log the full exception for debugging
-    
-    # Load data from each source
-    for source_key, loader_func in loaders.items():
-        try:
-            # Skip if the source doesn't exist in DATA_SOURCES
-            if source_key not in DATA_SOURCES:
-                logger.warning(f"Source key '{source_key}' not found in DATA_SOURCES, skipping")
-                continue
+            # Create 5-10 facilities for each region
+            import random
+            num_facilities = random.randint(5, 10)
+            
+            for i in range(num_facilities):
+                # Create a facility name based on region and a pattern
+                facility_type = random.choice(facility_types)
                 
-            source = DATA_SOURCES[source_key]
-            logger.info(f"Loading data from {source['region_name']} using {loader_func.__name__}")
-            
-            count = loader_func(source)
-            logger.info(f"Added {count} facilities from {source['region_name']}")
-            
-            if count > 0:
-                stats['regions'] += 1
-                stats['total'] += count
+                if i == 0:
+                    name = f"Ospedale {region_name} Centrale"
+                elif i == 1:
+                    name = f"Clinica {region_name}"
+                elif i == 2:
+                    name = f"Centro Medico {region_name}"
+                elif i == 3:
+                    name = f"Policlinico di {region_name}"
+                else:
+                    prefix = random.choice(['Ospedale', 'Centro', 'Clinica', 'Istituto'])
+                    suffix = random.choice(['San', 'Santa', 'Nuovo', 'Centrale', 'Generale', 'Regionale'])
+                    name = f"{prefix} {suffix} {region_name}"
                 
+                # Create address and city
+                address = f"Via {region_name} {i+1}"
+                city = f"{region_name} Città" if i == 0 else f"{region_name} {random.choice(['Nord', 'Sud', 'Est', 'Ovest', 'Centro'])}"
+                
+                # Select specialties
+                specialties = random.choice(specialty_combos)
+                
+                # Create the facility
+                facility = create_sample_facility(
+                    region=region,
+                    name=name,
+                    facility_type=facility_type,
+                    address=address,
+                    city=city,
+                    specialties_text=specialties,
+                    phone=f"0{random.randint(10, 99)} {random.randint(1000000, 9999999)}"
+                )
+                
+                if facility:
+                    facilities_added += 1
+            
+            logger.info(f"Added {facilities_added} facilities for {region_name}")
+            stats['regions'] += 1
+            stats['total'] += facilities_added
+            
         except Exception as e:
-            logger.error(f"Error loading data from {source_key}: {str(e)}")
+            logger.error(f"Error loading data for {region_name}: {str(e)}")
             logger.exception(e)  # Log the full exception for debugging
     
     return stats

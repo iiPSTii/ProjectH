@@ -153,17 +153,10 @@
                             <div class="card-header">Gestione Dati</div>
                             <div class="card-body">
                                 <h5 class="card-title">Carica i Dati</h5>
-                                <p class="card-text">Carica i dati delle strutture sanitarie scegliendo la modalità.</p>
-                                
-                                <div class="form-check form-switch mb-3">
-                                    <input class="form-check-input" type="checkbox" id="webScrapingToggle">
-                                    <label class="form-check-label" for="webScrapingToggle">
-                                        Usa Web Scraping (dati reali)
-                                    </label>
-                                </div>
+                                <p class="card-text">Carica i dati delle strutture sanitarie per tutte le 20 regioni italiane.</p>
                                 
                                 <div class="d-grid gap-2">
-                                    <a href="/load-data?web_scraping=false" class="btn btn-secondary" id="loadDataBtn">
+                                    <a href="/load-data" class="btn btn-primary" id="loadDataBtn">
                                         <i class="fas fa-database me-2"></i> Carica Dati di Esempio
                                     </a>
                                 </div>
@@ -172,15 +165,15 @@
                     </div>
                     <div class="col-md-6">
                         <div class="card bg-dark border-secondary mb-3">
-                            <div class="card-header">Fonti dei Dati</div>
+                            <div class="card-header">Regioni Italiane</div>
                             <div class="card-body">
-                                <h5 class="card-title">Informazioni sulle Fonti</h5>
-                                <p class="card-text">Le fonti dei dati includono:</p>
+                                <h5 class="card-title">Informazioni sulle Regioni</h5>
+                                <p class="card-text">Dati di esempio disponibili per tutte le 20 regioni italiane:</p>
                                 <ul class="list-group list-group-flush bg-dark">
-                                    <li class="list-group-item bg-dark">Regione Puglia - Anagrafe strutture sanitarie</li>
-                                    <li class="list-group-item bg-dark">Provincia Autonoma di Trento - Strutture sanitarie</li>
-                                    <li class="list-group-item bg-dark">Regione Toscana - Strutture ospedaliere</li>
-                                    <li class="list-group-item bg-dark">Regione Lazio - Strutture sanitarie</li>
+                                    <li class="list-group-item bg-dark">Nord: Lombardia, Piemonte, Veneto, Liguria, Valle d'Aosta, Trentino-Alto Adige, Friuli-Venezia Giulia, Emilia-Romagna</li>
+                                    <li class="list-group-item bg-dark">Centro: Toscana, Lazio, Umbria, Marche</li>
+                                    <li class="list-group-item bg-dark">Sud: Campania, Puglia, Basilicata, Calabria, Abruzzo, Molise</li>
+                                    <li class="list-group-item bg-dark">Isole: Sicilia, Sardegna</li>
                                 </ul>
                             </div>
                         </div>
@@ -203,31 +196,6 @@ function updateQualityValue(val) {
     }
 }
 
-// Web scraping toggle functionality
-document.addEventListener('DOMContentLoaded', function() {
-    const webScrapingToggle = document.getElementById('webScrapingToggle');
-    const loadDataBtn = document.getElementById('loadDataBtn');
-    
-    // Update button text and URL based on toggle state
-    function updateLoadButton() {
-        if (webScrapingToggle.checked) {
-            loadDataBtn.href = '/load-data?web_scraping=true';
-            loadDataBtn.innerHTML = '<i class="fas fa-cloud-download-alt me-2"></i> Carica Dati Reali (Web Scraping)';
-            loadDataBtn.classList.remove('btn-secondary');
-            loadDataBtn.classList.add('btn-success');
-        } else {
-            loadDataBtn.href = '/load-data?web_scraping=false';
-            loadDataBtn.innerHTML = '<i class="fas fa-database me-2"></i> Carica Dati di Esempio';
-            loadDataBtn.classList.remove('btn-success');
-            loadDataBtn.classList.add('btn-secondary');
-        }
-    }
-    
-    // Set up event listener for toggle changes
-    webScrapingToggle.addEventListener('change', updateLoadButton);
-    
-    // Initialize button state
-    updateLoadButton();
-});
+// No additional functionality needed for loading data
 </script>
 {% endblock %}
