@@ -1,0 +1,146 @@
+Build a Web App to Search Italian Medical Facilities
+🩺 Project Title:
+FindMyCure Italia – A Search Platform for the Best Medical Facilities in Italy
+
+🧠 What I Want You to Build:
+Please help me build a web app that lets users search and compare all types of medical facilities in Italy (hospitals, clinics, specialized centers, etc.) by:
+
+Treatment type / medical specialty
+
+Cost
+
+Quality / performance
+
+This is the beta version. I want to:
+
+Populate a database using real open data
+
+Let users search and filter based on treatment type, location, cost, and quality
+
+Show results with facility name, address, type, cost, quality rating
+
+Include a simple user interface (HTML/CSS/JS or React if preferred)
+
+Use Flask (Python) as backend (or Node.js if you're more comfortable)
+
+📊 What the Database Should Contain:
+Facility name (e.g., Ospedale San Raffaele)
+
+Address (street, city)
+
+Region
+
+Type of structure (e.g., hospital, clinic, diagnostic lab)
+
+Specialties / services offered
+
+Cost (approximate if available)
+
+Quality score (based on official indicators or patient reviews)
+
+🌐 USE THESE REAL DATA SOURCES to populate the database:
+🏥 Regional Open Datasets (CSV/XML)
+Use at least these three to start populating facilities:
+
+Regione Puglia – Anagrafe strutture sanitarie
+👉 https://www.dati.puglia.it/dataset/anagrafe-strutture-sanitarie
+
+Provincia Autonoma di Trento – Strutture sanitarie
+👉 https://dati.trentino.it/dataset/strutture-sanitarie-pubbliche-e-accreditate
+
+Regione Toscana – Strutture ospedaliere
+👉 https://www.opendata.toscana.it/dataset/strutture-ospedaliere
+
+✅ These are open data under IODL 2.0 / CC-BY — you can use and display them with attribution.
+
+📈 Quality Metrics (OPTIONAL for beta)
+You can reference:
+
+Programma Nazionale Esiti (PNE) by AGENAS for hospital performance
+👉 https://pne.agenas.it/
+
+If you don’t have a direct API, show a placeholder for quality in the database for now.
+
+🧰 Tech Stack
+Backend: Python + Flask
+
+Frontend: HTML + Bootstrap (or React if you want)
+
+Database: SQLite (for simplicity), use SQLAlchemy ORM
+
+Scraping or CSV ingestion: Use pandas to load datasets from CSV URLs
+
+🗂 Features
+Data Loader
+
+Load and clean datasets from the links above
+
+Normalize fields: facility name, address, type, region, specialty
+
+Database Builder
+
+Store facility info in SQLite
+
+Include cost (if any), quality (placeholder for now), and services offered
+
+User Interface
+
+Simple homepage with search filters: specialty, region, max cost, min quality
+
+Display a list of results with:
+
+Facility name
+
+Address
+
+Type
+
+Quality score
+
+Cost estimate
+
+Search Functionality
+
+Filter by: specialty, region, cost range, quality score
+
+Show results in a clean table or card view
+
+⚖️ Important Notes
+Do not scrape restricted sites. Use only open datasets (linked above).
+
+All listed sources are either open data or government portals.
+
+Feel free to enhance the frontend later (optional map, etc.)
+
+📦 Example Structure
+php
+Copy
+Edit
+project/
+├── app.py                # Flask app
+├── scraper.py            # Load datasets from URLs
+├── models.py             # SQLAlchemy models
+├── templates/
+│   ├── index.html        # Search form
+│   ├── results.html      # Display results
+├── static/
+│   ├── style.css         # Optional custom styling
+├── medical_structures.db # SQLite database
+✅ First Steps You Should Do
+Use pandas to load data from Regione Puglia CSV (from URL)
+
+Normalize and insert into SQLite using SQLAlchemy
+
+Create a /search route in Flask that queries by specialty, cost, quality
+
+Show results in an HTML template
+
+🔄 Later Features (After Beta)
+Add Google Maps or OpenStreetMap to show facility locations
+
+Add user review functionality
+
+Add sorting (best-rated, lowest-cost)
+
+Add real-time cost or booking info from APIs (e.g., MioDottore or iDoctors, if partnerships are possible)
+
