@@ -54,6 +54,17 @@ class MedicalFacility(db.Model):
     cost_estimate = db.Column(db.Float, default=None)
     quality_score = db.Column(db.Float, default=None)
     
+    # Specialty ratings (1-5 scale)
+    cardiology_rating = db.Column(db.Float, default=None)
+    orthopedics_rating = db.Column(db.Float, default=None)
+    oncology_rating = db.Column(db.Float, default=None)
+    neurology_rating = db.Column(db.Float, default=None)
+    surgery_rating = db.Column(db.Float, default=None)
+    urology_rating = db.Column(db.Float, default=None)
+    pediatrics_rating = db.Column(db.Float, default=None)
+    gynecology_rating = db.Column(db.Float, default=None)
+    strengths_summary = db.Column(db.String(500), default=None)
+    
     # Data source and attribution
     data_source = db.Column(db.String(100))
     attribution = db.Column(db.String(200))
