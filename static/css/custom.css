@@ -300,19 +300,48 @@ footer h5::after {
     color: #e0e0e0 !important;
 }
 
-/* Specialty ratings styling */
-.specialty-ratings .badge {
-    min-width: 90px;
-    display: inline-block;
-    text-align: center;
-}
-
-.specialty-ratings .stars {
-    font-size: 0.85rem;
-}
-
-.specialty-ratings .col-6 {
+/* Specialty ratings styling - modern compact design */
+.specialty-ratings .specialty-rating-item {
+    display: flex;
+    align-items: center;
     margin-bottom: 0.5rem;
+    padding: 0.3rem 0.5rem;
+    border-radius: 6px;
+    background: rgba(0, 119, 204, 0.05);
+}
+
+.specialty-ratings .specialty-name {
+    min-width: 85px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--medical-light-blue);
+}
+
+.specialty-ratings .rating-bar {
+    flex-grow: 1;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    margin: 0 0.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.specialty-ratings .rating-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: linear-gradient(90deg, var(--medical-blue), var(--medical-green));
+    border-radius: 4px;
+}
+
+.specialty-ratings .rating-value {
+    font-size: 0.75rem;
+    min-width: 24px;
+    text-align: right;
+    color: var(--medical-green);
+    font-weight: 600;
 }
 
 /* Strengths summary highlight */

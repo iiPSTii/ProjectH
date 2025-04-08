@@ -179,202 +179,97 @@
                             </div>
                         </div>
 
-                        <!-- Specialty Ratings -->
+                        <!-- Specialty Ratings - Modernized Design -->
                         {% if facility.cardiology_rating or facility.orthopedics_rating or facility.oncology_rating or facility.neurology_rating or facility.surgery_rating or facility.urology_rating or facility.pediatrics_rating or facility.gynecology_rating %}
                         <div class="mt-3 specialty-ratings">
                             <h6 class="mb-2">Valutazioni per Specialità:</h6>
-                            <div class="row g-2">
-                                {% if facility.cardiology_rating %}
-                                <div class="col-6">
-                                    <div class="d-flex align-items-center">
-                                        <span class="badge bg-primary me-2">Cardiologia</span>
-                                        <div class="stars" style="--rating: {{ facility.cardiology_rating }};">
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <div class="overlay">
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                            </div>
-                                        </div>
-                                        <span class="ms-1">{{ format_quality(facility.cardiology_rating) }}</span>
-                                    </div>
-                                </div>
-                                {% endif %}
-                                
-                                {% if facility.orthopedics_rating %}
-                                <div class="col-6">
-                                    <div class="d-flex align-items-center">
-                                        <span class="badge bg-primary me-2">Ortopedia</span>
-                                        <div class="stars" style="--rating: {{ facility.orthopedics_rating }};">
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <div class="overlay">
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                            </div>
-                                        </div>
-                                        <span class="ms-1">{{ format_quality(facility.orthopedics_rating) }}</span>
-                                    </div>
-                                </div>
-                                {% endif %}
-                                
-                                {% if facility.oncology_rating %}
-                                <div class="col-6">
-                                    <div class="d-flex align-items-center">
-                                        <span class="badge bg-primary me-2">Oncologia</span>
-                                        <div class="stars" style="--rating: {{ facility.oncology_rating }};">
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <div class="overlay">
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                            </div>
-                                        </div>
-                                        <span class="ms-1">{{ format_quality(facility.oncology_rating) }}</span>
-                                    </div>
-                                </div>
-                                {% endif %}
-                                
-                                {% if facility.neurology_rating %}
-                                <div class="col-6">
-                                    <div class="d-flex align-items-center">
-                                        <span class="badge bg-primary me-2">Neurologia</span>
-                                        <div class="stars" style="--rating: {{ facility.neurology_rating }};">
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <div class="overlay">
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                            </div>
-                                        </div>
-                                        <span class="ms-1">{{ format_quality(facility.neurology_rating) }}</span>
-                                    </div>
-                                </div>
-                                {% endif %}
-                                
-                                {% if facility.surgery_rating %}
-                                <div class="col-6">
-                                    <div class="d-flex align-items-center">
-                                        <span class="badge bg-primary me-2">Chirurgia</span>
-                                        <div class="stars" style="--rating: {{ facility.surgery_rating }};">
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <div class="overlay">
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                            </div>
-                                        </div>
-                                        <span class="ms-1">{{ format_quality(facility.surgery_rating) }}</span>
-                                    </div>
-                                </div>
-                                {% endif %}
-                                
-                                {% if facility.urology_rating %}
-                                <div class="col-6">
-                                    <div class="d-flex align-items-center">
-                                        <span class="badge bg-primary me-2">Urologia</span>
-                                        <div class="stars" style="--rating: {{ facility.urology_rating }};">
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <div class="overlay">
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                            </div>
-                                        </div>
-                                        <span class="ms-1">{{ format_quality(facility.urology_rating) }}</span>
-                                    </div>
-                                </div>
-                                {% endif %}
-                                
-                                {% if facility.pediatrics_rating %}
-                                <div class="col-6">
-                                    <div class="d-flex align-items-center">
-                                        <span class="badge bg-primary me-2">Pediatria</span>
-                                        <div class="stars" style="--rating: {{ facility.pediatrics_rating }};">
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <div class="overlay">
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                            </div>
-                                        </div>
-                                        <span class="ms-1">{{ format_quality(facility.pediatrics_rating) }}</span>
-                                    </div>
-                                </div>
-                                {% endif %}
-                                
-                                {% if facility.gynecology_rating %}
-                                <div class="col-6">
-                                    <div class="d-flex align-items-center">
-                                        <span class="badge bg-primary me-2">Ginecologia</span>
-                                        <div class="stars" style="--rating: {{ facility.gynecology_rating }};">
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <div class="overlay">
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                            </div>
-                                        </div>
-                                        <span class="ms-1">{{ format_quality(facility.gynecology_rating) }}</span>
-                                    </div>
-                                </div>
-                                {% endif %}
-                            </div>
                             
-                            {% if facility.strengths_summary %}
-                            <div class="mt-2">
-                                <p class="mb-0 text-info"><i class="fas fa-certificate me-1"></i> {{ facility.strengths_summary }}</p>
+                            {% if facility.cardiology_rating %}
+                            <div class="specialty-rating-item">
+                                <div class="specialty-name">Cardiologia</div>
+                                <div class="rating-bar">
+                                    <div class="rating-fill" style="width: {{ facility.cardiology_rating*20 }}%;"></div>
+                                </div>
+                                <div class="rating-value">{{ format_quality(facility.cardiology_rating) }}</div>
+                            </div>
+                            {% endif %}
+                            
+                            {% if facility.orthopedics_rating %}
+                            <div class="specialty-rating-item">
+                                <div class="specialty-name">Ortopedia</div>
+                                <div class="rating-bar">
+                                    <div class="rating-fill" style="width: {{ facility.orthopedics_rating*20 }}%;"></div>
+                                </div>
+                                <div class="rating-value">{{ format_quality(facility.orthopedics_rating) }}</div>
+                            </div>
+                            {% endif %}
+                            
+                            {% if facility.oncology_rating %}
+                            <div class="specialty-rating-item">
+                                <div class="specialty-name">Oncologia</div>
+                                <div class="rating-bar">
+                                    <div class="rating-fill" style="width: {{ facility.oncology_rating*20 }}%;"></div>
+                                </div>
+                                <div class="rating-value">{{ format_quality(facility.oncology_rating) }}</div>
+                            </div>
+                            {% endif %}
+                            
+                            {% if facility.neurology_rating %}
+                            <div class="specialty-rating-item">
+                                <div class="specialty-name">Neurologia</div>
+                                <div class="rating-bar">
+                                    <div class="rating-fill" style="width: {{ facility.neurology_rating*20 }}%;"></div>
+                                </div>
+                                <div class="rating-value">{{ format_quality(facility.neurology_rating) }}</div>
+                            </div>
+                            {% endif %}
+                            
+                            {% if facility.surgery_rating %}
+                            <div class="specialty-rating-item">
+                                <div class="specialty-name">Chirurgia</div>
+                                <div class="rating-bar">
+                                    <div class="rating-fill" style="width: {{ facility.surgery_rating*20 }}%;"></div>
+                                </div>
+                                <div class="rating-value">{{ format_quality(facility.surgery_rating) }}</div>
+                            </div>
+                            {% endif %}
+                            
+                            {% if facility.urology_rating %}
+                            <div class="specialty-rating-item">
+                                <div class="specialty-name">Urologia</div>
+                                <div class="rating-bar">
+                                    <div class="rating-fill" style="width: {{ facility.urology_rating*20 }}%;"></div>
+                                </div>
+                                <div class="rating-value">{{ format_quality(facility.urology_rating) }}</div>
+                            </div>
+                            {% endif %}
+                            
+                            {% if facility.pediatrics_rating %}
+                            <div class="specialty-rating-item">
+                                <div class="specialty-name">Pediatria</div>
+                                <div class="rating-bar">
+                                    <div class="rating-fill" style="width: {{ facility.pediatrics_rating*20 }}%;"></div>
+                                </div>
+                                <div class="rating-value">{{ format_quality(facility.pediatrics_rating) }}</div>
+                            </div>
+                            {% endif %}
+                            
+                            {% if facility.gynecology_rating %}
+                            <div class="specialty-rating-item">
+                                <div class="specialty-name">Ginecologia</div>
+                                <div class="rating-bar">
+                                    <div class="rating-fill" style="width: {{ facility.gynecology_rating*20 }}%;"></div>
+                                </div>
+                                <div class="rating-value">{{ format_quality(facility.gynecology_rating) }}</div>
                             </div>
                             {% endif %}
                         </div>
+                        
+                        {% if facility.strengths_summary %}
+                        <div class="mt-2">
+                            <p class="mb-0 text-info"><i class="fas fa-certificate me-1"></i> {{ facility.strengths_summary }}</p>
+                        </div>
+                        {% endif %}
                         {% endif %}
                         
                         {% if facility.telephone %}
@@ -464,39 +359,47 @@
                             {% endif %}
                         </div>
                         
-                        <!-- Specialty Ratings in List View -->
+                        <!-- Specialty Ratings in List View - Modernized Design -->
                         <div class="col-md-3">
                             {% if facility.cardiology_rating or facility.orthopedics_rating or facility.oncology_rating or facility.neurology_rating or facility.surgery_rating or facility.urology_rating or facility.pediatrics_rating or facility.gynecology_rating %}
-                            <div class="mt-2 mt-md-0">
+                            <div class="mt-2 mt-md-0 specialty-ratings">
                                 <h6 class="mb-1">Valutazioni per Specialità:</h6>
-                                <div class="row g-2">
-                                    {% if facility.cardiology_rating %}
-                                    <div class="col-12">
-                                        <small class="badge bg-primary me-1">Cardiologia</small>
-                                        <small>{{ format_quality(facility.cardiology_rating) }}</small>
+                                
+                                {% if facility.cardiology_rating %}
+                                <div class="specialty-rating-item">
+                                    <div class="specialty-name">Cardiologia</div>
+                                    <div class="rating-bar">
+                                        <div class="rating-fill" style="width: {{ facility.cardiology_rating*20 }}%;"></div>
                                     </div>
-                                    {% endif %}
-                                    
-                                    {% if facility.oncology_rating %}
-                                    <div class="col-12">
-                                        <small class="badge bg-primary me-1">Oncologia</small>
-                                        <small>{{ format_quality(facility.oncology_rating) }}</small>
-                                    </div>
-                                    {% endif %}
-                                    
-                                    {% if facility.neurology_rating %}
-                                    <div class="col-12">
-                                        <small class="badge bg-primary me-1">Neurologia</small>
-                                        <small>{{ format_quality(facility.neurology_rating) }}</small>
-                                    </div>
-                                    {% endif %}
-                                    
-                                    {% if facility.strengths_summary %}
-                                    <div class="col-12 mt-1">
-                                        <small class="text-info"><i class="fas fa-certificate me-1"></i> {{ facility.strengths_summary }}</small>
-                                    </div>
-                                    {% endif %}
+                                    <div class="rating-value">{{ format_quality(facility.cardiology_rating) }}</div>
                                 </div>
+                                {% endif %}
+                                
+                                {% if facility.oncology_rating %}
+                                <div class="specialty-rating-item">
+                                    <div class="specialty-name">Oncologia</div>
+                                    <div class="rating-bar">
+                                        <div class="rating-fill" style="width: {{ facility.oncology_rating*20 }}%;"></div>
+                                    </div>
+                                    <div class="rating-value">{{ format_quality(facility.oncology_rating) }}</div>
+                                </div>
+                                {% endif %}
+                                
+                                {% if facility.neurology_rating %}
+                                <div class="specialty-rating-item">
+                                    <div class="specialty-name">Neurologia</div>
+                                    <div class="rating-bar">
+                                        <div class="rating-fill" style="width: {{ facility.neurology_rating*20 }}%;"></div>
+                                    </div>
+                                    <div class="rating-value">{{ format_quality(facility.neurology_rating) }}</div>
+                                </div>
+                                {% endif %}
+                                
+                                {% if facility.strengths_summary %}
+                                <div class="mt-2">
+                                    <small class="text-info"><i class="fas fa-certificate me-1"></i> {{ facility.strengths_summary }}</small>
+                                </div>
+                                {% endif %}
                             </div>
                             {% endif %}
                         </div>
