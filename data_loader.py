@@ -389,9 +389,12 @@ def get_or_create_region(region_name):
             return None
 
 def get_or_create_specialty(specialty_name):
-    """Get or create a specialty by name"""
+    """Get or create a specialty by name with improved transaction handling"""
     if not specialty_name:
         return None
+    
+    # Start a new nested transaction for this specialty operation
+    db.session.begin_nested()
     
     try:
         # Make sure the input is a proper string
@@ -399,6 +402,7 @@ def get_or_create_specialty(specialty_name):
             try:
                 specialty_name = str(specialty_name)
             except:
+                db.session.rollback()
                 return None
         
         # Remove any non-ASCII characters first to avoid encoding issues
@@ -409,6 +413,7 @@ def get_or_create_specialty(specialty_name):
         
         # In case we get back None or an empty string, use a default
         if not normalized_name:
+            db.session.rollback()
             return None
             
         # Limit the length to avoid database errors (name column is String(100))
@@ -417,57 +422,91 @@ def get_or_create_specialty(specialty_name):
         
         # If string is empty after cleaning, skip this specialty
         if not normalized_name or normalized_name.strip() == "":
+            db.session.rollback()
             return None
             
-        # Try to find the specialty in the database
-        try:
-            # Use a SQL query instead of SQLAlchemy's filter_by to avoid encoding issues
-            from sqlalchemy import text
-            query = text("SELECT id FROM specialties WHERE name = :name")
-            result = db.session.execute(query, {"name": normalized_name}).fetchone()
-            
-            if result:
-                # We found the specialty, get it by ID
-                specialty_id = result[0]
-                specialty = Specialty.query.get(specialty_id)
-                return specialty
-        except Exception as e:
-            logger.error(f"Error querying specialty with raw SQL: {str(e)}")
-            # Continue and try the filter_by approach as fallback
-            pass
-            
-        # Fallback to SQLAlchemy's filter_by if raw SQL approach failed
+        # First try to find an existing specialty - this is the fast path
+        specialty = None
+        
+        # Method 1: Try direct lookup by primary key or filter
         try:
             specialty = Specialty.query.filter_by(name=normalized_name).first()
+            if specialty:
+                # Commit and return right away if found
+                db.session.commit()
+                logger.debug(f"Found existing specialty: {normalized_name}")
+                return specialty
         except Exception as e:
-            logger.error(f"Error querying specialty with filter_by: {str(e)}")
-            specialty = None
+            logger.error(f"Error looking up specialty with filter_by: {str(e)}")
+            # Continue to other methods
         
-        # If specialty doesn't exist, create it
+        # Method 2: Retry using raw SQL for more robust encoding handling
         if not specialty:
             try:
+                from sqlalchemy import text
+                query = text("SELECT id FROM specialties WHERE name = :name")
+                result = db.session.execute(query, {"name": normalized_name}).fetchone()
+                
+                if result:
+                    # We found the specialty, get it by ID
+                    specialty_id = result[0]
+                    specialty = Specialty.query.get(specialty_id)
+                    if specialty:
+                        db.session.commit()
+                        logger.debug(f"Found existing specialty via SQL: {normalized_name}")
+                        return specialty
+            except Exception as e:
+                logger.error(f"Error querying specialty with raw SQL: {str(e)}")
+                # Continue to creation
+        
+        # If we reached here, the specialty doesn't exist - create it
+        if not specialty:
+            try:
+                # Check once more for duplicates before creating
+                # Add a lock during creation for thread safety
+                from sqlalchemy import text
+                lock_query = text("SELECT id FROM specialties WHERE name = :name FOR UPDATE")
+                lock_result = db.session.execute(lock_query, {"name": normalized_name}).fetchone()
+                
+                if lock_result:
+                    # Another process created it while we were checking
+                    specialty_id = lock_result[0]
+                    specialty = Specialty.query.get(specialty_id)
+                    db.session.commit()
+                    logger.debug(f"Found specialty that was just created: {normalized_name}")
+                    return specialty
+                    
+                # Actually create the specialty
                 specialty = Specialty(name=normalized_name)
                 db.session.add(specialty)
                 db.session.commit()
                 logger.debug(f"Created new specialty: {normalized_name}")
+                return specialty
             except Exception as e:
                 logger.error(f"Error creating specialty: {str(e)}")
                 db.session.rollback()
-                # Try one more time with a really basic name
+                
+                # Try one more time with a unique name based on timestamp + hash
                 try:
-                    fallback_name = f"Specialty-{abs(hash(normalized_name) % 1000)}"
+                    import time
+                    import random
+                    random_stamp = int(time.time() * 1000) % 10000 + random.randint(0, 999)
+                    fallback_name = f"Specialty-{abs(hash(normalized_name) % 1000)}-{random_stamp}"
                     specialty = Specialty(name=fallback_name)
                     db.session.add(specialty)
                     db.session.commit()
                     logger.info(f"Created fallback specialty: {fallback_name}")
+                    return specialty
                 except Exception as inner_e:
                     logger.error(f"Error creating fallback specialty: {str(inner_e)}")
                     db.session.rollback()
                     return None
         
+        # If we somehow reached here, return the specialty or None
         return specialty
     except Exception as e:
         logger.error(f"Error in get_or_create_specialty: {str(e)}")
+        db.session.rollback()
         return None
 
 def extract_specialties(text):
@@ -1352,44 +1391,74 @@ def load_data():
     if USE_WEB_SCRAPING:
         try:
             logger.info("Attempting to fetch real data using web scrapers")
-            imported_data = web_scraper.fetch_all_data()
             
-            if imported_data and len(imported_data) > 0:
-                logger.info(f"Successfully imported data from {len(imported_data)} sources")
-                
-                # Process each source's data
-                for source_name, source_data in imported_data.items():
+            # Get scrapers directly and limit how many we process at once to avoid timeouts
+            import web_scraper
+            all_scrapers = web_scraper.get_available_scrapers()
+            # Limit to just a few scrapers per request
+            max_scrapers_per_request = 5
+            limited_scrapers = all_scrapers[:max_scrapers_per_request] 
+            
+            logger.info(f"Processing {len(limited_scrapers)} regions in this request (out of {len(all_scrapers)} total)")
+            
+            # Process each scraper directly
+            for scraper in limited_scrapers:
+                try:
+                    # Begin a nested transaction for each region
+                    db.session.begin_nested()
+                    
+                    source_name = scraper.source_name
+                    region_name = scraper.region_name
+                    attribution = scraper.attribution
+                    
+                    logger.info(f"Fetching data for {region_name} from {source_name}")
+                    
+                    # Attempt to fetch data with a timeout
+                    df = None
                     try:
-                        if source_data and "data" in source_data and not source_data["data"].empty:
-                            df = source_data["data"]
-                            region_name = source_data.get("region_name")
-                            attribution = source_data.get("attribution", source_name)
-                            
-                            # Create or get the region
-                            region = get_or_create_region(region_name)
-                            if not region:
-                                logger.warning(f"Could not create region for {region_name}")
-                                continue
-                                
-                            # Add each facility from the DataFrame
-                            facilities_added = process_scraped_data(df, region, source_name, attribution)
-                            
-                            if facilities_added > 0:
-                                stats['regions'] += 1
-                                stats['total'] += facilities_added
-                                logger.info(f"Added {facilities_added} facilities for {region_name} from {source_name}")
+                        df = scraper.fetch_data()
                     except Exception as e:
-                        logger.error(f"Error processing data from {source_name}: {str(e)}")
+                        logger.error(f"Error fetching data for {region_name}: {str(e)}")
+                        db.session.rollback()
                         continue
-                
-                # If we successfully loaded data from scraping, we can return early
-                if stats['total'] > 0:
-                    logger.info(f"Successfully loaded {stats['total']} facilities from {stats['regions']} regions using web scraping")
-                    return stats
-                else:
-                    logger.warning("No facilities were added from web scraping, falling back to sample data")
+                    
+                    if df is not None and not df.empty:
+                        # Create or get the region
+                        region = get_or_create_region(region_name)
+                        if not region:
+                            logger.warning(f"Could not create region for {region_name}")
+                            db.session.rollback()
+                            continue
+                            
+                        # Add each facility from the DataFrame
+                        facilities_added = process_scraped_data(df, region, source_name, attribution)
+                            
+                        if facilities_added > 0:
+                            # Commit if successful
+                            db.session.commit()
+                            stats['regions'] += 1
+                            stats['total'] += facilities_added
+                            logger.info(f"Added {facilities_added} facilities for {region_name} from {source_name}")
+                        else:
+                            # Rollback if no facilities were added
+                            db.session.rollback()
+                except Exception as e:
+                    logger.error(f"Error processing data from {source_name}: {str(e)}")
+                    db.session.rollback()
+                    continue
+            
+            # If we successfully loaded data from scraping, we can return early
+            if stats['total'] > 0:
+                logger.info(f"Successfully loaded {stats['total']} facilities from {stats['regions']} regions using web scraping")
+                # Make sure all changes are committed
+                try:
+                    db.session.commit()
+                except Exception as e:
+                    logger.error(f"Error in final commit: {str(e)}")
+                    db.session.rollback()
+                return stats
             else:
-                logger.warning("No data was imported from web scrapers, falling back to sample data")
+                logger.warning("No facilities were added from web scraping, falling back to sample data")
         except Exception as e:
             logger.error(f"Error fetching data using web scrapers: {str(e)}")
             logger.warning("Falling back to sample data approach")
@@ -1604,15 +1673,19 @@ def process_scraped_data(df, region, source_name, attribution):
         logger.warning(f"Could not find name column in {source_name} data")
         return 0
     
-    # Limit processing to first 5 items per region to avoid overloading
-    max_items = min(5, len(df))
+    # Limit processing to fewer items per region to avoid timeouts (reduce from 5 to 3)
+    max_items = min(3, len(df))
     logger.info(f"Processing {max_items} facilities for {region.name} from {source_name}")
     
     for idx in range(max_items):
+        # Start a new transaction for each facility
+        db.session.begin_nested()
+        
         try:
             # Extract basic facility information and ensure they're ASCII-only
             name = safe_get(df, idx, name_col)
             if not name:
+                db.session.rollback()
                 continue
                 
             # Clean strings to ensure they don't have encoding issues
@@ -1620,9 +1693,11 @@ def process_scraped_data(df, region, source_name, attribution):
                 name = ''.join(c for c in str(name) if ord(c) < 128)
                 if not name:
                     logger.warning(f"Name became empty after cleaning for row {idx}. Skipping.")
+                    db.session.rollback()
                     continue
             except Exception as e:
                 logger.error(f"Error cleaning facility name for row {idx}: {str(e)}")
+                db.session.rollback()
                 continue
                 
             # Clean other strings
@@ -1662,9 +1737,11 @@ def process_scraped_data(df, region, source_name, attribution):
                 
                 if existing:
                     logger.debug(f"Facility already exists: {name} in {region.name}")
+                    db.session.rollback()
                     continue
             except Exception as e:
                 logger.error(f"Error checking for existing facility: {str(e)}")
+                db.session.rollback()
                 continue
             
             # Create new facility with random cost estimates and quality scores
@@ -1725,15 +1802,18 @@ def process_scraped_data(df, region, source_name, attribution):
             # Add facility to database
             try:
                 db.session.add(facility)
+                # Commit the facility first
                 db.session.commit()
                 facilities_added += 1
+                logger.debug(f"Added facility: {name} in {region.name}")
             except Exception as e:
                 logger.error(f"Error adding facility to database: {str(e)}")
                 db.session.rollback()
                 continue
             
-            # Process specialties as a batch instead of committing each individually
+            # Process specialties - limit to max 3 specialties per facility to avoid timeouts
             if specialty_col:
+                specialties_processed = 0
                 try:
                     specialties_text = safe_get(df, idx, specialty_col)
                     if specialties_text:
@@ -1741,48 +1821,65 @@ def process_scraped_data(df, region, source_name, attribution):
                         specialties_text = ''.join(c for c in str(specialties_text) if ord(c) < 128)
                         specialty_names = extract_specialties(specialties_text)
                         
+                        # Limit number of specialties to process
+                        specialty_names = specialty_names[:3] if len(specialty_names) > 3 else specialty_names
+                        
                         # Add specialties one by one to avoid batch issues
-                        # First, get unique specialty names to avoid duplicates
                         processed_specialty_ids = set()
                         for specialty_name in specialty_names:
+                            if specialties_processed >= 3:  # Limit to 3 specialties per facility
+                                break
+                                
+                            # Start a new nested transaction for each specialty
+                            db.session.begin_nested()
+                            
                             try:
                                 specialty = get_or_create_specialty(specialty_name)
                                 if not specialty:
+                                    db.session.rollback()  # Rollback the nested transaction
                                     continue
                                     
                                 # Skip if we've already processed this specialty for this facility
                                 if specialty.id in processed_specialty_ids:
+                                    db.session.rollback()  # Rollback the nested transaction
                                     continue
                                     
                                 processed_specialty_ids.add(specialty.id)
-                                    
+                                
                                 # Check if this specialty is already associated with this facility
-                                try:
-                                    existing_fs = FacilitySpecialty.query.filter_by(
+                                existing_fs = FacilitySpecialty.query.filter_by(
+                                    facility_id=facility.id,
+                                    specialty_id=specialty.id
+                                ).first()
+                                
+                                if not existing_fs:
+                                    facility_specialty = FacilitySpecialty(
                                         facility_id=facility.id,
                                         specialty_id=specialty.id
-                                    ).first()
-                                    
-                                    if not existing_fs:
-                                        facility_specialty = FacilitySpecialty(
-                                            facility_id=facility.id,
-                                            specialty_id=specialty.id
-                                        )
-                                        db.session.add(facility_specialty)
-                                        db.session.commit()
-                                except Exception as e:
-                                    logger.error(f"Error adding specialty {specialty_name} to facility: {str(e)}")
-                                    db.session.rollback()
+                                    )
+                                    db.session.add(facility_specialty)
+                                    db.session.commit()  # Commit the nested transaction
+                                    specialties_processed += 1
+                                else:
+                                    db.session.rollback()  # Rollback the nested transaction
                             except Exception as e:
                                 logger.error(f"Error processing specialty {specialty_name}: {str(e)}")
+                                db.session.rollback()  # Rollback the nested transaction
                                 continue
                 except Exception as e:
-                    logger.error(f"Error processing specialties: {str(e)}")
+                    logger.error(f"Error processing specialties for facility {name}: {str(e)}")
                     # Don't rollback the entire transaction - the facility is already saved
         except Exception as e:
             logger.error(f"Error processing facility {idx} from {source_name}: {str(e)}")
             db.session.rollback()
             continue
+    
+    # Final clean commit to ensure all changes are saved
+    try:
+        db.session.commit()
+    except Exception as e:
+        logger.error(f"Error in final commit for {region.name}: {str(e)}")
+        db.session.rollback()
     
     return facilities_added
     
