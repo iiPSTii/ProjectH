@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block title %}Trova la tua Struttura Sanitaria Ideale{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="text-center mb-5">
+            <h1 class="display-4 fw-bold">Trova la Struttura Sanitaria Ideale in Italia</h1>
+            <p class="lead">Confronta ospedali, cliniche e centri specializzati in base a specialità, costi e qualità.</p>
+        </div>
+
+        <div class="card bg-dark shadow-lg border-0 rounded-lg mb-5">
+            <div class="card-body p-4">
+                <h2 class="card-title text-center mb-4">Cerca Strutture Sanitarie</h2>
+                
+                <form action="/search" method="get" id="searchForm">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="specialty" class="form-label">Specialità Medica</label>
+                            <select class="form-select" id="specialty" name="specialty">
+                                <option value="">Tutte le specialità</option>
+                                {% for specialty in specialties %}
+                                <option value="{{ specialty.name }}">{{ specialty.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label for="region" class="form-label">Regione</label>
+                            <select class="form-select" id="region" name="region">
+                                <option value="">Tutte le regioni</option>
+                                {% for region in regions %}
+                                <option value="{{ region.name }}">{{ region.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label for="min_quality" class="form-label">Qualità Minima</label>
+                            <div class="input-group">
+                                <input type="range" class="form-range" id="min_quality" name="min_quality" min="0" max="5" step="0.5" value="0" oninput="updateQualityValue(this.value)">
+                                <span class="input-group-text ms-2" id="qualityValue">Qualsiasi</span>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label for="max_cost" class="form-label">Costo Massimo (€)</label>
+                            <input type="number" class="form-control" id="max_cost" name="max_cost" placeholder="Qualsiasi" min="0">
+                        </div>
+                        
+                        <div class="col-12 mt-4 text-center">
+                            <button type="submit" class="btn btn-primary btn-lg px-5">
+                                <i class="fas fa-search me-2"></i> Cerca Strutture
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
+            <div class="col">
+                <div class="card h-100 bg-dark border-0 shadow">
+                    <div class="card-body text-center">
+                        <div class="feature-icon bg-primary bg-opacity-10 text-primary rounded-circle mb-3 p-3 d-inline-block">
+                            <i class="fas fa-hospital fa-2x"></i>
+                        </div>
+                        <h5 class="card-title">Strutture Verificate</h5>
+                        <p class="card-text">Dati ufficiali da fonti regionali open data per strutture in Puglia, Trentino e Toscana.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card h-100 bg-dark border-0 shadow">
+                    <div class="card-body text-center">
+                        <div class="feature-icon bg-primary bg-opacity-10 text-primary rounded-circle mb-3 p-3 d-inline-block">
+                            <i class="fas fa-search-dollar fa-2x"></i>
+                        </div>
+                        <h5 class="card-title">Confronta Costi</h5>
+                        <p class="card-text">Trova le strutture sanitarie che offrono il miglior rapporto qualità-prezzo per le tue esigenze.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card h-100 bg-dark border-0 shadow">
+                    <div class="card-body text-center">
+                        <div class="feature-icon bg-primary bg-opacity-10 text-primary rounded-circle mb-3 p-3 d-inline-block">
+                            <i class="fas fa-star fa-2x"></i>
+                        </div>
+                        <h5 class="card-title">Valutazioni di Qualità</h5>
+                        <p class="card-text">Filtra le strutture in base alle valutazioni di qualità e alle recensioni dei pazienti.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center">
+            <h3 class="mb-4">Come Funziona</h3>
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="accordion" id="howItWorksAccordion">
+                        <div class="accordion-item bg-dark">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed bg-dark text-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                    <i class="fas fa-search me-2"></i> Cerca per Specialità o Regione
+                                </button>
+                            </h2>
+                            <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#howItWorksAccordion">
+                                <div class="accordion-body">
+                                    Seleziona la specialità medica che ti interessa (cardiologia, ortopedia, ecc.) e/o la regione in cui desideri trovare la struttura sanitaria. Puoi anche lasciare vuoti questi campi per visualizzare tutte le strutture disponibili.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item bg-dark">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed bg-dark text-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    <i class="fas fa-sliders-h me-2"></i> Filtra per Qualità e Costo
+                                </button>
+                            </h2>
+                            <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#howItWorksAccordion">
+                                <div class="accordion-body">
+                                    Utilizza i filtri di qualità minima e costo massimo per affinare la tua ricerca. Il filtro di qualità ti permette di visualizzare solo le strutture con un determinato punteggio minimo, mentre il filtro di costo ti aiuta a trovare opzioni adatte al tuo budget.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item bg-dark">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed bg-dark text-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                    <i class="fas fa-hospital-user me-2"></i> Trova la Struttura Ideale
+                                </button>
+                            </h2>
+                            <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#howItWorksAccordion">
+                                <div class="accordion-body">
+                                    Visualizza i risultati della ricerca con tutte le informazioni pertinenti: nome della struttura, indirizzo, specialità, valutazione di qualità e costo stimato. Così potrai confrontare facilmente le diverse opzioni e scegliere quella più adatta alle tue esigenze.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function updateQualityValue(val) {
+    const qualityValueElement = document.getElementById('qualityValue');
+    if (val == 0) {
+        qualityValueElement.textContent = 'Qualsiasi';
+    } else {
+        qualityValueElement.textContent = val + '/5';
+    }
+}
+</script>
+{% endblock %}

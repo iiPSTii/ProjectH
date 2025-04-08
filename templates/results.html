@@ -1,0 +1,311 @@
+{% extends "base.html" %}
+
+{% block title %}Risultati della Ricerca{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Risultati della Ricerca</li>
+            </ol>
+        </nav>
+        
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="mb-0">Strutture Sanitarie</h1>
+            <a href="/" class="btn btn-outline-primary">
+                <i class="fas fa-search me-2"></i> Nuova Ricerca
+            </a>
+        </div>
+        
+        <!-- Filter Summary -->
+        <div class="card bg-dark border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Filtri Applicati</h5>
+                <div class="row">
+                    <div class="col-md-3">
+                        <p class="mb-1"><strong>Specialità:</strong></p>
+                        <p>{{ search_params.specialty if search_params.specialty else 'Tutte' }}</p>
+                    </div>
+                    <div class="col-md-3">
+                        <p class="mb-1"><strong>Regione:</strong></p>
+                        <p>{{ search_params.region if search_params.region else 'Tutte' }}</p>
+                    </div>
+                    <div class="col-md-3">
+                        <p class="mb-1"><strong>Qualità Minima:</strong></p>
+                        <p>{{ search_params.min_quality if search_params.min_quality > 0 else 'Qualsiasi' }}
+                        {% if search_params.min_quality > 0 %}/5{% endif %}</p>
+                    </div>
+                    <div class="col-md-3">
+                        <p class="mb-1"><strong>Costo Massimo:</strong></p>
+                        <p>{% if search_params.max_cost and search_params.max_cost < 1000000 %}€{{ search_params.max_cost }}{% else %}Qualsiasi{% endif %}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Results Count -->
+        <div class="alert {% if facilities|length > 0 %}alert-info{% else %}alert-warning{% endif %} mb-4">
+            {% if facilities|length > 0 %}
+                <i class="fas fa-info-circle me-2"></i> Trovate {{ facilities|length }} strutture sanitarie che corrispondono ai criteri di ricerca.
+            {% else %}
+                <i class="fas fa-exclamation-triangle me-2"></i> Nessuna struttura sanitaria trovata con i criteri selezionati. Prova a modificare i filtri di ricerca.
+            {% endif %}
+        </div>
+        
+        <!-- Sort Controls -->
+        {% if facilities|length > 0 %}
+        <div class="mb-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <label for="sortOrder" class="form-label me-2">Ordina per:</label>
+                    <select class="form-select form-select-sm d-inline-block w-auto" id="sortOrder">
+                        <option value="name">Nome</option>
+                        <option value="quality-desc">Qualità (più alta)</option>
+                        <option value="quality-asc">Qualità (più bassa)</option>
+                        <option value="cost-asc">Costo (più basso)</option>
+                        <option value="cost-desc">Costo (più alto)</option>
+                    </select>
+                </div>
+                <div>
+                    <button class="btn btn-sm btn-outline-secondary me-2" id="viewGrid">
+                        <i class="fas fa-th-large"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-secondary" id="viewList">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Results Grid -->
+        {% if facilities|length > 0 %}
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-5" id="facilitiesGrid">
+            {% for facility in facilities %}
+            <div class="col facility-card" 
+                data-name="{{ facility.name }}" 
+                data-quality="{{ facility.quality_score or 0 }}"
+                data-cost="{{ facility.cost_estimate or 0 }}">
+                <div class="card h-100 bg-dark border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="card-title mb-0">{{ facility.name }}</h5>
+                            <span class="badge bg-info">{{ facility.facility_type }}</span>
+                        </div>
+                        
+                        <p class="card-text text-muted mb-3">
+                            <i class="fas fa-map-marker-alt me-2"></i>
+                            {{ facility.address }}, {{ facility.city }}
+                            {% if facility.region %}
+                            <br><i class="fas fa-map me-2"></i>{{ facility.region.name }}
+                            {% endif %}
+                        </p>
+                        
+                        <div class="mb-3">
+                            <h6 class="mb-2">Specialità:</h6>
+                            <div class="d-flex flex-wrap gap-1">
+                                {% for specialty in facility.specialties_list %}
+                                <span class="badge bg-primary">{{ specialty }}</span>
+                                {% else %}
+                                <span class="badge bg-secondary">Informazione non disponibile</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-2">
+                            <div class="col-6">
+                                <h6 class="mb-1">Qualità:</h6>
+                                <div class="facility-rating">
+                                    {% if facility.quality_score %}
+                                        <div class="stars" style="--rating: {{ facility.quality_score }};">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                        <span class="ms-2">{{ format_quality(facility.quality_score) }}</span>
+                                    {% else %}
+                                        <span class="text-muted">N/A</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <h6 class="mb-1">Costo:</h6>
+                                <span class="badge {% if facility.cost_estimate %}bg-success{% else %}bg-secondary{% endif %}">
+                                    {{ format_cost(facility.cost_estimate) }}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        {% if facility.telephone or facility.website %}
+                        <div class="contact-info mt-3 pt-3 border-top">
+                            {% if facility.telephone %}
+                            <p class="mb-1">
+                                <i class="fas fa-phone me-2"></i>
+                                <a href="tel:{{ facility.telephone }}">{{ facility.telephone }}</a>
+                            </p>
+                            {% endif %}
+                            
+                            {% if facility.website %}
+                            <p class="mb-1">
+                                <i class="fas fa-globe me-2"></i>
+                                <a href="{{ facility.website }}" target="_blank">Sito Web</a>
+                            </p>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="card-footer bg-dark border-top-0">
+                        <small class="text-muted">Fonte: {{ facility.data_source }}</small>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Results List (hidden by default) -->
+        <div class="mb-5 d-none" id="facilitiesList">
+            <div class="list-group">
+                {% for facility in facilities %}
+                <div class="list-group-item bg-dark border-light facility-item"
+                    data-name="{{ facility.name }}" 
+                    data-quality="{{ facility.quality_score or 0 }}"
+                    data-cost="{{ facility.cost_estimate or 0 }}">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">{{ facility.name }}</h5>
+                                <span class="badge bg-info">{{ facility.facility_type }}</span>
+                            </div>
+                            <p class="mb-1 text-muted">
+                                <i class="fas fa-map-marker-alt me-1"></i>
+                                {{ facility.address }}, {{ facility.city }}
+                                {% if facility.region %}
+                                - {{ facility.region.name }}
+                                {% endif %}
+                            </p>
+                            <div class="mb-2">
+                                {% for specialty in facility.specialties_list %}
+                                <span class="badge bg-primary me-1">{{ specialty }}</span>
+                                {% else %}
+                                <span class="badge bg-secondary">Informazione non disponibile</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mt-2 mt-md-0">
+                                <h6 class="mb-1">Qualità:</h6>
+                                <div class="facility-rating">
+                                    {% if facility.quality_score %}
+                                        <div class="stars" style="--rating: {{ facility.quality_score }};">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                        <span class="ms-2">{{ format_quality(facility.quality_score) }}</span>
+                                    {% else %}
+                                        <span class="text-muted">N/A</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mt-2 mt-md-0">
+                                <h6 class="mb-1">Costo Stimato:</h6>
+                                <span class="badge {% if facility.cost_estimate %}bg-success{% else %}bg-secondary{% endif %}">
+                                    {{ format_cost(facility.cost_estimate) }}
+                                </span>
+                            </div>
+                            
+                            {% if facility.telephone %}
+                            <p class="mb-0 mt-2">
+                                <i class="fas fa-phone me-1"></i>
+                                <a href="tel:{{ facility.telephone }}">{{ facility.telephone }}</a>
+                            </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // View switching
+    const viewGrid = document.getElementById('viewGrid');
+    const viewList = document.getElementById('viewList');
+    const facilitiesGrid = document.getElementById('facilitiesGrid');
+    const facilitiesList = document.getElementById('facilitiesList');
+    
+    if (viewGrid && viewList) {
+        viewGrid.addEventListener('click', function() {
+            facilitiesGrid.classList.remove('d-none');
+            facilitiesList.classList.add('d-none');
+            viewGrid.classList.add('btn-outline-primary');
+            viewGrid.classList.remove('btn-outline-secondary');
+            viewList.classList.add('btn-outline-secondary');
+            viewList.classList.remove('btn-outline-primary');
+        });
+        
+        viewList.addEventListener('click', function() {
+            facilitiesGrid.classList.add('d-none');
+            facilitiesList.classList.remove('d-none');
+            viewList.classList.add('btn-outline-primary');
+            viewList.classList.remove('btn-outline-secondary');
+            viewGrid.classList.add('btn-outline-secondary');
+            viewGrid.classList.remove('btn-outline-primary');
+        });
+    }
+    
+    // Sorting
+    const sortOrder = document.getElementById('sortOrder');
+    if (sortOrder) {
+        sortOrder.addEventListener('change', function() {
+            sortFacilities(this.value);
+        });
+    }
+    
+    function sortFacilities(criteria) {
+        const gridCards = Array.from(document.querySelectorAll('.facility-card'));
+        const listItems = Array.from(document.querySelectorAll('.facility-item'));
+        
+        // Sort function
+        const sortFunc = (a, b) => {
+            if (criteria === 'name') {
+                return a.dataset.name.localeCompare(b.dataset.name);
+            } else if (criteria === 'quality-desc') {
+                return parseFloat(b.dataset.quality) - parseFloat(a.dataset.quality);
+            } else if (criteria === 'quality-asc') {
+                return parseFloat(a.dataset.quality) - parseFloat(b.dataset.quality);
+            } else if (criteria === 'cost-asc') {
+                return parseFloat(a.dataset.cost) - parseFloat(b.dataset.cost);
+            } else if (criteria === 'cost-desc') {
+                return parseFloat(b.dataset.cost) - parseFloat(a.dataset.cost);
+            }
+            return 0;
+        };
+        
+        // Sort and reorder grid
+        gridCards.sort(sortFunc).forEach((card, index) => {
+            card.parentNode.appendChild(card);
+        });
+        
+        // Sort and reorder list
+        listItems.sort(sortFunc).forEach((item, index) => {
+            item.parentNode.appendChild(item);
+        });
+    }
+});
+</script>
+{% endblock %}

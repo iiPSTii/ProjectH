@@ -1,0 +1,81 @@
+/* Custom styles for FindMyCure Italia */
+
+/* Feature icons on homepage */
+.feature-icon {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Star rating visualization */
+.facility-rating .stars {
+    display: inline-block;
+    position: relative;
+    color: var(--bs-gray-600);
+}
+
+.facility-rating .stars::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: calc(var(--rating) * 20%);
+    height: 100%;
+    overflow: hidden;
+    color: var(--bs-warning);
+}
+
+.facility-rating .stars i {
+    font-style: normal;
+}
+
+.facility-rating .stars::before {
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    content: "\f005\f005\f005\f005\f005";
+}
+
+/* Cards and list items hover effect */
+.card, .list-group-item {
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card:hover, .list-group-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Range slider styles */
+.form-range::-webkit-slider-thumb {
+    background: var(--bs-primary);
+}
+
+.form-range::-moz-range-thumb {
+    background: var(--bs-primary);
+}
+
+.form-range::-ms-thumb {
+    background: var(--bs-primary);
+}
+
+/* Customize footer */
+footer {
+    margin-top: 4rem;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .facility-card {
+        margin-bottom: 1rem;
+    }
+    
+    .facility-rating .stars {
+        font-size: 0.9rem;
+    }
+}
