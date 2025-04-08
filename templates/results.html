@@ -191,7 +191,8 @@
                             {% if facility.website %}
                             <p class="mb-1">
                                 <i class="fas fa-globe me-2"></i>
-                                <a href="{{ facility.website }}" target="_blank">Sito Web</a>
+                                <a href="{{ facility.website }}" target="_blank" class="text-truncate d-inline-block" style="max-width: 200px;" title="{{ facility.website }}">{{ facility.website }}</a>
+                                <i class="fas fa-external-link-alt ms-1 text-muted small"></i>
                             </p>
                             {% endif %}
                         </div>
@@ -272,6 +273,14 @@
                             <p class="mb-0 mt-2">
                                 <i class="fas fa-phone me-1"></i>
                                 <a href="tel:{{ facility.telephone }}">{{ facility.telephone }}</a>
+                            </p>
+                            {% endif %}
+                            
+                            {% if facility.website %}
+                            <p class="mb-0 mt-2">
+                                <i class="fas fa-globe me-1"></i>
+                                <a href="{{ facility.website }}" target="_blank" class="text-truncate d-inline-block" style="max-width: 150px;" title="{{ facility.website }}">{{ facility.website }}</a>
+                                <i class="fas fa-external-link-alt ms-1 text-muted small"></i>
                             </p>
                             {% endif %}
                         </div>
