@@ -1555,23 +1555,61 @@ def process_scraped_data(df, region, source_name, attribution):
     
     for idx in range(max_items):
         try:
-            # Extract basic facility information
+            # Extract basic facility information and ensure they're ASCII-only
             name = safe_get(df, idx, name_col)
             if not name:
                 continue
                 
-            facility_type = safe_get(df, idx, type_col) if type_col else None
-            address = safe_get(df, idx, address_col) if address_col else None
-            city = safe_get(df, idx, city_col) if city_col else None
+            # Clean strings to ensure they don't have encoding issues
+            try:
+                name = ''.join(c for c in str(name) if ord(c) < 128)
+                if not name:
+                    logger.warning(f"Name became empty after cleaning for row {idx}. Skipping.")
+                    continue
+            except Exception as e:
+                logger.error(f"Error cleaning facility name for row {idx}: {str(e)}")
+                continue
+                
+            # Clean other strings
+            facility_type = None
+            if type_col:
+                try:
+                    facility_type = safe_get(df, idx, type_col)
+                    if facility_type:
+                        facility_type = ''.join(c for c in str(facility_type) if ord(c) < 128)
+                except Exception as e:
+                    logger.error(f"Error cleaning facility type: {str(e)}")
+            
+            address = None
+            if address_col:
+                try:
+                    address = safe_get(df, idx, address_col)
+                    if address:
+                        address = ''.join(c for c in str(address) if ord(c) < 128)
+                except Exception as e:
+                    logger.error(f"Error cleaning address: {str(e)}")
+            
+            city = None
+            if city_col:
+                try:
+                    city = safe_get(df, idx, city_col)
+                    if city:
+                        city = ''.join(c for c in str(city) if ord(c) < 128)
+                except Exception as e:
+                    logger.error(f"Error cleaning city: {str(e)}")
             
             # Look for existing facility to avoid duplicates
-            existing = MedicalFacility.query.filter_by(
-                name=name, 
-                region_id=region.id
-            ).first()
-            
-            if existing:
-                logger.debug(f"Facility already exists: {name} in {region.name}")
+            try:
+                existing = MedicalFacility.query.filter_by(
+                    name=name, 
+                    region_id=region.id
+                ).first()
+                
+                if existing:
+                    logger.debug(f"Facility already exists: {name} in {region.name}")
+                    continue
+            except Exception as e:
+                logger.error(f"Error checking for existing facility: {str(e)}")
                 continue
             
             # Create new facility with random cost estimates and quality scores
@@ -1580,6 +1618,38 @@ def process_scraped_data(df, region, source_name, attribution):
             cost_estimate = None
             if random.random() > 0.3:  # 70% of facilities have cost estimates
                 cost_estimate = round(random.uniform(50, 300), 2)
+            
+            # Clean additional fields
+            telephone = None
+            if phone_col:
+                try:
+                    telephone = safe_get(df, idx, phone_col)
+                    if telephone:
+                        telephone = ''.join(c for c in str(telephone) if ord(c) < 128)
+                except Exception as e:
+                    logger.error(f"Error cleaning telephone: {str(e)}")
+            
+            email = None
+            if email_col:
+                try:
+                    email = safe_get(df, idx, email_col)
+                    if email:
+                        email = ''.join(c for c in str(email) if ord(c) < 128)
+                except Exception as e:
+                    logger.error(f"Error cleaning email: {str(e)}")
+            
+            website = None
+            if web_col:
+                try:
+                    website = safe_get(df, idx, web_col)
+                    if website:
+                        website = ''.join(c for c in str(website) if ord(c) < 128)
+                except Exception as e:
+                    logger.error(f"Error cleaning website: {str(e)}")
+                
+            # Ensure attribution and source name are also clean
+            safe_source_name = ''.join(c for c in str(source_name) if ord(c) < 128)
+            safe_attribution = ''.join(c for c in str(attribution) if ord(c) < 128)
                 
             facility = MedicalFacility(
                 name=name,
@@ -1587,31 +1657,41 @@ def process_scraped_data(df, region, source_name, attribution):
                 city=city,
                 region=region,
                 facility_type=facility_type or "Struttura Sanitaria",
-                telephone=safe_get(df, idx, phone_col) if phone_col else None,
-                email=safe_get(df, idx, email_col) if email_col else None,
-                website=safe_get(df, idx, web_col) if web_col else None,
-                data_source=source_name,
-                attribution=attribution,
+                telephone=telephone,
+                email=email,
+                website=website,
+                data_source=safe_source_name,
+                attribution=safe_attribution,
                 # Set values for optional fields
                 quality_score=round(random.uniform(2.5, 5.0), 1),  # Random quality between 2.5-5.0
                 cost_estimate=cost_estimate
             )
             
             # Add facility to database
-            db.session.add(facility)
-            db.session.commit()
-            facilities_added += 1
+            try:
+                db.session.add(facility)
+                db.session.commit()
+                facilities_added += 1
+            except Exception as e:
+                logger.error(f"Error adding facility to database: {str(e)}")
+                db.session.rollback()
+                continue
             
-            # Process specialties
+            # Process specialties as a batch instead of committing each individually
             if specialty_col:
-                specialties_text = safe_get(df, idx, specialty_col)
-                if specialties_text:
-                    specialty_names = extract_specialties(specialties_text)
-                    for specialty_name in specialty_names:
-                        specialty = get_or_create_specialty(specialty_name)
-                        if specialty:
-                            try:
-                                # Check if this facility already has this specialty to avoid duplicates
+                try:
+                    specialties_text = safe_get(df, idx, specialty_col)
+                    if specialties_text:
+                        # Clean specialties text
+                        specialties_text = ''.join(c for c in str(specialties_text) if ord(c) < 128)
+                        specialty_names = extract_specialties(specialties_text)
+                        
+                        # Add all specialties as a batch
+                        specialties_to_add = []
+                        for specialty_name in specialty_names:
+                            specialty = get_or_create_specialty(specialty_name)
+                            if specialty:
+                                # Check if this specialty is already associated with this facility
                                 existing_fs = FacilitySpecialty.query.filter_by(
                                     facility_id=facility.id,
                                     specialty_id=specialty.id
@@ -1622,11 +1702,19 @@ def process_scraped_data(df, region, source_name, attribution):
                                         facility_id=facility.id,
                                         specialty_id=specialty.id
                                     )
-                                    db.session.add(facility_specialty)
-                                    db.session.commit()
+                                    specialties_to_add.append(facility_specialty)
+                        
+                        # Add all specialties in one batch if there are any
+                        if specialties_to_add:
+                            try:
+                                db.session.add_all(specialties_to_add)
+                                db.session.commit()
                             except Exception as e:
-                                logger.error(f"Error adding specialty {specialty_name} to facility: {str(e)}")
+                                logger.error(f"Error adding specialties batch: {str(e)}")
                                 db.session.rollback()
+                except Exception as e:
+                    logger.error(f"Error processing specialties: {str(e)}")
+                    # Don't rollback the entire transaction - the facility is already saved
         except Exception as e:
             logger.error(f"Error processing facility {idx} from {source_name}: {str(e)}")
             db.session.rollback()
