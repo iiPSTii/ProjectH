@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 from werkzeug.middleware.proxy_fix import ProxyFix
 from medical_mapping import map_query_to_specialties
+from medical_professionals import map_profession_to_specialties
 from location_mapping import detect_location_in_query
 
 # Configure logging
@@ -122,8 +123,16 @@ with app.app_context():
         # Apply text search if provided
         mapped_specialties = []
         if query_text:
-            # First, check if we can map this query to medical specialties
-            mapped_specialties = map_query_to_specialties(query_text)
+            # First, try to map the query to medical profession terms
+            profession_specialties = map_profession_to_specialties(query_text)
+            
+            # If no medical profession mapping found, try medical conditions
+            if not profession_specialties:
+                condition_specialties = map_query_to_specialties(query_text)
+                mapped_specialties = condition_specialties
+            else:
+                mapped_specialties = profession_specialties
+            
             logger.debug(f"Mapped query '{query_text}' to specialties: {mapped_specialties}")
             
             # Create a copy of the query before applying specialty filters
