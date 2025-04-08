@@ -1184,114 +1184,143 @@ def create_sample_facility(region, name, facility_type, address, city, specialti
         return None
 
 def load_data():
-    """Load data from all sources"""
+    """Load data from all sources - extreme simplification to avoid encoding issues"""
     stats = {
         'regions': 0,
         'total': 0
     }
     
-    # Clear existing data first
+    # Clear all existing data
     try:
+        logger.info("Clearing existing database data")
         FacilitySpecialty.query.delete()
+        db.session.commit()
         MedicalFacility.query.delete()
+        db.session.commit()
         Specialty.query.delete()
+        db.session.commit()
         Region.query.delete()
         db.session.commit()
-        logger.info("Cleared existing database data")
+        logger.info("Database cleared successfully")
     except Exception as e:
         logger.error(f"Error clearing database: {str(e)}")
         db.session.rollback()
     
-    # Italian regions list
-    all_regions = [
-        'Abruzzo', 'Basilicata', 'Calabria', 'Campania', 'Emilia-Romagna',
-        'Friuli-Venezia Giulia', 'Lazio', 'Liguria', 'Lombardia', 'Marche',
-        'Molise', 'Piemonte', 'Puglia', 'Sardegna', 'Sicilia', 'Toscana',
-        'Trentino-Alto Adige', 'Umbria', 'Valle d\'Aosta', 'Veneto'
+    import random
+    
+    # Create some common specialties first
+    specialty_names = [
+        "Cardiologia", "Pediatria", "Medicina Generale", "Oncologia", 
+        "Ortopedia", "Ginecologia", "Dermatologia", "Oculistica",
+        "Urologia", "Neurologia", "Psichiatria", "Geriatria",
+        "Fisioterapia", "Analisi Cliniche", "Radiologia", "Diagnostica"
     ]
     
-    # Common medical facility types
-    facility_types = [
-        'Ospedale', 'Clinica Privata', 'Centro Medico', 'Policlinico Universitario',
-        'Ambulatorio', 'Centro Diagnostico', 'Istituto Specializzato', 'Poliambulatorio'
-    ]
-    
-    # Common specialties combinations
-    specialty_combos = [
-        'Cardiologia, Pediatria, Medicina Generale',
-        'Oncologia, Ortopedia, Ginecologia',
-        'Dermatologia, Oculistica, Urologia',
-        'Neurologia, Psichiatria, Ortopedia',
-        'Medicina Generale, Geriatria, Fisioterapia',
-        'Ambulatorio, Analisi Cliniche',
-        'Radiologia, Diagnostica, Oncologia',
-        'Ginecologia, Urologia, Otorinolaringoiatria',
-        'Cardiologia, Neurologia, Pediatria, Oncologia',
-        'Medicina Generale, Fisioterapia',
-        'Chirurgia, Medicina Generale, Urologia'
-    ]
-    
-    # Load facilities for each region
-    for region_name in all_regions:
+    specialties = {}
+    for name in specialty_names:
         try:
-            # Get or create the region
-            region = Region.query.filter_by(name=region_name).first()
-            if not region:
-                region = Region(name=region_name)
-                db.session.add(region)
-                db.session.commit()
-            
-            facilities_added = 0
-            
-            # Create 5-10 facilities for each region
-            import random
-            num_facilities = random.randint(5, 10)
-            
-            for i in range(num_facilities):
-                # Create a facility name based on region and a pattern
-                facility_type = random.choice(facility_types)
-                
-                if i == 0:
-                    name = f"Ospedale {region_name} Centrale"
-                elif i == 1:
-                    name = f"Clinica {region_name}"
-                elif i == 2:
-                    name = f"Centro Medico {region_name}"
-                elif i == 3:
-                    name = f"Policlinico di {region_name}"
-                else:
-                    prefix = random.choice(['Ospedale', 'Centro', 'Clinica', 'Istituto'])
-                    suffix = random.choice(['San', 'Santa', 'Nuovo', 'Centrale', 'Generale', 'Regionale'])
-                    name = f"{prefix} {suffix} {region_name}"
-                
-                # Create address and city
+            specialty = Specialty(name=name)
+            db.session.add(specialty)
+            db.session.commit()
+            specialties[name] = specialty
+            logger.info(f"Added specialty: {name}")
+        except Exception as e:
+            logger.error(f"Error adding specialty {name}: {str(e)}")
+            db.session.rollback()
+    
+    # Simplified regions list - using ASCII characters only
+    region_names = [
+        "Abruzzo", "Basilicata", "Calabria", "Campania", "Emilia-Romagna",
+        "Friuli-Venezia Giulia", "Lazio", "Liguria", "Lombardia", "Marche",
+        "Molise", "Piemonte", "Puglia", "Sardegna", "Sicilia", "Toscana",
+        "Trentino-Alto Adige", "Umbria", "Valle d'Aosta", "Veneto"
+    ]
+    
+    regions = {}
+    for name in region_names:
+        try:
+            region = Region(name=name)
+            db.session.add(region)
+            db.session.commit()
+            regions[name] = region
+            logger.info(f"Added region: {name}")
+        except Exception as e:
+            logger.error(f"Error adding region {name}: {str(e)}")
+            db.session.rollback()
+    
+    # Facility types
+    facility_types = [
+        "Ospedale", "Clinica Privata", "Centro Medico", "Policlinico",
+        "Ambulatorio", "Centro Diagnostico", "Istituto", "Poliambulatorio"
+    ]
+    
+    # Now create facilities for each region
+    for region_name, region in regions.items():
+        facilities_added = 0
+        
+        # Create 5-8 facilities for each region
+        num_facilities = random.randint(5, 8)
+        
+        for i in range(num_facilities):
+            try:
+                # Basic facility info
+                facility_type = facility_types[i % len(facility_types)]
+                name = f"{facility_type} {region_name} {i+1}"
                 address = f"Via {region_name} {i+1}"
-                city = f"{region_name} Città" if i == 0 else f"{region_name} {random.choice(['Nord', 'Sud', 'Est', 'Ovest', 'Centro'])}"
+                city = f"{region_name} Centro"
                 
-                # Select specialties
-                specialties = random.choice(specialty_combos)
+                # Add random cost and quality
+                cost = round(random.uniform(50, 300), 2) if random.random() > 0.3 else None
+                quality = round(random.uniform(2.5, 5.0), 1)
                 
                 # Create the facility
-                facility = create_sample_facility(
-                    region=region,
+                facility = MedicalFacility(
                     name=name,
-                    facility_type=facility_type,
                     address=address,
                     city=city,
-                    specialties_text=specialties,
-                    phone=f"0{random.randint(10, 99)} {random.randint(1000000, 9999999)}"
+                    region_id=region.id,
+                    facility_type=facility_type,
+                    telephone=f"0{random.randint(10, 99)} {random.randint(1000000, 9999999)}",
+                    data_source="Sample Data",
+                    attribution="FindMyCure Italia",
+                    quality_score=quality,
+                    cost_estimate=cost
                 )
                 
-                if facility:
-                    facilities_added += 1
-            
-            logger.info(f"Added {facilities_added} facilities for {region_name}")
+                db.session.add(facility)
+                db.session.commit()
+                
+                # Add 2-4 random specialties to this facility
+                num_specialties = random.randint(2, 4)
+                specialty_keys = list(specialties.keys())
+                random.shuffle(specialty_keys)
+                
+                for j in range(min(num_specialties, len(specialty_keys))):
+                    specialty_name = specialty_keys[j]
+                    specialty = specialties[specialty_name]
+                    
+                    # Link the specialty to the facility
+                    facility_specialty = FacilitySpecialty(
+                        facility_id=facility.id,
+                        specialty_id=specialty.id
+                    )
+                    
+                    db.session.add(facility_specialty)
+                    db.session.commit()
+                
+                facilities_added += 1
+                logger.info(f"Added facility {name} for {region_name}")
+                
+            except Exception as e:
+                logger.error(f"Error adding facility for {region_name}: {str(e)}")
+                db.session.rollback()
+        
+        # Update stats
+        if facilities_added > 0:
             stats['regions'] += 1
             stats['total'] += facilities_added
-            
-        except Exception as e:
-            logger.error(f"Error loading data for {region_name}: {str(e)}")
-            logger.exception(e)  # Log the full exception for debugging
+        
+        logger.info(f"Added {facilities_added} facilities for {region_name}")
     
     return stats
 
