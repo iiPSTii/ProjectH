@@ -7,6 +7,57 @@ to appropriate medical specialties, enabling more intuitive search.
 # Map of common medical conditions/symptoms to appropriate specialties
 # Format: 'condition_keyword': ['specialty1', 'specialty2', ...]
 CONDITION_TO_SPECIALTY_MAP = {
+    # General body parts - map these to likely specialties
+    'piede': ['Ortopedia', 'Fisioterapia', 'Podologia'],
+    'gamba': ['Ortopedia', 'Fisioterapia', 'Chirurgia Vascolare'],
+    'mano': ['Ortopedia', 'Fisioterapia', 'Chirurgia della Mano'],
+    'braccio': ['Ortopedia', 'Fisioterapia'],
+    'petto': ['Cardiologia', 'Pneumologia', 'Medicina Interna'],
+    'torace': ['Cardiologia', 'Pneumologia', 'Medicina Interna'],
+    'gambe': ['Ortopedia', 'Fisioterapia', 'Chirurgia Vascolare'],
+    'seno': ['Senologia', 'Ginecologia', 'Oncologia'],
+    'testa': ['Neurologia', 'Otorinolaringoiatria', 'Oculistica'],
+    'viso': ['Dermatologia', 'Chirurgia Plastica', 'Otorinolaringoiatria'],
+    'piedi': ['Ortopedia', 'Fisioterapia', 'Podologia'],
+    'caviglia': ['Ortopedia', 'Fisioterapia'],
+    'dita': ['Ortopedia', 'Fisioterapia', 'Chirurgia della Mano'],
+    'addome': ['Gastroenterologia', 'Chirurgia Generale', 'Medicina Interna'],
+    'gola': ['Otorinolaringoiatria', 'Gastroenterologia'],
+    
+    # General symptoms - map to likely specialties
+    'male': ['Medicina Interna', 'Medicina Generale'],
+    'malessere': ['Medicina Interna', 'Medicina Generale'],
+    'dolore': ['Medicina Interna', 'Terapia del Dolore', 'Fisioterapia'],
+    'dolori': ['Medicina Interna', 'Terapia del Dolore', 'Ortopedia', 'Fisioterapia'],
+    'febbre': ['Medicina Interna', 'Malattie Infettive'],
+    'infiammazione': ['Medicina Interna', 'Reumatologia', 'Immunologia'],
+    'gonfiore': ['Medicina Interna', 'Angiologia', 'Reumatologia'],
+    'formicolio': ['Neurologia', 'Ortopedia'],
+    'bruciore': ['Dermatologia', 'Gastroenterologia'],
+    'prurito': ['Dermatologia', 'Allergologia'],
+    'stanchezza': ['Medicina Interna', 'Ematologia', 'Endocrinologia'],
+    'dolore al petto': ['Cardiologia', 'Pneumologia', 'Chirurgia Toracica'],
+    'dolori al petto': ['Cardiologia', 'Pneumologia', 'Chirurgia Toracica'],
+    
+    # Specific body-part combinations
+    'male alla schiena': ['Ortopedia', 'Fisioterapia', 'Neurologia'],
+    'male al collo': ['Ortopedia', 'Fisioterapia', 'Neurologia'],
+    'male alla testa': ['Neurologia', 'Medicina Interna'],
+    'male alle gambe': ['Ortopedia', 'Angiologia', 'Fisioterapia'],
+    'male ai piedi': ['Ortopedia', 'Podologia', 'Fisioterapia'],
+    'dolore alla schiena': ['Ortopedia', 'Fisioterapia', 'Neurologia'],
+    'dolore al ginocchio': ['Ortopedia', 'Fisioterapia'],
+    'dolore al collo': ['Ortopedia', 'Fisioterapia', 'Neurologia'],
+    'dolore addominale': ['Gastroenterologia', 'Medicina Interna', 'Chirurgia Generale'],
+    'male al piede': ['Ortopedia', 'Podologia', 'Fisioterapia'],
+    'male alla gamba': ['Ortopedia', 'Angiologia', 'Fisioterapia'],
+    'male al braccio': ['Ortopedia', 'Fisioterapia'],
+    'mal di testa': ['Neurologia', 'Medicina Interna'],
+    'mal di gola': ['Otorinolaringoiatria', 'Medicina Interna'],
+    'mal di schiena': ['Ortopedia', 'Fisioterapia', 'Neurologia'],
+    'mal di stomaco': ['Gastroenterologia', 'Medicina Interna'],
+    'mal di denti': ['Odontoiatria'],
+    'mal di orecchio': ['Otorinolaringoiatria'],
     # Back, joint and bone problems -> Orthopedics, Rheumatology, Physiotherapy
     'schiena': ['Ortopedia', 'Reumatologia', 'Fisioterapia', 'Neurologia'],
     'lombare': ['Ortopedia', 'Fisioterapia', 'Neurologia'],
@@ -193,12 +244,41 @@ def map_query_to_specialties(query):
     # Convert query to lowercase for case-insensitive matching
     query = query.lower()
     
-    # Find matching conditions in the query
+    # First try multi-word exact matches (e.g., "dolore al petto")
     matching_specialties = set()
+    
+    # Try exact phrase matching first
     for keyword, specialties in CONDITION_TO_SPECIALTY_MAP.items():
-        if keyword.lower() in query:
+        keyword_lower = keyword.lower()
+        if len(keyword_lower.split()) > 1 and keyword_lower in query:
             # Add all mapped specialties for this condition
             for specialty in specialties:
                 matching_specialties.add(specialty)
     
+    # If no multi-word matches found, try single-word matching
+    if not matching_specialties:
+        for keyword, specialties in CONDITION_TO_SPECIALTY_MAP.items():
+            keyword_lower = keyword.lower()
+            # Only check single words to avoid false positives
+            if keyword_lower in query.split() or (' ' + keyword_lower + ' ') in (' ' + query + ' '):
+                # Add all mapped specialties for this condition
+                for specialty in specialties:
+                    matching_specialties.add(specialty)
+    
+    # If still no matches, try broader partial matching for important body parts
+    if not matching_specialties:
+        for keyword, specialties in CONDITION_TO_SPECIALTY_MAP.items():
+            keyword_lower = keyword.lower()
+            if keyword_lower in query:
+                # Add all mapped specialties for this condition
+                for specialty in specialties:
+                    matching_specialties.add(specialty)
+    
+    # If we didn't find any matches but the query contains general terms like "male" (hurt/pain)
+    # add some fallback general specialties
+    if not matching_specialties and len(query.split()) > 1:
+        if any(term in query for term in ['male', 'dolore', 'dolori', 'mal']):
+            matching_specialties.update(['Medicina Interna', 'Medicina Generale', 'Ortopedia'])
+    
+    # Sort by relevance (this is a placeholder - ideally would sort based on query relevance)
     return list(matching_specialties)

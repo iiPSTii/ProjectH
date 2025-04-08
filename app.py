@@ -105,13 +105,19 @@ with app.app_context():
             mapped_specialties = map_query_to_specialties(query_text)
             logger.debug(f"Mapped query '{query_text}' to specialties: {mapped_specialties}")
             
+            # Create a copy of the query before applying specialty filters
+            base_query = query
+            specialty_search_applied = False
+            
             # If not already filtered by specialty form field and we have mapped specialties
             if not specialty_filter_applied and mapped_specialties:
+                specialty_search_applied = True
                 query = query.join(MedicalFacility.specialties).join(FacilitySpecialty.specialty).filter(
                     Specialty.name.in_(mapped_specialties)
                 )
+            
             # If no medical mapping found or specialty already filtered, do regular text search
-            else:
+            if not specialty_search_applied or specialty_filter_applied:
                 # Search in facility name, address, specialties, and conditions
                 search_term = f"%{query_text.lower()}%"
                 
@@ -129,10 +135,50 @@ with app.app_context():
                         db.func.lower(Specialty.name).like(search_term)
                     )
                 )
-        
-        # Execute query
-        facilities = query.all()
-        logger.debug(f"Found {len(facilities)} facilities matching criteria")
+            
+            # Execute query to see if we found any results
+            facilities = query.all()
+            
+            # If no facilities found and we've tried specialty mapping, fall back to general search
+            if len(facilities) == 0 and specialty_search_applied:
+                logger.debug(f"No facilities found with specialty mapping, falling back to broader search")
+                
+                # We need a fresh query with original filters (region, quality) but not the specialty mapping
+                query = base_query
+                
+                # Get general medical specialties to try as fallbacks
+                general_specialties = ['Medicina Generale', 'Medicina Interna', 'Ortopedia']
+                
+                # Join specialties tables
+                query = query.join(MedicalFacility.specialties).join(FacilitySpecialty.specialty)
+                
+                # Filter by these general specialties
+                query = query.filter(
+                    db.or_(
+                        Specialty.name.in_(general_specialties),
+                        db.func.lower(MedicalFacility.name).like(f"%{query_text.lower()}%"),
+                        db.func.lower(MedicalFacility.city).like(f"%{query_text.lower()}%")
+                    )
+                )
+                
+                # Add a message to indicate we're showing broader results
+                if not mapped_specialties:
+                    # If we couldn't map the query at all, add general mapping
+                    mapped_specialties = general_specialties
+                else:
+                    # If we had some mappings but found no facilities, add these general ones
+                    mapped_specialties.extend(general_specialties)
+                
+                # Re-execute query to get facilities
+                facilities = query.all()
+                logger.debug(f"Fallback search found {len(facilities)} facilities")
+            else:
+                # We already have facilities from the first query
+                logger.debug(f"Primary search found {len(facilities)} facilities")
+        else:
+            # No text search, just execute the query with existing filters
+            facilities = query.all()
+            logger.debug(f"Basic filter search found {len(facilities)} facilities")
         
         # Return results template
         return render_template('results.html', facilities=facilities, db_status=db_status, search_params={
