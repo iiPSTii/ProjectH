@@ -7,6 +7,7 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 from medical_mapping import map_query_to_specialties
 from medical_professionals import map_profession_to_specialties
 from location_mapping import detect_location_in_query
+from website_finder import update_facility_website
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -340,6 +341,43 @@ with app.app_context():
         
         # Redirect to the data manager page instead of index
         return redirect('/data-manager')
+        
+    @app.route('/find-website/<int:facility_id>', methods=['POST'])
+    def find_website(facility_id):
+        """
+        Find and update website for a facility.
+        This route attempts to find a website for a medical facility and updates the database if found.
+        """
+        try:
+            # Find the facility
+            facility = db.session.query(MedicalFacility).filter_by(id=facility_id).first()
+            
+            if not facility:
+                return jsonify({'success': False, 'error': 'Facility not found'}), 404
+            
+            # Try to update the facility website
+            success = update_facility_website(facility)
+            
+            if success:
+                # Save the changes to the database
+                db.session.commit()
+                
+                # Return the updated website URL
+                return jsonify({
+                    'success': True, 
+                    'website': facility.website,
+                    'message': 'Website trovato e aggiornato con successo!'
+                })
+            else:
+                return jsonify({
+                    'success': False, 
+                    'error': 'Non è stato possibile trovare un sito web per questa struttura.'
+                })
+                
+        except Exception as e:
+            logger.error(f"Error finding website for facility {facility_id}: {str(e)}")
+            db.session.rollback()
+            return jsonify({'success': False, 'error': str(e)}), 500
 
     @app.context_processor
     def utility_processor():

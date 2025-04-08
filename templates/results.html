@@ -188,13 +188,21 @@
                             </p>
                             {% endif %}
                             
-                            {% if facility.website %}
-                            <p class="mb-1">
+                            <p class="mb-1 website-container">
                                 <i class="fas fa-globe me-2"></i>
-                                <a href="{{ facility.website }}" target="_blank" class="text-truncate d-inline-block" style="max-width: 200px;" title="{{ facility.website }}">{{ facility.website }}</a>
-                                <i class="fas fa-external-link-alt ms-1 text-muted small"></i>
+                                {% if facility.website %}
+                                <a href="{{ facility.website }}" target="_blank" class="website-link text-truncate d-inline-block" 
+                                   style="max-width: 200px;" data-bs-toggle="tooltip" title="{{ facility.website }}">
+                                   {{ facility.website }}
+                                   <i class="fas fa-external-link-alt ms-1 text-muted small"></i>
+                                </a>
+                                {% else %}
+                                <button class="btn btn-sm btn-outline-primary ms-2" 
+                                        onclick="findFacilityWebsite({{ facility.id }}, this)">
+                                    <i class="fas fa-search"></i> Trova Sito
+                                </button>
+                                {% endif %}
                             </p>
-                            {% endif %}
                         </div>
                         {% endif %}
                     </div>
@@ -276,13 +284,21 @@
                             </p>
                             {% endif %}
                             
-                            {% if facility.website %}
-                            <p class="mb-0 mt-2">
+                            <p class="mb-0 mt-2 website-container">
                                 <i class="fas fa-globe me-1"></i>
-                                <a href="{{ facility.website }}" target="_blank" class="text-truncate d-inline-block" style="max-width: 150px;" title="{{ facility.website }}">{{ facility.website }}</a>
-                                <i class="fas fa-external-link-alt ms-1 text-muted small"></i>
+                                {% if facility.website %}
+                                <a href="{{ facility.website }}" target="_blank" class="website-link text-truncate d-inline-block" 
+                                   style="max-width: 150px;" data-bs-toggle="tooltip" title="{{ facility.website }}">
+                                   {{ facility.website }}
+                                   <i class="fas fa-external-link-alt ms-1 text-muted small"></i>
+                                </a>
+                                {% else %}
+                                <button class="btn btn-sm btn-outline-primary ms-2" 
+                                        onclick="findFacilityWebsite({{ facility.id }}, this)">
+                                    <i class="fas fa-search"></i> Trova Sito
+                                </button>
+                                {% endif %}
                             </p>
-                            {% endif %}
                         </div>
                     </div>
                 </div>
