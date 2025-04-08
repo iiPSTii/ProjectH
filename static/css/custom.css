@@ -16,32 +16,26 @@
 }
 
 .facility-rating .stars {
-    display: inline-block;
     position: relative;
+    display: inline-flex;
     color: var(--bs-gray-600);
     white-space: nowrap;
-    text-align: center;
-}
-
-.facility-rating .stars::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: calc(var(--rating) * 20%);
-    height: 100%;
-    overflow: hidden;
-    color: var(--bs-warning);
 }
 
 .facility-rating .stars i {
     font-style: normal;
 }
 
-.facility-rating .stars::before {
+.facility-rating .stars::after {
+    position: absolute;
+    content: "\f005\f005\f005\f005\f005";
     font-family: "Font Awesome 6 Free";
     font-weight: 900;
-    content: "\f005\f005\f005\f005\f005";
+    color: var(--bs-warning);
+    top: 0;
+    left: 0;
+    width: calc(var(--rating) * 20%);
+    overflow: hidden;
 }
 
 /* Cards and list items hover effect */
