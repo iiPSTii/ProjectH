@@ -69,9 +69,8 @@ with app.app_context():
         specialty = request.args.get('specialty', '')
         region = request.args.get('region', '')
         min_quality = request.args.get('min_quality', 0, type=float)
-        max_cost = request.args.get('max_cost', 1000000, type=float)
         
-        logger.debug(f"Search params: specialty={specialty}, region={region}, min_quality={min_quality}, max_cost={max_cost}")
+        logger.debug(f"Search params: specialty={specialty}, region={region}, min_quality={min_quality}")
         
         # Get database status
         db_status = get_database_status()
@@ -91,9 +90,6 @@ with app.app_context():
         
         if min_quality is not None and min_quality > 0:
             query = query.filter(MedicalFacility.quality_score >= min_quality)
-            
-        if max_cost is not None and max_cost < 1000000:
-            query = query.filter(MedicalFacility.cost_estimate <= max_cost)
         
         # Execute query
         facilities = query.all()
@@ -103,8 +99,7 @@ with app.app_context():
         return render_template('results.html', facilities=facilities, db_status=db_status, search_params={
             'specialty': specialty,
             'region': region,
-            'min_quality': min_quality,
-            'max_cost': max_cost
+            'min_quality': min_quality
         })
 
     @app.route('/data-manager')

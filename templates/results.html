@@ -49,14 +49,10 @@
                         <p class="mb-1"><strong>Regione:</strong></p>
                         <p>{{ search_params.region if search_params.region else 'Tutte' }}</p>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-6">
                         <p class="mb-1"><strong>Qualità Minima:</strong></p>
                         <p>{{ search_params.min_quality if search_params.min_quality > 0 else 'Qualsiasi' }}
                         {% if search_params.min_quality > 0 %}/5{% endif %}</p>
-                    </div>
-                    <div class="col-md-3">
-                        <p class="mb-1"><strong>Costo Massimo:</strong></p>
-                        <p>{% if search_params.max_cost and search_params.max_cost < 1000000 %}€{{ search_params.max_cost }}{% else %}Qualsiasi{% endif %}</p>
                     </div>
                 </div>
             </div>

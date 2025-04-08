@@ -10,10 +10,17 @@
 }
 
 /* Star rating visualization */
+.facility-rating {
+    display: flex;
+    align-items: center;
+}
+
 .facility-rating .stars {
     display: inline-block;
     position: relative;
     color: var(--bs-gray-600);
+    white-space: nowrap;
+    text-align: center;
 }
 
 .facility-rating .stars::before {
