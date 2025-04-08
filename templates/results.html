@@ -179,21 +179,12 @@
                             </div>
                         </div>
                         
-                        {% if facility.telephone or facility.website %}
+                        {% if facility.telephone %}
                         <div class="contact-info mt-3 pt-3 border-top">
-                            {% if facility.telephone %}
                             <p class="mb-1">
                                 <i class="fas fa-phone me-2"></i>
                                 <a href="tel:{{ facility.telephone }}">{{ facility.telephone }}</a>
                             </p>
-                            {% endif %}
-                            
-                            {% if facility.website %}
-                            <p class="mb-1">
-                                <i class="fas fa-globe me-2"></i>
-                                <a href="{{ facility.website }}" target="_blank">Sito Web</a>
-                            </p>
-                            {% endif %}
                         </div>
                         {% endif %}
                     </div>
