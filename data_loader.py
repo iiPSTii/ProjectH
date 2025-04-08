@@ -296,21 +296,39 @@ def normalize_specialty(specialty_name):
         return None
         
     try:
+        # Make sure it's a string
+        if not isinstance(specialty_name, str):
+            try:
+                specialty_name = str(specialty_name)
+            except:
+                return "Specialty"
+                
+        # Remove non-ASCII characters first to avoid encoding issues
+        ascii_only = ''.join(c for c in specialty_name if ord(c) < 128)
+        
+        # If nothing left after cleaning, use a safe default
+        if not ascii_only:
+            return "Specialty"
+            
         # Try to normalize with unidecode
         try:
             # Convert to lowercase, remove accents, and strip whitespace
-            normalized = unidecode(specialty_name.lower().strip())
+            normalized = unidecode(ascii_only.lower().strip())
         except:
-            # If unidecode fails, just use lowercase
-            normalized = specialty_name.lower().strip()
+            # If unidecode fails, just use lowercase of cleaned string
+            normalized = ascii_only.lower().strip()
         
+        # If still empty after normalization, use a safe default
+        if not normalized:
+            return "Specialty"
+            
         # Check if it matches any key in the mapping
         for key, value in SPECIALTY_MAPPING.items():
             if key in normalized:
                 return value
         
-        # If no match found, return capitalized version of original
-        return specialty_name.capitalize()
+        # If no match found, return capitalized version of cleaned original
+        return ascii_only.capitalize()
     except Exception as e:
         logger.error(f"Error normalizing specialty name: {str(e)}")
         # Return a safe value
@@ -331,12 +349,44 @@ def get_or_create_region(region_name):
     if not region_name:
         return None
     
-    region = Region.query.filter_by(name=region_name).first()
-    if not region:
-        region = Region(name=region_name)
-        db.session.add(region)
-        db.session.commit()
-    return region
+    # Make sure the input is a proper string
+    if not isinstance(region_name, str):
+        try:
+            region_name = str(region_name)
+        except:
+            return None
+    
+    # Clean up region name - remove non-ASCII characters that might cause encoding issues
+    cleaned_name = ''.join(c for c in region_name if ord(c) < 128)
+    
+    # If the cleaned name is empty, use a default
+    if not cleaned_name:
+        cleaned_name = "Unknown Region"
+    
+    try:
+        region = Region.query.filter_by(name=cleaned_name).first()
+        if not region:
+            region = Region(name=cleaned_name)
+            db.session.add(region)
+            db.session.commit()
+        return region
+    except Exception as e:
+        logger.error(f"Error in get_or_create_region: {str(e)}")
+        db.session.rollback()
+        
+        # Try one more time with a completely safe name if there was an error
+        try:
+            safe_name = f"Region-{hash(region_name) % 1000}"
+            region = Region.query.filter_by(name=safe_name).first()
+            if not region:
+                region = Region(name=safe_name)
+                db.session.add(region)
+                db.session.commit()
+            return region
+        except Exception as inner_e:
+            logger.error(f"Second attempt at creating region failed: {str(inner_e)}")
+            db.session.rollback()
+            return None
 
 def get_or_create_specialty(specialty_name):
     """Get or create a specialty by name"""
