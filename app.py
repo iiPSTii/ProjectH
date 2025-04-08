@@ -358,26 +358,31 @@ with app.app_context():
 
     @app.route('/download-db')
     def download_database():
-        """Download the PostgreSQL database as SQL export"""
+        """Download the PostgreSQL database as CSV files in a ZIP archive"""
         import os
         import tempfile
         from flask import send_file
         from export_database import export_database
         
         try:
-            # Export the database to a SQL file
+            # Show a message in the logs
+            logger.info("Starting database export to CSV/ZIP format...")
+            
+            # Export the database to CSV files and zip them
             export_file = export_database()
             
             if export_file and os.path.exists(export_file):
+                logger.info(f"Database export successful: {export_file}")
                 # Return the file for download
                 return send_file(
                     export_file,
-                    mimetype='application/sql',
+                    mimetype='application/zip',
                     as_attachment=True,
-                    download_name=export_file
+                    download_name=os.path.basename(export_file)
                 )
             else:
-                return "Failed to export database", 500
+                logger.error("Failed to export database: No file was created")
+                return "Failed to export database. The export process did not create a file.", 500
         except Exception as e:
             logger.error(f"Error exporting database: {str(e)}")
             return f"Error exporting database: {str(e)}", 500
