@@ -1364,6 +1364,11 @@ def load_data(batch=0):
     Returns:
         dict: Statistics about the loaded data
     """
+    # Add a timeout mechanism to prevent worker timeouts
+    import time
+    start_time = time.time()
+    # Set a 25 second timeout limit to finish before gunicorn's 30s worker timeout
+    MAX_PROCESSING_TIME = 25
     stats = {
         'regions': 0,
         'total': 0
@@ -1429,8 +1434,12 @@ def load_data(batch=0):
             
             logger.info(f"Batch {batch}: Processing regions {start_idx}-{end_idx-1} (out of {len(all_scrapers)} total regions)")
             
-            # Process each scraper directly
+            # Process each scraper directly but check for timeout
             for scraper in batch_scrapers:
+                # Check if we've exceeded our time limit
+                if time.time() - start_time > MAX_PROCESSING_TIME:
+                    logger.warning(f"Reached processing time limit of {MAX_PROCESSING_TIME} seconds. Stopping early.")
+                    break
                 try:
                     # Begin a nested transaction for each region
                     db.session.begin_nested()
@@ -1555,8 +1564,12 @@ def load_data(batch=0):
         "Ambulatorio", "Centro Diagnostico", "Istituto", "Poliambulatorio"
     ]
     
-    # Now create facilities for each region
+    # Now create facilities for each region, but check for timeout
     for region_name, region in regions.items():
+        # Check if we've exceeded our time limit
+        if time.time() - start_time > MAX_PROCESSING_TIME:
+            logger.warning(f"Reached processing time limit of {MAX_PROCESSING_TIME} seconds. Stopping early.")
+            break
         facilities_added = 0
         
         # Create only 3-4 facilities for each region to minimize database load
@@ -1673,6 +1686,11 @@ def get_specialties():
 
 def process_scraped_data(df, region, source_name, attribution):
     """Process a DataFrame of scraped data and add facilities to the database"""
+    # Add timeout check
+    import time
+    start_time = time.time()
+    # Set a 20 second timeout limit to ensure we finish within gunicorn's 30s worker timeout
+    MAX_PROCESSING_TIME = 20
     facilities_added = 0
     
     # Try to detect column names in the DataFrame
@@ -1701,12 +1719,16 @@ def process_scraped_data(df, region, source_name, attribution):
         logger.warning(f"Could not find name column in {source_name} data")
         return 0
     
-    # Process more facilities per region, but not too many to avoid timeouts
-    # Aim for 6 per region or all available if fewer (up from original 3)
-    max_items = min(6, len(df))
+    # Process fewer facilities per region to avoid timeouts
+    # Reduced from 6 back to 3 to improve reliability
+    max_items = min(3, len(df))
     logger.info(f"Processing {max_items} facilities for {region.name} from {source_name} (out of {len(df)} available)")
     
     for idx in range(max_items):
+        # Check if we've exceeded our time limit
+        if time.time() - start_time > MAX_PROCESSING_TIME:
+            logger.warning(f"Reached processing time limit of {MAX_PROCESSING_TIME} seconds. Stopping early.")
+            break
         # Start a new transaction for each facility
         db.session.begin_nested()
         
@@ -1857,13 +1879,13 @@ def process_scraped_data(df, region, source_name, attribution):
                         specialties_text = ''.join(c for c in specialties_text if ord(c) < 128)
                         specialty_names = extract_specialties(specialties_text)
                         
-                        # Limit number of specialties to process - increased from 3 to 5
-                        specialty_names = specialty_names[:5] if len(specialty_names) > 5 else specialty_names
+                        # Limit number of specialties to process - reduced to 3 for better reliability
+                        specialty_names = specialty_names[:3] if len(specialty_names) > 3 else specialty_names
                         
                         # Add specialties one by one to avoid batch issues
                         processed_specialty_ids = set()
                         for specialty_name in specialty_names:
-                            if specialties_processed >= 5:  # Increased limit from 3 to 5 specialties per facility
+                            if specialties_processed >= 3:  # Reduced limit from 5 back to 3 specialties per facility
                                 break
                                 
                             # Start a new nested transaction for each specialty
