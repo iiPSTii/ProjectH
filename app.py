@@ -348,6 +348,16 @@ with app.app_context():
             return f"{quality:.1f}/5.0"
 
         return dict(format_quality=format_quality)
+    
+    @app.route('/methodology')
+    def methodology():
+        """Show detailed information about our rating methodology"""
+        # Get data for the form dropdowns (regions and specialties)
+        from data_loader import get_regions, get_specialties
+        regions = get_regions()
+        specialties = get_specialties()
+        
+        return render_template('methodology.html', regions=regions, specialties=specialties)
 
     @app.route('/download-db')
     def download_database():

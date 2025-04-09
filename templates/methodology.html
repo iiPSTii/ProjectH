@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block title %}Metodologia di Valutazione delle Specialità{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Metodologia di Valutazione</li>
+            </ol>
+        </nav>
+        
+        <div class="card bg-dark border-0 shadow-lg mb-5">
+            <div class="card-body p-4">
+                <h1 class="card-title text-center mb-4">Metodologia di Valutazione delle Specialità</h1>
+                
+                <div class="mb-5">
+                    <h4 class="text-info"><i class="fas fa-chart-line me-2"></i>Analisi dei Dati e Sistema di Classificazione</h4>
+                    <p class="lead">Abbiamo sviluppato un sistema di classificazione completo e strutturato per le strutture mediche in tutta Italia analizzando un ampio dataset di ospedali e cliniche.</p>
+                    <p>Il nostro obiettivo è stato identificare i punti di forza di ciascuna struttura tra le specialità mediche chiave — cardiologia, ortopedia, oncologia, neurologia, urologia, chirurgia generale, pediatria e ginecologia — e assegnare a ciascuna un rating di prestazione da 1 a 5 per specialità.</p>
+                </div>
+                
+                <div class="mb-5">
+                    <h4 class="text-info"><i class="fas fa-database me-2"></i>Fonti di Dati</h4>
+                    <p>Questa valutazione si basa principalmente su <strong>dati pubblici ufficiali</strong>, come:</p>
+                    <ul class="list-group list-group-flush bg-dark mb-3">
+                        <li class="list-group-item bg-dark"><i class="fas fa-check-circle text-success me-2"></i>Rapporti nazionali di outcome del Programma Nazionale Esiti (PNE) di AGENAS</li>
+                        <li class="list-group-item bg-dark"><i class="fas fa-check-circle text-success me-2"></i>Fonti esterne affidabili come Micuro, QSalute e rapporti istituzionali dove disponibili</li>
+                        <li class="list-group-item bg-dark"><i class="fas fa-check-circle text-success me-2"></i>Reputazione istituzionale, classifiche regionali e feedback verificati per integrare i dati pubblici carenti</li>
+                    </ul>
+                </div>
+                
+                <div class="mb-5">
+                    <h4 class="text-info"><i class="fas fa-star-half-alt me-2"></i>Scala di Valutazione</h4>
+                    <p>Ogni struttura è valutata su una scala da 1 a 5:</p>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-dark">
+                            <thead>
+                                <tr>
+                                    <th>Valutazione</th>
+                                    <th>Descrizione</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="stars" style="--rating: 5;">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <div class="overlay">
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><strong>Eccezionale</strong> - Centro di eccellenza riconosciuto a livello nazionale</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="stars" style="--rating: 4;">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <div class="overlay">
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><strong>Ottimo</strong> - Prestazioni superiori alla media in questa specialità</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="stars" style="--rating: 3;">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <div class="overlay">
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><strong>Buono</strong> - Prestazioni nella media con punti di forza in questa specialità</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="stars" style="--rating: 2;">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <div class="overlay">
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><strong>Adeguato</strong> - Struttura con servizi di base in questa specialità</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="stars" style="--rating: 1;">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <div class="overlay">
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><strong>Limitato</strong> - Presenza minima o periferica della specialità</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <p class="mt-3">Le specialità di ogni struttura sono state identificate e una scala di valutazione è stata applicata per riflettere le sue prestazioni o il riconoscimento in quelle aree.</p>
+                </div>
+                
+                <div class="mb-4">
+                    <h4 class="text-info"><i class="fas fa-search me-2"></i>Risultato della Nostra Analisi</h4>
+                    <p>Il risultato è un dataset comparativo e consultabile che aiuta pazienti, professionisti o amministratori sanitari a identificare rapidamente la struttura migliore per qualsiasi specialità o esigenza di trattamento — con sicurezza basata sui dati e copertura nazionale.</p>
+                </div>
+                
+                <div class="text-center mt-5">
+                    <a href="/" class="btn btn-primary">
+                        <i class="fas fa-search me-2"></i> Torna alla Ricerca
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
