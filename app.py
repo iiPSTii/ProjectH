@@ -159,6 +159,23 @@ with app.app_context():
                     Specialty.name.ilike(f'%{normalized_specialty}%')
                 )
                 logger.debug(f"No specialty mapping for '{specialty}', using normalized: {normalized_specialty}")
+                
+            # Check if we'll get any results with this query
+            preliminary_count = query.count()
+            if preliminary_count == 0:
+                logger.debug(f"No results found for specialty '{specialty}', using fallback to common specialties")
+                # Reset query and join with specialties
+                query = db.session.query(MedicalFacility)
+                query = query.join(MedicalFacility.specialties).join(FacilitySpecialty.specialty)
+                
+                # If region is specified, keep that filter
+                if region:
+                    query = query.join(MedicalFacility.region, isouter=True).filter(Region.name.ilike(f'%{region}%'))
+                
+                # Filter by the most common specialties to ensure we get results
+                fallback_specialties = ['Medicina Generale', 'Medicina Interna', 'Chirurgia Generale']
+                query = query.filter(Specialty.name.in_(fallback_specialties))
+                logger.debug(f"Using fallback specialties: {fallback_specialties}")
             
             specialty_filter_applied = True
         else:
