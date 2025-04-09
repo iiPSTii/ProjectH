@@ -91,8 +91,6 @@
                         <select class="form-select form-select-sm d-inline-block w-auto" id="sort_by" name="sort_by" onchange="document.getElementById('sortForm').submit();">
                             <option value="quality_desc" {% if search_params.sort_by == 'quality_desc' %}selected{% endif %}>Qualità (Migliore prima)</option>
                             <option value="quality_asc" {% if search_params.sort_by == 'quality_asc' %}selected{% endif %}>Qualità (Peggiore prima)</option>
-                            <option value="cost_asc" {% if search_params.sort_by == 'cost_asc' %}selected{% endif %}>Costo (Più economico prima)</option>
-                            <option value="cost_desc" {% if search_params.sort_by == 'cost_desc' %}selected{% endif %}>Costo (Più costoso prima)</option>
                             <option value="name_asc" {% if search_params.sort_by == 'name_asc' %}selected{% endif %}>Nome (A-Z)</option>
                             <option value="name_desc" {% if search_params.sort_by == 'name_desc' %}selected{% endif %}>Nome (Z-A)</option>
                             <option value="city_asc" {% if search_params.sort_by == 'city_asc' %}selected{% endif %}>Città (A-Z)</option>
@@ -118,8 +116,7 @@
             {% for facility in facilities %}
             <div class="col facility-card" 
                 data-name="{{ facility.name }}" 
-                data-quality="{{ facility.quality_score or 0 }}"
-                data-cost="{{ facility.cost_estimate or 0 }}">
+                data-quality="{{ facility.quality_score or 0 }}">
                 <div class="card h-100 bg-dark border-0 shadow-sm">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start mb-2">
@@ -147,7 +144,7 @@
                         </div>
                         
                         <div class="row mb-2">
-                            <div class="col-6">
+                            <div class="col-12">
                                 <h6 class="mb-1">Qualità Generale:</h6>
                                 <div class="facility-rating">
                                     {% if facility.quality_score %}
@@ -170,12 +167,6 @@
                                         <span class="text-muted">N/A</span>
                                     {% endif %}
                                 </div>
-                            </div>
-                            <div class="col-6">
-                                <h6 class="mb-1">Costo:</h6>
-                                <span class="badge {% if facility.cost_estimate %}bg-success{% else %}bg-secondary{% endif %}">
-                                    {{ format_cost(facility.cost_estimate) }}
-                                </span>
                             </div>
                         </div>
 
@@ -295,8 +286,7 @@
                 {% for facility in facilities %}
                 <div class="list-group-item bg-dark border-light facility-item"
                     data-name="{{ facility.name }}" 
-                    data-quality="{{ facility.quality_score or 0 }}"
-                    data-cost="{{ facility.cost_estimate or 0 }}">
+                    data-quality="{{ facility.quality_score or 0 }}">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="d-flex w-100 justify-content-between">
@@ -344,12 +334,7 @@
                                 </div>
                             </div>
                             
-                            <div class="mt-2">
-                                <h6 class="mb-1">Costo Stimato:</h6>
-                                <span class="badge {% if facility.cost_estimate %}bg-success{% else %}bg-secondary{% endif %}">
-                                    {{ format_cost(facility.cost_estimate) }}
-                                </span>
-                            </div>
+
                             
                             {% if facility.telephone %}
                             <p class="mb-0 mt-2">

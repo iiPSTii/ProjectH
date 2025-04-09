@@ -1292,11 +1292,6 @@ def create_sample_facility(region, name, facility_type, address, city, specialti
     """Create a sample facility with specified attributes"""
     import random
     
-    # Generate a random cost estimate for 70% of facilities
-    cost_estimate = None
-    if random.random() > 0.3:
-        cost_estimate = round(random.uniform(50, 300), 2)
-    
     # Create the facility
     try:
         facility = MedicalFacility(
@@ -1310,8 +1305,7 @@ def create_sample_facility(region, name, facility_type, address, city, specialti
             website=website,
             data_source=f"{region.name} Sample Data",
             attribution="FindMyCure Italia",
-            quality_score=round(random.uniform(2.5, 5.0), 1),
-            cost_estimate=cost_estimate
+            quality_score=round(random.uniform(2.5, 5.0), 1)
         )
         
         db.session.add(facility)
@@ -1583,8 +1577,7 @@ def load_data(batch=0):
                 address = f"Via {region_name} {i+1}"
                 city = f"{region_name} Centro"
                 
-                # Add random cost and quality
-                cost = round(random.uniform(50, 300), 2) if random.random() > 0.3 else None
+                # Add random quality
                 quality = round(random.uniform(2.5, 5.0), 1)
                 
                 # Create the facility - with robust error handling
@@ -1599,8 +1592,7 @@ def load_data(batch=0):
                         telephone=f"0{random.randint(10, 99)} {random.randint(1000000, 9999999)}",
                         data_source="Sample Data",
                         attribution="FindMyCure Italia",
-                        quality_score=quality,
-                        cost_estimate=cost
+                        quality_score=quality
                     )
                     
                     db.session.add(facility)
@@ -1850,8 +1842,7 @@ def process_scraped_data(df, region, source_name, attribution):
                 data_source=safe_source_name,
                 attribution=safe_attribution,
                 # Set values for optional fields
-                quality_score=round(random.uniform(2.5, 5.0), 1),  # Random quality between 2.5-5.0
-                cost_estimate=cost_estimate
+                quality_score=round(random.uniform(2.5, 5.0), 1)  # Random quality between 2.5-5.0
             )
             
             # Add facility to database
@@ -2051,12 +2042,9 @@ def load_generic_data(data_source):
                     logger.error(f"Error checking for existing facility: {str(e)}")
                     continue
                 
-                # Create new facility with random cost estimates for some facilities
+                # Create new facility with random quality score
                 import random
-                cost_estimate = None
-                if random.random() > 0.3:  # 70% of facilities have cost estimates
-                    cost_estimate = round(random.uniform(50, 300), 2)
-                    
+                
                 facility = MedicalFacility(
                     name=name,
                     address=address,
@@ -2069,8 +2057,7 @@ def load_generic_data(data_source):
                     data_source=f"{data_source['region_name']} Open Data",
                     attribution=data_source['attribution'],
                     # Set values for optional fields
-                    quality_score=round(random.uniform(2.5, 5.0), 1),  # Random quality between 2.5-5.0
-                    cost_estimate=cost_estimate
+                    quality_score=round(random.uniform(2.5, 5.0), 1)  # Random quality between 2.5-5.0
                 )
                 
                 # Add facility to database

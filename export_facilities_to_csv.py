@@ -28,7 +28,7 @@ def export_facilities_to_csv(filename="updated_medical_facilities.csv"):
         columns = [
             'id', 'name', 'address', 'city', 'postal_code', 'region', 
             'facility_type', 'telephone', 'email', 'website',
-            'cost_estimate', 'quality_score',
+            'quality_score',
             'cardiology_rating', 'orthopedics_rating', 'oncology_rating',
             'neurology_rating', 'surgery_rating', 'urology_rating',
             'pediatrics_rating', 'gynecology_rating', 'strengths_summary',
@@ -52,7 +52,6 @@ def export_facilities_to_csv(filename="updated_medical_facilities.csv"):
                     'telephone': facility.telephone,
                     'email': facility.email,
                     'website': facility.website,
-                    'cost_estimate': facility.cost_estimate,
                     'quality_score': facility.quality_score,
                     'cardiology_rating': facility.cardiology_rating,
                     'orthopedics_rating': facility.orthopedics_rating,

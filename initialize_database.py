@@ -240,8 +240,7 @@ def initialize_database(force=False):
                                 data_source=source_name,
                                 attribution=attribution,
                                 # Set values for optional fields
-                                quality_score=round(random.uniform(2.5, 5.0), 1),
-                                cost_estimate=round(random.uniform(50, 300), 2) if random.random() > 0.3 else None
+                                quality_score=round(random.uniform(2.5, 5.0), 1)
                             )
                             
                             # Add facility to database

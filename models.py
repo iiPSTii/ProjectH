@@ -51,7 +51,6 @@ class MedicalFacility(db.Model):
     website = db.Column(db.String(200))
     
     # Performance metrics
-    cost_estimate = db.Column(db.Float, default=None)
     quality_score = db.Column(db.Float, default=None)
     
     # Specialty ratings (1-5 scale)

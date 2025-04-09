@@ -215,15 +215,13 @@ with app.app_context():
         sorting_functions = {
             'quality_desc': lambda x: (x.quality_score if x.quality_score is not None else -1) * -1,  # Default
             'quality_asc': lambda x: x.quality_score if x.quality_score is not None else float('inf'),
-            'cost_desc': lambda x: (x.cost_estimate if x.cost_estimate is not None else -1) * -1,
-            'cost_asc': lambda x: x.cost_estimate if x.cost_estimate is not None else float('inf'),
             'name_asc': lambda x: x.name.lower(),
             'name_desc': lambda x: x.name.lower(),
             'city_asc': lambda x: (x.city or '').lower(),
             'city_desc': lambda x: (x.city or '').lower(),
         }
 
-        reverse_sort = sort_by.endswith('_desc') and sort_by != 'quality_desc' and sort_by != 'cost_desc'
+        reverse_sort = sort_by.endswith('_desc') and sort_by != 'quality_desc'
 
         # If sort_by is not in our mapping, default to quality descending
         sort_function = sorting_functions.get(sort_by, sorting_functions['quality_desc'])
@@ -344,17 +342,12 @@ with app.app_context():
     @app.context_processor
     def utility_processor():
         """Add utility functions to template context"""
-        def format_cost(cost):
-            if cost is None:
-                return "N/A"
-            return f"€{cost:.2f}"
-
         def format_quality(quality):
             if quality is None:
                 return "N/A"
             return f"{quality:.1f}/5.0"
 
-        return dict(format_cost=format_cost, format_quality=format_quality)
+        return dict(format_quality=format_quality)
 
     @app.route('/download-db')
     def download_database():
