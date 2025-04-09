@@ -34,9 +34,34 @@
                             <label for="specialty" class="form-label">Specialità Medica</label>
                             <select class="form-select" id="specialty" name="specialty">
                                 <option value="">Tutte le specialità</option>
-                                {% for specialty in specialties %}
-                                <option value="{{ specialty.name }}">{{ specialty.name }}</option>
-                                {% endfor %}
+                                <!-- Standard medical macrocategories -->
+                                <option value="Cardiologia">Cardiologia</option>
+                                <option value="Neurologia">Neurologia</option>
+                                <option value="Ortopedia">Ortopedia</option>
+                                <option value="Oncologia">Oncologia</option>
+                                <option value="Pediatria">Pediatria</option>
+                                <option value="Ginecologia">Ginecologia</option>
+                                <option value="Dermatologia">Dermatologia</option>
+                                <option value="Psichiatria">Psichiatria</option>
+                                <option value="Urologia">Urologia</option>
+                                <option value="Oculistica">Oculistica</option>
+                                <option value="Otorinolaringoiatria">Otorinolaringoiatria</option>
+                                <option value="Pneumologia">Pneumologia</option>
+                                <option value="Allergologia">Allergologia</option>
+                                <option value="Gastroenterologia">Gastroenterologia</option>
+                                <option value="Endocrinologia">Endocrinologia</option>
+                                <option value="Reumatologia">Reumatologia</option>
+                                <option value="Ematologia">Ematologia</option>
+                                <!-- Combined categories -->
+                                <option value="Chirurgia">Chirurgia</option>
+                                <option value="Medicina Interna">Medicina Interna</option>
+                                <option value="Diagnostica">Diagnostica per Immagini</option>
+                                <option value="Medicina d'Urgenza">Medicina d'Urgenza</option>
+                                <option value="Riabilitazione">Riabilitazione</option>
+                                <option value="Medicina di Laboratorio">Medicina di Laboratorio</option>
+                                <option value="Trapianti">Trapianti</option>
+                                <option value="Malattie Infettive">Malattie Infettive</option>
+                                <option value="Fertilità">Fertilità e Riproduzione</option>
                             </select>
                         </div>
                         

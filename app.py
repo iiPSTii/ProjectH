@@ -142,10 +142,24 @@ with app.app_context():
 
         # Apply specialty filter if provided by form
         if specialty:
-            normalized_specialty = normalize_specialty(specialty)
-            query = query.join(MedicalFacility.specialties).join(FacilitySpecialty.specialty).filter(
-                Specialty.name.ilike(f'%{normalized_specialty}%')
-            )
+            # Get equivalent specialties from our mapping system
+            from specialty_mapping import get_equivalent_specialties
+            equivalent_specialties = get_equivalent_specialties(specialty)
+            
+            # If we have equivalent specialties, use them
+            if equivalent_specialties:
+                query = query.join(MedicalFacility.specialties).join(FacilitySpecialty.specialty).filter(
+                    Specialty.name.in_(equivalent_specialties)
+                )
+                logger.debug(f"Using specialty mapping for '{specialty}': {equivalent_specialties}")
+            # Otherwise fall back to the original method
+            else:
+                normalized_specialty = normalize_specialty(specialty)
+                query = query.join(MedicalFacility.specialties).join(FacilitySpecialty.specialty).filter(
+                    Specialty.name.ilike(f'%{normalized_specialty}%')
+                )
+                logger.debug(f"No specialty mapping for '{specialty}', using normalized: {normalized_specialty}")
+            
             specialty_filter_applied = True
         else:
             specialty_filter_applied = False
@@ -180,8 +194,21 @@ with app.app_context():
             # If not already filtered by specialty form field and we have mapped specialties
             if not specialty_filter_applied and mapped_specialties:
                 specialty_search_applied = True
+                
+                # For each specialty from mapping, expand it to include equivalent specialties
+                from specialty_mapping import get_equivalent_specialties
+                expanded_specialties = []
+                for s in mapped_specialties:
+                    equiv_specs = get_equivalent_specialties(s)
+                    if equiv_specs:
+                        expanded_specialties.extend(equiv_specs)
+                    else:
+                        expanded_specialties.append(s)
+                        
+                logger.debug(f"Expanded mapped specialties: {mapped_specialties} -> {expanded_specialties}")
+                
                 query = query.join(MedicalFacility.specialties).join(FacilitySpecialty.specialty).filter(
-                    Specialty.name.in_(mapped_specialties)
+                    Specialty.name.in_(expanded_specialties)
                 )
 
             # Special case for "ospedale [region]" patterns or when query is empty but region is set
@@ -209,11 +236,23 @@ with app.app_context():
                     specialties_to_search = PROFESSION_TO_SPECIALTY_MAP[prof_term]
                     logger.debug(f"Found profession term '{prof_term}' mapping to: {specialties_to_search}")
                     
+                    # Expand the specialties using our macrocategory mapping
+                    from specialty_mapping import get_equivalent_specialties
+                    expanded_specialties = []
+                    for s in specialties_to_search:
+                        equiv_specs = get_equivalent_specialties(s)
+                        if equiv_specs:
+                            expanded_specialties.extend(equiv_specs)
+                        else:
+                            expanded_specialties.append(s)
+                    
+                    logger.debug(f"Expanded profession specialties: {specialties_to_search} -> {expanded_specialties}")
+                    
                     # Join with specialties tables
                     query = query.join(MedicalFacility.specialties).join(FacilitySpecialty.specialty)
                     
                     # Filter by these specialties
-                    query = query.filter(Specialty.name.in_(specialties_to_search))
+                    query = query.filter(Specialty.name.in_(expanded_specialties))
                     specialty_search_applied = True
             # If no medical mapping found or specialty already filtered, do regular text search
             elif not specialty_search_applied or specialty_filter_applied:
