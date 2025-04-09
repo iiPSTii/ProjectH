@@ -133,11 +133,15 @@ CITY_TO_REGION_MAP = {
     'pescara': 'Abruzzo',
     'teramo': 'Abruzzo',
     
-    # Friuli Venezia Giulia
-    'trieste': 'Friuli Venezia Giulia',
-    'gorizia': 'Friuli Venezia Giulia',
-    'pordenone': 'Friuli Venezia Giulia',
-    'udine': 'Friuli Venezia Giulia',
+    # Friuli-Venezia Giulia
+    'trieste': 'Friuli-Venezia Giulia',
+    'gorizia': 'Friuli-Venezia Giulia',
+    'pordenone': 'Friuli-Venezia Giulia',
+    'udine': 'Friuli-Venezia Giulia',
+    'friuli': 'Friuli-Venezia Giulia',
+    'friuli venezia giulia': 'Friuli-Venezia Giulia',
+    'venezia giulia': 'Friuli-Venezia Giulia',
+    'friuli-venezia giulia': 'Friuli-Venezia Giulia',
     
     # Trentino-Alto Adige
     'trento': 'Trentino',

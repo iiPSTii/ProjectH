@@ -5,7 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 from werkzeug.middleware.proxy_fix import ProxyFix
 from medical_mapping import map_query_to_specialties
-from medical_professionals import map_profession_to_specialties
+from medical_professionals import map_profession_to_specialties, PROFESSION_TO_SPECIALTY_MAP
 from location_mapping import detect_location_in_query
 
 # Configure logging
@@ -147,8 +147,34 @@ with app.app_context():
                     Specialty.name.in_(mapped_specialties)
                 )
 
+            # Special case for "ospedale [region]" patterns 
+            if 'ospedale' in query_text.lower() and region:
+                # This will find all hospitals in the specified region
+                search_term = "%ospedale%"
+                query = query.filter(db.func.lower(MedicalFacility.name).like(search_term))
+                specialty_search_applied = True
+            # Special case for "[profession] [city]" patterns (e.g., "oncologo trieste")
+            elif any(p in query_text.lower() for p in PROFESSION_TO_SPECIALTY_MAP.keys()) and region:
+                # Get the profession term
+                prof_term = None
+                for term in PROFESSION_TO_SPECIALTY_MAP.keys():
+                    if term in query_text.lower():
+                        prof_term = term
+                        break
+                
+                if prof_term:
+                    # Find specialties associated with this profession
+                    specialties_to_search = PROFESSION_TO_SPECIALTY_MAP[prof_term]
+                    logger.debug(f"Found profession term '{prof_term}' mapping to: {specialties_to_search}")
+                    
+                    # Join with specialties tables
+                    query = query.join(MedicalFacility.specialties).join(FacilitySpecialty.specialty)
+                    
+                    # Filter by these specialties
+                    query = query.filter(Specialty.name.in_(specialties_to_search))
+                    specialty_search_applied = True
             # If no medical mapping found or specialty already filtered, do regular text search
-            if not specialty_search_applied or specialty_filter_applied:
+            elif not specialty_search_applied or specialty_filter_applied:
                 # Search in facility name, address, specialties, and conditions
                 search_term = f"%{query_text.lower()}%"
 
@@ -269,7 +295,7 @@ with app.app_context():
             0: ["Puglia", "Trentino", "Toscana", "Lazio", "Lombardia"],
             1: ["Sicilia", "Piemonte", "Campania", "Veneto", "Liguria"],
             2: ["Emilia Romagna", "Sardegna", "Marche", "Abruzzo", "Calabria"],
-            3: ["Friuli Venezia Giulia", "Umbria", "Basilicata", "Molise", "Valle d Aosta"]
+            3: ["Friuli-Venezia Giulia", "Umbria", "Basilicata", "Molise", "Valle d Aosta"]
         }
 
         batch_status = {}
