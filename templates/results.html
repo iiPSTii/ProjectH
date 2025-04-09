@@ -39,52 +39,32 @@
             </div>
         </div>
         
-        <!-- Filter Summary - Compact Design -->
-        <div class="alert bg-dark border border-secondary rounded p-2 mb-3">
-            <div class="d-flex align-items-center flex-wrap gap-2">
-                <span class="badge bg-secondary text-white p-2 me-1">
-                    <i class="fas fa-filter me-1"></i> Filtri:
-                </span>
-                
-                {% if search_params.query_text %}
-                <span class="badge bg-primary p-2" title="Ricerca testuale">
-                    <i class="fas fa-search me-1"></i> "{{ search_params.original_query if search_params.original_query else search_params.query_text }}"
-                </span>
-                {% endif %}
-                
-                {% if search_params.detected_location %}
-                <span class="badge bg-success p-2" title="Località rilevata">
-                    <i class="fas fa-map-marker-alt me-1"></i> {{ search_params.detected_location }}
-                </span>
-                {% endif %}
-                
-                {% if search_params.specialty %}
-                <span class="badge bg-info p-2" title="Specialità">
-                    <i class="fas fa-stethoscope me-1"></i> {{ search_params.specialty }}
-                </span>
-                {% endif %}
-                
-                {% if search_params.region and not search_params.detected_location %}
-                <span class="badge bg-success p-2" title="Regione">
-                    <i class="fas fa-map me-1"></i> {{ search_params.region }}
-                </span>
-                {% endif %}
-                
-                {% if search_params.min_quality > 0 %}
-                <span class="badge bg-warning text-dark p-2" title="Qualità minima">
-                    <i class="fas fa-star me-1"></i> {{ search_params.min_quality }}/5
-                </span>
-                {% endif %}
-                
-                {% if search_params.mapped_specialties %}
-                <div class="ms-auto">
-                    <small class="text-muted me-1">Specialità rilevate:</small>
-                    {% for specialty in search_params.mapped_specialties %}
-                    <span class="badge bg-info p-1">{{ specialty }}</span>
-                    {% endfor %}
-                </div>
-                {% endif %}
-            </div>
+        <!-- Super Minimal Filter Pills -->
+        <div class="d-flex flex-wrap gap-1 mb-2 text-muted small">
+            <i class="fas fa-filter me-1 mt-1"></i>
+            {% if search_params.query_text %}
+            <span class="badge bg-primary rounded-pill">{{ search_params.original_query if search_params.original_query else search_params.query_text }}</span>
+            {% endif %}
+            
+            {% if search_params.detected_location %}
+            <span class="badge bg-success rounded-pill">{{ search_params.detected_location }}</span>
+            {% endif %}
+            
+            {% if search_params.specialty %}
+            <span class="badge bg-info rounded-pill">{{ search_params.specialty }}</span>
+            {% endif %}
+            
+            {% if search_params.region and not search_params.detected_location %}
+            <span class="badge bg-success rounded-pill">{{ search_params.region }}</span>
+            {% endif %}
+            
+            {% if search_params.min_quality > 0 %}
+            <span class="badge bg-warning text-dark rounded-pill">min. {{ search_params.min_quality }}/5</span>
+            {% endif %}
+            
+            {% if search_params.mapped_specialties and search_params.mapped_specialties|length > 0 %}
+            <span class="badge bg-secondary rounded-pill">trovato: {{ search_params.mapped_specialties|join(', ') }}</span>
+            {% endif %}
         </div>
         
         <!-- Results Count (in permanent card) -->
