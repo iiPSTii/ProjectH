@@ -18,8 +18,8 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Constants
-BATCH_SIZE = 10  # Process facilities in batches to avoid timeouts
-GEOCODING_DELAY = 1.0  # Delay between geocoding requests to respect API limits
+BATCH_SIZE = 5  # Process facilities in batches to avoid timeouts
+GEOCODING_DELAY = 0.5  # Delay between geocoding requests to respect API limits
 
 def geocode_facilities(batch_size=None, max_facilities=None):
     """

@@ -275,7 +275,7 @@ def extract_coordinates_from_address(address, city=None):
     
     return None
 
-def find_facilities_near_address(query_text, facilities, max_distance=10.0):
+def find_facilities_near_address(query_text, facilities, max_distance=10.0, max_results=20):
     """
     Find facilities near a specified address using stored coordinates.
     
@@ -283,6 +283,7 @@ def find_facilities_near_address(query_text, facilities, max_distance=10.0):
         query_text (str): The address query text
         facilities (list): List of medical facilities
         max_distance (float): Maximum distance in kilometers (default: 10km)
+        max_results (int): Maximum number of results to return (default: 20)
         
     Returns:
         dict: Dictionary with facilities sorted by distance and search location details
@@ -311,11 +312,16 @@ def find_facilities_near_address(query_text, facilities, max_distance=10.0):
     
     # Calculate distances for each facility that has coordinates
     facilities_with_distance = []
+    facilities_without_coords = []
+    
+    # Count geocoded facilities
+    geocoded_count = 0
     
     for facility in facilities:
         try:
             # Use the stored coordinates from the database
             if facility.latitude is not None and facility.longitude is not None:
+                geocoded_count += 1
                 facility_lat = facility.latitude
                 facility_lon = facility.longitude
                 
@@ -330,11 +336,67 @@ def find_facilities_near_address(query_text, facilities, max_distance=10.0):
                     facilities_with_distance.append(facility)
                     
                     logger.debug(f"Added facility {facility.name} at distance {distance:.1f} km")
+            else:
+                # Keep track of facilities without coordinates
+                facilities_without_coords.append(facility)
         except Exception as e:
             logger.error(f"Error processing facility {facility.name}: {str(e)}")
             continue
     
     # Sort by distance
+    facilities_with_distance.sort(key=lambda x: x.distance)
+    
+    # If we have very few geocoded facilities (less than 5%), try geocoding on-the-fly for a small subset
+    if geocoded_count < len(facilities) * 0.05 and len(facilities_with_distance) < 3:
+        logger.warning(f"Few geocoded facilities ({geocoded_count}/{len(facilities)}). Trying on-the-fly geocoding for some.")
+        
+        # Try to geocode a few facilities on-the-fly
+        city_name = geocoded_address.get('address', {}).get('city', '')
+        if not city_name:
+            # Try to extract city from display name
+            display_parts = geocoded_address.get('display_name', '').split(',')
+            if len(display_parts) > 1:
+                city_name = display_parts[1].strip()
+        
+        # Filter facilities by city if we have a city name
+        if city_name:
+            city_facilities = [f for f in facilities_without_coords if city_name.lower() in (f.city or '').lower()]
+            # Limit to avoid timeouts
+            city_facilities = city_facilities[:5]
+            
+            for facility in city_facilities:
+                try:
+                    # Geocode on-the-fly
+                    coords = extract_coordinates_from_address(facility.address, facility.city)
+                    if coords:
+                        facility_lat = coords['lat']
+                        facility_lon = coords['lon']
+                        
+                        # Calculate distance
+                        distance = calculate_distance(search_lat, search_lon, facility_lat, facility_lon)
+                        
+                        if distance <= max_distance:
+                            facility.distance = distance
+                            facility.distance_text = f"{distance:.1f} km"
+                            facilities_with_distance.append(facility)
+                            
+                            # Store coordinates for future lookup (these are temporary and won't be saved to DB)
+                            # To permanently save the coordinates, we'd need a separate update function
+                            # to avoid circular imports with app.py
+                            facility._temp_lat = facility_lat
+                            facility._temp_lon = facility_lon
+                            facility._temp_geocoded = True
+                            
+                            logger.info(f"On-the-fly geocoding: Added facility {facility.name} at distance {distance:.1f} km")
+                except Exception as e:
+                    logger.error(f"Error on-the-fly geocoding for {facility.name}: {str(e)}")
+                    continue
+    
+    # Limit the number of results
+    if max_results and len(facilities_with_distance) > max_results:
+        facilities_with_distance = facilities_with_distance[:max_results]
+    
+    # Sort again to include any newly geocoded facilities
     facilities_with_distance.sort(key=lambda x: x.distance)
     
     logger.info(f"Found {len(facilities_with_distance)} facilities within {max_distance} km of {search_display}")

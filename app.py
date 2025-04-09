@@ -1,6 +1,6 @@
 import os
 import logging
-from flask import Flask, render_template, request, jsonify, flash, redirect, send_file
+from flask import Flask, render_template, request, jsonify, flash, redirect, url_for, send_file
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 from werkzeug.middleware.proxy_fix import ProxyFix
@@ -468,10 +468,31 @@ with app.app_context():
 
     @app.route('/geocode-facilities')
     @app.route('/geocode-facilities/<int:batch_size>')
-    def geocode_facilities_route(batch_size=20):
+    def geocode_facilities_route(batch_size=10):
         """Geocode facilities and store their coordinates in the database"""
         try:
-            # This is a limited version that won't timeout but will only process a small batch
+            # For large batches, start a background process to avoid timeouts
+            if batch_size > 10:
+                import subprocess
+                import sys
+                
+                # Launch the background geocoding script for larger batches
+                cmd = [sys.executable, 'background_geocoding.py', '--batch-size', str(5)]
+                subprocess.Popen(cmd)
+                
+                flash(f"Started background geocoding process for facilities. Check the logs for progress.", "success")
+                flash(f"Small batches are processed immediately, larger ones in the background to avoid timeouts.", "info")
+                
+                logger.info(f"Started background geocoding process for {batch_size} facilities")
+                
+                # Get current stats for display
+                from geocode_facilities import get_geocoding_statistics
+                stats = get_geocoding_statistics()
+                flash(f"Current stats: {stats['geocoded']}/{stats['total']} facilities have been geocoded.", "info")
+                
+                return redirect(request.referrer or '/')
+            
+            # Import the geocoding module
             from geocode_facilities import geocode_facilities
             
             # Get statistics before
@@ -482,8 +503,8 @@ with app.app_context():
                     MedicalFacility.longitude != None
                 ).count()
             
-            # Import the geocoding module and run the geocoding
-            # For web requests, limit to small batch and set max_facilities to avoid timeouts
+            # For smaller batches, process directly with a lower batch size
+            # and shorter delay to avoid timeouts
             geocode_facilities(batch_size=5, max_facilities=batch_size)
             
             # Get statistics after
@@ -500,8 +521,8 @@ with app.app_context():
             
             flash(f"Geocoded {facilities_processed} facilities, with {coords_added} successful coordinate lookups.", "success")
             
-            # Remind about command-line option for full processing
-            flash(f"For full geocoding, use the terminal command: python geocode_facilities.py", "info")
+            # Remind about background processing option
+            flash(f"For full background geocoding, use: python background_geocoding.py --continuous", "info")
             
             logger.info(f"Geocoded {facilities_processed} facilities (web batch), added {coords_added} coordinates")
             
