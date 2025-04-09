@@ -96,7 +96,8 @@ with app.app_context():
                 all_facilities = db.session.query(MedicalFacility).all()
                 
                 # Find facilities near the specified address
-                address_search_results = find_facilities_near_address(address_part, all_facilities, max_distance=15.0)
+                # Increased max distance to 30km to get more results
+                address_search_results = find_facilities_near_address(address_part, all_facilities, max_distance=30.0)
                 
                 if address_search_results and address_search_results.get('facilities'):
                     logger.debug(f"Found {len(address_search_results['facilities'])} facilities near address: '{query_text}'")
@@ -285,7 +286,7 @@ with app.app_context():
             search_location = address_search_results['search_location']
             
             # Add distance information for display
-            mapped_specialties = [f"Strutture entro 15 km da {search_location.get('display_name', query_text)}"]
+            mapped_specialties = [f"Strutture entro 30 km da {search_location.get('display_name', query_text)}"]
             
             logger.debug(f"Using address search results sorted by distance")
             

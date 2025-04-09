@@ -454,18 +454,26 @@
 {% block extra_js %}
 <script>
 // View toggles (grid/list)
-document.getElementById('viewGrid').addEventListener('click', function() {
-    document.getElementById('facilitiesGrid').classList.remove('d-none');
-    document.getElementById('facilitiesList').classList.add('d-none');
-    this.classList.add('active');
-    document.getElementById('viewList').classList.remove('active');
-});
-
-document.getElementById('viewList').addEventListener('click', function() {
-    document.getElementById('facilitiesGrid').classList.add('d-none');
-    document.getElementById('facilitiesList').classList.remove('d-none');
-    this.classList.add('active');
-    document.getElementById('viewGrid').classList.remove('active');
+document.addEventListener('DOMContentLoaded', function() {
+    // Only add event listeners if the elements exist on the page
+    var viewGrid = document.getElementById('viewGrid');
+    var viewList = document.getElementById('viewList');
+    
+    if (viewGrid && viewList) {
+        viewGrid.addEventListener('click', function() {
+            document.getElementById('facilitiesGrid').classList.remove('d-none');
+            document.getElementById('facilitiesList').classList.add('d-none');
+            this.classList.add('active');
+            viewList.classList.remove('active');
+        });
+        
+        viewList.addEventListener('click', function() {
+            document.getElementById('facilitiesGrid').classList.add('d-none');
+            document.getElementById('facilitiesList').classList.remove('d-none');
+            this.classList.add('active');
+            viewGrid.classList.remove('active');
+        });
+    }
 });
 </script>
 {% endblock %}
