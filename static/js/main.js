@@ -16,6 +16,24 @@ document.addEventListener('DOMContentLoaded', function() {
             updateQualityValue(this.value);
         });
     }
+    
+    // Add loading spinner to search form
+    const searchForm = document.getElementById('searchForm');
+    if (searchForm) {
+        searchForm.addEventListener('submit', function() {
+            const searchButton = document.getElementById('searchButton');
+            if (searchButton) {
+                // Disable the button to prevent multiple submissions
+                searchButton.disabled = true;
+                
+                // Change button text and add spinner
+                searchButton.innerHTML = '<i class="fas fa-search me-2"></i> Ricerca in corso... <span class="spinner-border spinner-border-sm ms-2" role="status" aria-hidden="true"></span>';
+            }
+            
+            // Allow the form to submit
+            return true;
+        });
+    }
 
     // Initialize any collapsible elements
     const collapseElementList = [].slice.call(document.querySelectorAll('.collapse'));
