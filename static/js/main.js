@@ -6,6 +6,19 @@ document.addEventListener('DOMContentLoaded', function() {
     tooltipTriggerList.map(function(tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
+    
+    // Initialize modals
+    const modalTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="modal"]'));
+    modalTriggerList.map(function(modalTriggerEl) {
+        modalTriggerEl.addEventListener('click', function(event) {
+            event.preventDefault();
+            const targetModal = document.querySelector(this.getAttribute('data-bs-target'));
+            if (targetModal) {
+                const modal = new bootstrap.Modal(targetModal);
+                modal.show();
+            }
+        });
+    });
 
     // Handle quality slider on the search form
     const qualitySlider = document.getElementById('min_quality');
