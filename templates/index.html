@@ -71,8 +71,9 @@
                         </div>
                         
                         <div class="col-12 mt-4 text-center">
-                            <button type="submit" class="btn btn-primary btn-lg px-5">
+                            <button type="submit" class="btn btn-primary btn-lg px-5" id="searchButton">
                                 <i class="fas fa-search me-2"></i> Cerca Strutture
+                                <span class="spinner-border spinner-border-sm ms-2 d-none" id="searchSpinner" role="status" aria-hidden="true"></span>
                             </button>
                         </div>
                     </div>
@@ -278,6 +279,27 @@ function updateQualityValue(val) {
     }
 }
 
-// No additional functionality needed for loading data
+// Show spinner when form is submitted
+document.addEventListener('DOMContentLoaded', function() {
+    const searchForm = document.getElementById('searchForm');
+    const searchButton = document.getElementById('searchButton');
+    const searchSpinner = document.getElementById('searchSpinner');
+    
+    if (searchForm && searchButton && searchSpinner) {
+        searchForm.addEventListener('submit', function() {
+            // Disable the button to prevent multiple submissions
+            searchButton.disabled = true;
+            
+            // Show the spinner
+            searchSpinner.classList.remove('d-none');
+            
+            // Change button text
+            searchButton.innerHTML = '<i class="fas fa-search me-2"></i> Ricerca in corso... <span class="spinner-border spinner-border-sm ms-2" role="status" aria-hidden="true"></span>';
+            
+            // Allow the form to submit
+            return true;
+        });
+    }
+});
 </script>
 {% endblock %}
