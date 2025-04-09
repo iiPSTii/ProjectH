@@ -35,59 +35,102 @@ def parse_address(query_text):
     Returns:
         dict: Extracted address components (street, number, city)
     """
+    # Define common Italian cities - expanded list
+    common_cities = [
+        'milano', 'roma', 'napoli', 'torino', 'bologna', 'firenze', 'genova', 
+        'palermo', 'bari', 'venezia', 'verona', 'padova', 'catania', 'messina', 
+        'salerno', 'parma', 'modena', 'reggio', 'pisa', 'livorno', 'siena'
+    ]
+    
     # Check if we have explicit city information (after a comma or at the end)
     city = None
-    query_parts = query_text.split(',')
+    street_text = query_text
     
-    # If we have comma-separated parts, the last part might be the city
-    if len(query_parts) > 1:
-        city_part = query_parts[-1].strip().lower()
-        common_cities = ['milano', 'roma', 'napoli', 'torino', 'bologna', 'firenze', 
-                         'genova', 'palermo', 'bari', 'venezia', 'verona', 'padova']
+    # Check comma-separated parts first - they take priority
+    if ',' in query_text:
+        query_parts = query_text.split(',')
         
-        # Check if the last part contains a known city name
-        city_found = False
-        for common_city in common_cities:
-            if common_city in city_part:
-                city = common_city.title()
-                city_found = True
-                break
-        
-        # If we found a city, remove it from the query for street parsing
-        if city_found:
-            query_text = ','.join(query_parts[:-1])
+        # If we have comma-separated parts, the last part might be the city
+        if len(query_parts) > 1:
+            city_part = query_parts[-1].strip().lower()
+            
+            # Check if the last part contains a known city name
+            for common_city in common_cities:
+                if common_city in city_part:
+                    city = common_city.title()
+                    break
+            
+            # If no known city found, but we have a non-empty part after comma, use it as city
+            if not city and len(city_part) > 2:
+                city = city_part.title()
+            
+            # Use only the part before the comma for street parsing
+            street_text = ','.join(query_parts[:-1])
     
-    # Basic address pattern: "via/corso/piazza name number city"
-    address_pattern = r'(via|corso|piazza|viale|vicolo|strada|largo)\s+([a-zA-Z\s\']+)\s+(\d+)?\s*([a-zA-Z\s]+)?'
-    match = re.search(address_pattern, query_text.lower())
+    # Try to match street pattern first with the street part
+    # Basic address pattern: "via/corso/piazza name number [potential city]"
+    street_prefixes = ['via', 'corso', 'piazza', 'viale', 'vicolo', 'strada', 'largo']
+    prefix_pattern = '|'.join(street_prefixes)
+    address_pattern = r'(' + prefix_pattern + r')\s+([a-zA-Z\s\']+)\s+(\d+)?(?:\s+([a-zA-Z\s]+))?'
+    
+    match = re.search(address_pattern, street_text.lower())
     
     if match:
         street_type = match.group(1)
         street_name = match.group(2).strip()
         street_number = match.group(3) or ""
         
-        # If we didn't find a city from comma separation, try from the match
+        # If we have city from comma-separated part, use it
+        # Otherwise, try to extract from the match
         if not city and match.group(4):
             potential_city = match.group(4).strip()
             
             # Check if this might be a city name
-            common_cities = ['milano', 'roma', 'napoli', 'torino', 'bologna', 'firenze', 
-                             'genova', 'palermo', 'bari', 'venezia', 'verona', 'padova']
-            
             for common_city in common_cities:
                 if common_city in potential_city.lower():
                     city = common_city.title()
                     break
             
-            # If not found in our common cities list, just use what we have
+            # If not found in our common cities list but looks like a city name, use it
             if not city and len(potential_city) > 3:
-                city = potential_city.title()
+                # Check if this potential city appears somewhere in the original query
+                # in case it was repeated or better specified elsewhere
+                for word in query_text.lower().split():
+                    if word in common_cities:
+                        city = word.title()
+                        break
+                
+                # If still no match, use what we extracted
+                if not city:
+                    city = potential_city.title()
+        
+        # If still no city, check the full query for any city mentions
+        if not city:
+            for common_city in common_cities:
+                if common_city in query_text.lower():
+                    city = common_city.title()
+                    break
         
         return {
             "street": f"{street_type} {street_name}",
             "number": street_number,
             "city": city or ""
         }
+    
+    # If we couldn't match the street pattern but have a city, try a simple approach
+    # Extract any street prefix and create a partial address
+    if not match:
+        for prefix in street_prefixes:
+            if f" {prefix} " in f" {street_text.lower()} " or street_text.lower().startswith(f"{prefix} "):
+                # Extract from prefix to the next word boundary
+                pattern = r'\b' + prefix + r'\s+([^\s,]+)'
+                simple_match = re.search(pattern, street_text.lower())
+                if simple_match:
+                    return {
+                        "street": f"{prefix} {simple_match.group(1)}",
+                        "number": "",
+                        "city": city or ""
+                    }
     
     return None
 
@@ -236,21 +279,62 @@ def extract_address_part(query_text):
         # Extract everything from the prefix to the end
         address_part = query_text[start_index:]
         
-        # Check if we have common city names in the query that should be included
-        common_cities = ['milano', 'roma', 'napoli', 'torino', 'bologna', 'firenze', 
-                         'genova', 'palermo', 'bari', 'venezia', 'verona', 'padova']
+        # Define common Italian cities - expanded list
+        common_cities = [
+            'milano', 'roma', 'napoli', 'torino', 'bologna', 'firenze', 'genova', 
+            'palermo', 'bari', 'venezia', 'verona', 'padova', 'catania', 'messina', 
+            'salerno', 'parma', 'modena', 'reggio', 'pisa', 'livorno', 'siena'
+        ]
         
-        # Try to find a city name in the remaining part
-        city_found = None
-        for city in common_cities:
-            if city in query_lower and city not in address_part.lower():
-                city_found = city
-                break
+        # Check if address_part already has a city in it (comma-separated or just at the end)
+        already_has_city = False
+        extracted_city = None
         
-        # If we found a city, append it to the address part if not already there
-        if city_found and city_found not in address_part.lower():
-            address_part += f", {city_found.title()}"
+        # First check for comma-separated city
+        if ',' in address_part:
+            parts = address_part.split(',')
+            for city in common_cities:
+                if any(city in part.lower().strip() for part in parts):
+                    already_has_city = True
+                    break
+        
+        # If address doesn't already have a city with comma, check if it has a city at the end
+        if not already_has_city:
+            # Try to extract city at the end of the address (after street number)
+            # Pattern to match a street address: "street_type street_name number [potential city]"
+            street_pattern = r'(' + '|'.join(street_prefixes) + r')\s+([a-zA-Z\s\']+)\s+(\d+)(?:\s+([a-zA-Z\s]+))?'
+            street_match = re.search(street_pattern, address_part.lower())
             
+            if street_match and street_match.group(4):  # If we have text after the street number
+                potential_city = street_match.group(4).strip()
+                
+                # Check if this looks like a city name
+                for city in common_cities:
+                    if city in potential_city:
+                        extracted_city = city
+                        already_has_city = True
+                        break
+        
+        # Next, check if we need to add a city from the original query
+        if not already_has_city:
+            # Check the original query for city mentions
+            city_in_query = None
+            for city in common_cities:
+                if city in query_lower and city not in address_part.lower():
+                    city_in_query = city
+                    break
+                    
+            # If we found a city in the query and it's not already in the address, add it
+            if city_in_query:
+                address_part += f", {city_in_query.title()}"
+        
+        # If we extracted a city from the address but it's not properly formatted with a comma,
+        # reformat the address to have the city comma-separated
+        elif extracted_city and ',' not in address_part:
+            # Replace the city mention with a comma-separated version
+            address_without_city = re.sub(r'\s+' + extracted_city + r'\b', '', address_part, flags=re.IGNORECASE)
+            address_part = f"{address_without_city}, {extracted_city.title()}"
+        
         return address_part
     
     return query_text
