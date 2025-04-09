@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ title }}</li>
+            </ol>
+        </nav>
+        
+        <div class="mb-5">
+            <div class="text-center mb-5">
+                <h1 class="display-5 fw-bold mb-4">{{ headline }}</h1>
+                <p class="lead mb-4">{{ description }}</p>
+                
+                <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                    <a href="{{ search_url }}" class="btn btn-primary btn-lg px-4 gap-3">
+                        <i class="fas fa-search me-2"></i> Cerca Adesso
+                    </a>
+                </div>
+            </div>
+            
+            <div class="card bg-dark border-0 shadow-sm mb-5">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-7">
+                            <h2 class="mb-4">{{ content_title }}</h2>
+                            <div class="mb-4">
+                                {{ content_html|safe }}
+                            </div>
+                            
+                            {% if keywords %}
+                            <div class="mb-4">
+                                <h3 class="h5 mb-3">Parole chiave correlate:</h3>
+                                <div class="d-flex flex-wrap gap-2">
+                                    {% for keyword in keywords %}
+                                    <a href="/search?query_text={{ keyword }}" class="badge bg-secondary text-decoration-none">{{ keyword }}</a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-5">
+                            <div class="card bg-dark bg-opacity-50 border-0 h-100">
+                                <div class="card-body">
+                                    <h3 class="h5 mb-4">Informazioni utili</h3>
+                                    <ul class="list-group list-group-flush bg-transparent">
+                                        {% for fact in facts %}
+                                        <li class="list-group-item bg-transparent border-secondary">
+                                            <i class="fas fa-check-circle text-success me-2"></i> {{ fact }}
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                    
+                                    <div class="d-grid gap-2 mt-4">
+                                        <a href="{{ search_url }}" class="btn btn-outline-primary">
+                                            Trova strutture {{ cta_text }}
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

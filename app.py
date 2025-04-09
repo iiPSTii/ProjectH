@@ -582,3 +582,228 @@ with app.app_context():
         except Exception as e:
             logger.error(f"Error exporting database: {str(e)}")
             return f"Error exporting database: {str(e)}", 500
+    
+    # SEO friendly routes
+    @app.route('/robots.txt')
+    def robots():
+        """Serve robots.txt file"""
+        return send_file('static/robots.txt')
+    
+    @app.route('/sitemap.xml')
+    def sitemap():
+        """Serve sitemap.xml file"""
+        return send_file('static/sitemap.xml')
+        
+    @app.route('/urls')
+    def url_list():
+        """Serve a list of all important URLs for crawler discovery"""
+        return send_file('static/urls.txt')
+    
+    @app.route('/.well-known/security.txt')
+    def security_txt():
+        """Security.txt file with contact information for security researchers"""
+        return """Contact: mailto:sicurezza@findmycure-italia.it
+Expires: 2026-04-09T00:00:00.000Z
+Preferred-Languages: it, en
+"""
+    
+    @app.route('/<region>/<specialty>')
+    def region_specialty_search(region, specialty):
+        """SEO-friendly URL structure for region+specialty search"""
+        # Redirect to the search page with the same parameters
+        return redirect(url_for('search', region=region, specialty=specialty))
+    
+    # Add dynamic structured data (JSON-LD) to all pages
+    @app.context_processor
+    def inject_json_ld():
+        """Inject JSON-LD structured data into all templates"""
+        def get_structured_data():
+            # Default data for website (homepage and general pages)
+            current_path = request.path
+            
+            # Base data for all pages
+            base_data = {
+                "@context": "https://schema.org",
+                "@type": "WebSite",
+                "name": "FindMyCure Italia",
+                "url": "https://findmycure-italia.replit.app/",
+                "description": "Trova e confronta strutture sanitarie in Italia con valutazioni reali basate su dati ufficiali.",
+                "potentialAction": {
+                    "@type": "SearchAction",
+                    "target": "https://findmycure-italia.replit.app/search?query_text={search_term}",
+                    "query-input": "required name=search_term"
+                }
+            }
+            
+            # Enhanced structured data for search results pages
+            if current_path == '/search':
+                query = request.args.get('query_text', '')
+                specialty = request.args.get('specialty', '')
+                region = request.args.get('region', '')
+                
+                # Customize page title based on search parameters
+                search_title = "Risultati della ricerca"
+                if query:
+                    search_title = f"Strutture per '{query}'"
+                elif specialty:
+                    search_title = f"Strutture di {specialty}"
+                if region:
+                    search_title += f" in {region}"
+                    
+                base_data = {
+                    "@context": "https://schema.org",
+                    "@type": "SearchResultsPage",
+                    "name": f"FindMyCure Italia - {search_title}",
+                    "description": f"Risultati della ricerca per strutture sanitarie in Italia: {search_title}"
+                }
+            
+            # Enhanced structured data for methodology page
+            elif current_path == '/methodology':
+                base_data = {
+                    "@context": "https://schema.org",
+                    "@type": "Article",
+                    "headline": "Metodologia di valutazione delle strutture sanitarie",
+                    "description": "Scopri come valutiamo le strutture sanitarie italiane usando dati ufficiali del Programma Nazionale Esiti (PNE) e altre fonti verificate",
+                    "datePublished": "2025-04-09",
+                    "publisher": {
+                        "@type": "Organization",
+                        "name": "FindMyCure Italia",
+                        "url": "https://findmycure-italia.replit.app/"
+                    }
+                }
+            
+            # Enhanced structured data for landing pages
+            elif current_path in ['/cardiologia', '/oncologia', '/milano-strutture-sanitarie']:
+                page_info = {
+                    '/cardiologia': {
+                        "name": "Strutture di Cardiologia in Italia",
+                        "specialty": "Cardiologia"
+                    },
+                    '/oncologia': {
+                        "name": "Strutture di Oncologia in Italia",
+                        "specialty": "Oncologia"
+                    },
+                    '/milano-strutture-sanitarie': {
+                        "name": "Strutture Sanitarie a Milano",
+                        "city": "Milano"
+                    }
+                }
+                
+                info = page_info[current_path]
+                
+                base_data = {
+                    "@context": "https://schema.org",
+                    "@type": "MedicalWebPage",
+                    "headline": info["name"],
+                    "specialty": info.get("specialty", ""),
+                    "about": {
+                        "@type": "MedicalOrganization",
+                        "name": "Strutture mediche italiane",
+                        "address": {
+                            "@type": "PostalAddress",
+                            "addressCountry": "IT",
+                            "addressRegion": info.get("city", "Italia")
+                        }
+                    }
+                }
+                
+            return base_data
+            
+        return dict(get_structured_data=get_structured_data)
+        
+    # SEO landing pages for common specialties and cities
+    @app.route('/cardiologia')
+    def cardiology_landing():
+        """Landing page for cardiology specialty searches"""
+        return render_template('landing_page.html',
+            title="Strutture di Cardiologia in Italia",
+            headline="Trova le migliori strutture di cardiologia in Italia",
+            description="Cerca e confronta ospedali e strutture specializzate in cardiologia in tutta Italia, con valutazioni basate su dati pubblici ufficiali.",
+            search_url="/search?specialty=Cardiologia",
+            content_title="Come trovare la migliore struttura di cardiologia",
+            content_html="""
+                <p>La cardiologia è una branca della medicina che si occupa della diagnosi e del trattamento delle malattie cardiovascolari, ovvero quelle che interessano il cuore e i vasi sanguigni.</p>
+                <p>Quando si cerca una struttura specializzata in cardiologia, è importante valutare diversi fattori:</p>
+                <ul>
+                    <li>La presenza di cardiologi esperti e qualificati</li>
+                    <li>La disponibilità di tecnologie diagnostiche avanzate</li>
+                    <li>Il volume di interventi cardiovascolari eseguiti annualmente</li>
+                    <li>I tassi di successo degli interventi</li>
+                    <li>La vicinanza alla propria abitazione</li>
+                </ul>
+                <p>Tutte le strutture presenti nel nostro database sono valutate secondo criteri oggettivi basati sui dati del Programma Nazionale Esiti e altre fonti ufficiali.</p>
+            """,
+            keywords=["cardiologia milano", "cardiologo roma", "ospedali cardiochirurgia", "centri cardiologia", "malattie cardiovascolari", "ecocardiogramma"],
+            facts=[
+                "Le malattie cardiovascolari sono la prima causa di morte in Italia",
+                "Un centro di eccellenza in cardiologia deve avere un volume adeguato di interventi",
+                "La prossimità geografica è importante per le emergenze cardiache",
+                "La mortalità a 30 giorni dopo intervento è un indicatore chiave di qualità",
+                "I tempi di attesa per procedure cardiologiche variano tra le strutture"
+            ],
+            cta_text="cardiologiche"
+        )
+        
+    @app.route('/oncologia')
+    def oncology_landing():
+        """Landing page for oncology specialty searches"""
+        return render_template('landing_page.html',
+            title="Strutture di Oncologia in Italia",
+            headline="Cerca strutture specializzate in oncologia in Italia",
+            description="Trova ospedali e centri oncologici in tutta Italia con valutazioni basate su dati pubblici ufficiali e indicatori di qualità verificati.",
+            search_url="/search?specialty=Oncologia",
+            content_title="Come scegliere un centro oncologico di qualità",
+            content_html="""
+                <p>L'oncologia è la specialità medica che si occupa dello studio e del trattamento dei tumori. Scegliere la struttura giusta per un trattamento oncologico è una decisione importante che può influenzare significativamente il percorso di cura.</p>
+                <p>I fattori da considerare nella scelta di un centro oncologico includono:</p>
+                <ul>
+                    <li>La specializzazione nel tipo specifico di tumore da trattare</li>
+                    <li>Il volume di casi trattati annualmente</li>
+                    <li>La disponibilità di tecnologie diagnostiche e terapeutiche all'avanguardia</li>
+                    <li>La presenza di un'équipe multidisciplinare</li>
+                    <li>I tassi di sopravvivenza e la qualità della vita post-trattamento</li>
+                </ul>
+                <p>FindMyCure Italia ti aiuta a confrontare i centri oncologici su tutto il territorio nazionale, utilizzando dati verificati e indicatori di qualità oggettivi.</p>
+            """,
+            keywords=["oncologia roma", "centri oncologici milano", "terapie tumorali", "ospedali cancro", "oncologo napoli", "centro tumori"],
+            facts=[
+                "I centri ad alto volume hanno generalmente risultati migliori nel trattamento oncologico",
+                "Un approccio multidisciplinare è fondamentale per il trattamento del cancro",
+                "La specializzazione del centro nel tipo specifico di tumore è cruciale",
+                "I tassi di sopravvivenza a 5 anni variano significativamente tra i centri",
+                "L'accesso a trial clinici può offrire opzioni terapeutiche innovative"
+            ],
+            cta_text="oncologiche"
+        )
+    
+    @app.route('/milano-strutture-sanitarie')
+    def milan_landing():
+        """Landing page for Milan healthcare facilities"""
+        return render_template('landing_page.html',
+            title="Strutture Sanitarie a Milano",
+            headline="Trova le migliori strutture sanitarie a Milano",
+            description="Cerca e confronta ospedali, cliniche e centri specializzati a Milano e provincia, con informazioni dettagliate e valutazioni di qualità.",
+            search_url="/search?query_text=Milano",
+            content_title="Servizi sanitari a Milano",
+            content_html="""
+                <p>Milano è una delle città italiane con la più alta concentrazione di strutture sanitarie di eccellenza, che offrono cure di alta qualità in numerose specialità mediche.</p>
+                <p>Il sistema sanitario milanese include:</p>
+                <ul>
+                    <li>Ospedali pubblici (ASST) con reparti di eccellenza</li>
+                    <li>Istituti di Ricovero e Cura a Carattere Scientifico (IRCCS)</li>
+                    <li>Policlinici universitari</li>
+                    <li>Strutture private convenzionate</li>
+                    <li>Centri specialistici per specifiche patologie</li>
+                </ul>
+                <p>Utilizzando il nostro strumento di ricerca, puoi trovare la struttura più adatta alle tue esigenze nella zona di Milano, con valutazioni basate su dati ufficiali e indicatori di qualità verificati.</p>
+            """,
+            keywords=["ospedali milano", "cliniche private milano", "policlinico milano", "strutture sanitarie lombardia", "san raffaele milano", "niguarda"],
+            facts=[
+                "Milano ospita alcuni degli ospedali più rinomati d'Italia",
+                "Molte strutture milanesi sono anche centri di ricerca e formazione",
+                "Le strutture sono distribuite in diverse zone della città e provincia",
+                "La Lombardia ha uno dei sistemi sanitari più efficienti d'Italia",
+                "Molti ospedali milanesi sono specializzati in specifiche aree mediche"
+            ],
+            cta_text="a Milano"
+        )

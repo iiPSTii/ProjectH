@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+Disallow: /data-manager
+Disallow: /_internal/
+Disallow: /download-db
+Disallow: /load-data
+Disallow: /geocode-facilities
+
+# Crawl-delay: 10
+
+# Sitemap
+Sitemap: https://findmycure-italia.replit.app/sitemap.xml
+
+# URL list for additional crawling
+Sitemap: https://findmycure-italia.replit.app/urls

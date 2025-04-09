@@ -3,12 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Trova e confronta strutture sanitarie in Italia. Cerca ospedali, cliniche e centri specializzati in base a specialità e qualità.">
-    <meta name="keywords" content="strutture sanitarie, ospedali italia, cliniche mediche, centri specializzati, ricerca ospedali">
+    <meta name="description" content="Trova e confronta strutture sanitarie in Italia con valutazioni reali. Cerca ospedali, cliniche e centri specializzati in base a specialità, posizione e qualità.">
+    <meta name="keywords" content="strutture sanitarie, ospedali italia, cliniche mediche, centri specializzati, ricerca ospedali, qualità ospedaliera, valutazione strutture sanitarie, migliori ospedali italiani">
     <meta name="robots" content="index, follow">
+    <meta name="author" content="FindMyCure Italia">
+    <meta name="geo.region" content="IT">
+    <meta name="geo.placename" content="Italia">
+    <meta name="google-site-verification" content="">
+    
+    <!-- Open Graph / Facebook / Twitter -->
     <meta property="og:title" content="FindMyCure Italia - Trova le Strutture Sanitarie in Italia">
-    <meta property="og:description" content="Cerca e confronta strutture sanitarie in tutta Italia per specialità e qualità.">
+    <meta property="og:description" content="Cerca e confronta strutture sanitarie in tutta Italia per specialità, posizione e qualità con valutazioni verificate.">
     <meta property="og:type" content="website">
+    <meta property="og:url" content="https://findmycure-italia.replit.app/">
+    <meta property="og:locale" content="it_IT">
+    
+    <!-- Twitter Card data -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="FindMyCure Italia - Trova le Strutture Sanitarie in Italia">
+    <meta name="twitter:description" content="Cerca e confronta strutture sanitarie in tutta Italia per specialità, posizione e qualità con valutazioni verificate.">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://findmycure-italia.replit.app{{ request.path }}">
     <title>FindMyCure Italia - {% block title %}Trova le Strutture Sanitarie in Italia{% endblock %}</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">
@@ -111,8 +127,10 @@
                     <h5>Collegamenti Rapidi</h5>
                     <ul class="list-unstyled">
                         <li class="mb-2"><a href="/"><i class="fas fa-chevron-right me-1 small"></i> Home</a></li>
-                        <li class="mb-2"><a href="#"><i class="fas fa-chevron-right me-1 small"></i> Informazioni</a></li>
-                        <li class="mb-2"><a href="#"><i class="fas fa-chevron-right me-1 small"></i> Contatti</a></li>
+                        <li class="mb-2"><a href="/methodology"><i class="fas fa-chevron-right me-1 small"></i> Metodologia</a></li>
+                        <li class="mb-2"><a href="/cardiologia"><i class="fas fa-chevron-right me-1 small"></i> Strutture di Cardiologia</a></li>
+                        <li class="mb-2"><a href="/oncologia"><i class="fas fa-chevron-right me-1 small"></i> Strutture di Oncologia</a></li>
+                        <li class="mb-2"><a href="/milano-strutture-sanitarie"><i class="fas fa-chevron-right me-1 small"></i> Strutture a Milano</a></li>
                     </ul>
                 </div>
                 
@@ -165,5 +183,10 @@
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     <script src="{{ url_for('static', filename='js/update_ratings.js') }}"></script>
     {% block extra_js %}{% endblock %}
+    
+    <!-- JSON-LD Structured Data for SEO -->
+    <script type="application/ld+json">
+    {{ get_structured_data()|tojson }}
+    </script>
 </body>
 </html>
