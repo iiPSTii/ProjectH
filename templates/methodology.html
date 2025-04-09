@@ -33,80 +33,69 @@
                 </div>
                 
                 <div class="mb-5">
-                    <h4 class="text-info"><i class="fas fa-star-half-alt me-2"></i>Scala di Valutazione</h4>
+                    <h4 class="text-info"><i class="fas fa-chart-bar me-2"></i>Scala di Valutazione</h4>
                     <p>Ogni struttura è valutata su una scala da 1 a 5:</p>
                     
-                    <div class="table-responsive">
-                        <table class="table table-dark">
-                            <thead>
-                                <tr>
-                                    <th style="width: 250px;">Valutazione</th>
-                                    <th>Descrizione</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <div class="specialty-rating-item">
-                                            <div class="specialty-name">Eccezionale (5.0)</div>
-                                            <div class="rating-bar">
-                                                <div class="rating-fill" style="width: 100%;"></div>
-                                            </div>
-                                            <div class="rating-value">5.0/5.0</div>
-                                        </div>
-                                    </td>
-                                    <td><strong>Eccezionale</strong> - Centro di eccellenza riconosciuto a livello nazionale</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="specialty-rating-item">
-                                            <div class="specialty-name">Ottimo (4.0)</div>
-                                            <div class="rating-bar">
-                                                <div class="rating-fill" style="width: 80%;"></div>
-                                            </div>
-                                            <div class="rating-value">4.0/5.0</div>
-                                        </div>
-                                    </td>
-                                    <td><strong>Ottimo</strong> - Prestazioni superiori alla media in questa specialità</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="specialty-rating-item">
-                                            <div class="specialty-name">Buono (3.0)</div>
-                                            <div class="rating-bar">
-                                                <div class="rating-fill" style="width: 60%;"></div>
-                                            </div>
-                                            <div class="rating-value">3.0/5.0</div>
-                                        </div>
-                                    </td>
-                                    <td><strong>Buono</strong> - Prestazioni nella media con punti di forza in questa specialità</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="specialty-rating-item">
-                                            <div class="specialty-name">Adeguato (2.0)</div>
-                                            <div class="rating-bar">
-                                                <div class="rating-fill" style="width: 40%;"></div>
-                                            </div>
-                                            <div class="rating-value">2.0/5.0</div>
-                                        </div>
-                                    </td>
-                                    <td><strong>Adeguato</strong> - Struttura con servizi di base in questa specialità</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="specialty-rating-item">
-                                            <div class="specialty-name">Limitato (1.0)</div>
-                                            <div class="rating-bar">
-                                                <div class="rating-fill" style="width: 20%;"></div>
-                                            </div>
-                                            <div class="rating-value">1.0/5.0</div>
-                                        </div>
-                                    </td>
-                                    <td><strong>Limitato</strong> - Presenza minima o periferica della specialità</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div class="mt-4">
+                        <!-- Rating item: Eccezionale -->
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h5 class="mb-0"><strong>Eccezionale (5.0)</strong></h5>
+                                <span class="text-info">5.0/5.0</span>
+                            </div>
+                            <div class="progress bg-dark">
+                                <div class="progress-bar bg-info" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <p class="text-muted mt-2">Centro di eccellenza riconosciuto a livello nazionale</p>
+                        </div>
+                        
+                        <!-- Rating item: Ottimo -->
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h5 class="mb-0"><strong>Ottimo (4.0)</strong></h5>
+                                <span class="text-info">4.0/5.0</span>
+                            </div>
+                            <div class="progress bg-dark">
+                                <div class="progress-bar bg-info" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <p class="text-muted mt-2">Prestazioni superiori alla media in questa specialità</p>
+                        </div>
+                        
+                        <!-- Rating item: Buono -->
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h5 class="mb-0"><strong>Buono (3.0)</strong></h5>
+                                <span class="text-info">3.0/5.0</span>
+                            </div>
+                            <div class="progress bg-dark">
+                                <div class="progress-bar bg-info" role="progressbar" style="width: 60%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <p class="text-muted mt-2">Prestazioni nella media con punti di forza in questa specialità</p>
+                        </div>
+                        
+                        <!-- Rating item: Adeguato -->
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h5 class="mb-0"><strong>Adeguato (2.0)</strong></h5>
+                                <span class="text-info">2.0/5.0</span>
+                            </div>
+                            <div class="progress bg-dark">
+                                <div class="progress-bar bg-info" role="progressbar" style="width: 40%" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <p class="text-muted mt-2">Struttura con servizi di base in questa specialità</p>
+                        </div>
+                        
+                        <!-- Rating item: Limitato -->
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h5 class="mb-0"><strong>Limitato (1.0)</strong></h5>
+                                <span class="text-info">1.0/5.0</span>
+                            </div>
+                            <div class="progress bg-dark">
+                                <div class="progress-bar bg-info" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <p class="text-muted mt-2">Presenza minima o periferica della specialità</p>
+                        </div>
                     </div>
                     
                     <p class="mt-3">Le specialità di ogni struttura sono state identificate e una scala di valutazione è stata applicata per riflettere le sue prestazioni o il riconoscimento in quelle aree.</p>
