@@ -339,6 +339,25 @@ footer h5::after {
     color: var(--medical-light-blue) !important;
 }
 
+/* Phone number links styling */
+a[href^="tel:"], .phone-link {
+    color: var(--medical-green) !important;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+a[href^="tel:"]:hover, .phone-link:hover {
+    color: var(--medical-light-blue) !important;
+    text-decoration: underline;
+}
+
+.phone-link .fa-external-link-alt {
+    opacity: 0.6;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .facility-card {
