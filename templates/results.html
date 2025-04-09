@@ -197,20 +197,9 @@
                         <div class="mt-3 specialty-ratings">
                             <h6 class="mb-2">Valutazioni per Specialità:</h6>
                             
-                            {% if facility.cardiology_rating or facility.orthopedics_rating or facility.oncology_rating or facility.neurology_rating or facility.surgery_rating or facility.urology_rating or facility.pediatrics_rating or facility.gynecology_rating %}
-                            
-                            {% if facility.cardiology_rating %}
-                            <div class="specialty-rating-item">
-                                <div class="specialty-name">Cardiologia</div>
-                                <div class="rating-bar">
-                                    <div class="rating-fill" style="width: {{ facility.cardiology_rating*20 }}%;"></div>
-                                </div>
-                                <div class="rating-value">{{ format_quality(facility.cardiology_rating) }}</div>
-                            </div>
-                            {% endif %}
-                            
-                            {% else %}
-                            <div class="alert alert-secondary bg-opacity-25 border-0 rounded mb-0">
+                            {% if not facility.cardiology_rating and not facility.orthopedics_rating and not facility.oncology_rating and not facility.neurology_rating and not facility.surgery_rating and not facility.urology_rating and not facility.pediatrics_rating and not facility.gynecology_rating %}
+                            <!-- No specialty ratings available -->
+                            <div class="alert alert-secondary bg-opacity-25 border-0 rounded mb-3">
                                 <div class="d-flex align-items-center">
                                     <div class="me-3">
                                         <i class="fas fa-info-circle text-secondary fa-lg"></i>
@@ -220,6 +209,16 @@
                                     </div>
                                 </div>
                             </div>
+                            {% else %}
+                                {% if facility.cardiology_rating %}
+                                <div class="specialty-rating-item">
+                                    <div class="specialty-name">Cardiologia</div>
+                                    <div class="rating-bar">
+                                        <div class="rating-fill" style="width: {{ facility.cardiology_rating*20 }}%;"></div>
+                                    </div>
+                                    <div class="rating-value">{{ format_quality(facility.cardiology_rating) }}</div>
+                                </div>
+                                {% endif %}
                             {% endif %}
                             
                             {% if facility.orthopedics_rating %}
@@ -371,21 +370,28 @@
                             <div class="mt-2 mt-md-0 specialty-ratings">
                                 <h6 class="mb-1">Valutazioni per Specialità:</h6>
                                 
-                                {% if facility.cardiology_rating or facility.orthopedics_rating or facility.oncology_rating or facility.neurology_rating or facility.surgery_rating or facility.urology_rating or facility.pediatrics_rating or facility.gynecology_rating %}
-                                {% if facility.cardiology_rating %}
-                                <div class="specialty-rating-item">
-                                    <div class="specialty-name">Cardiologia</div>
-                                    <div class="rating-bar">
-                                        <div class="rating-fill" style="width: {{ facility.cardiology_rating*20 }}%;"></div>
+                                {% if not facility.cardiology_rating and not facility.orthopedics_rating and not facility.oncology_rating and not facility.neurology_rating and not facility.surgery_rating and not facility.urology_rating and not facility.pediatrics_rating and not facility.gynecology_rating %}
+                                <!-- No specialty ratings available -->
+                                <div class="alert alert-secondary bg-opacity-25 border-0 rounded mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <div class="me-2">
+                                            <i class="fas fa-info-circle text-secondary"></i>
+                                        </div>
+                                        <div>
+                                            <small>Non abbiamo dati sufficienti per valutare le specialità di questa struttura. Ci impegniamo a fornire solo valutazioni basate su dati verificati.</small>
+                                        </div>
                                     </div>
-                                    <div class="rating-value">{{ format_quality(facility.cardiology_rating) }}</div>
                                 </div>
-                                {% endif %}
                                 {% else %}
-                                <div class="small text-secondary">
-                                    <i class="fas fa-info-circle me-1"></i>
-                                    Non abbiamo dati sufficienti per valutare le specialità di questa struttura.
-                                </div>
+                                    {% if facility.cardiology_rating %}
+                                    <div class="specialty-rating-item">
+                                        <div class="specialty-name">Cardiologia</div>
+                                        <div class="rating-bar">
+                                            <div class="rating-fill" style="width: {{ facility.cardiology_rating*20 }}%;"></div>
+                                        </div>
+                                        <div class="rating-value">{{ format_quality(facility.cardiology_rating) }}</div>
+                                    </div>
+                                    {% endif %}
                                 {% endif %}
                                 
                                 {% if facility.oncology_rating %}
