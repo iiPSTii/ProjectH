@@ -39,47 +39,51 @@
             </div>
         </div>
         
-        <!-- Filter Summary -->
-        <div class="card bg-dark border-0 shadow-sm mb-4">
-            <div class="card-body">
-                <h5 class="card-title">Filtri Applicati</h5>
-                <div class="row">
-                    {% if search_params.query_text %}
-                    <div class="col-md-12 mb-2">
-                        <p class="mb-1"><strong>Ricerca Testuale:</strong></p>
-                        <p>"{{ search_params.original_query if search_params.original_query else search_params.query_text }}"</p>
-                        
-                        {% if search_params.detected_location %}
-                        <p class="mb-1 mt-2"><strong>Abbiamo rilevato la località:</strong></p>
-                        <span class="badge bg-success">{{ search_params.detected_location }}</span>
-                        <small class="text-muted mt-1 d-block">Stiamo mostrando le strutture nella regione {{ search_params.detected_location }}</small>
-                        {% endif %}
-                        
-                        {% if search_params.mapped_specialties %}
-                        <p class="mb-1 mt-2"><strong>Specialità associate alla ricerca:</strong></p>
-                        <div class="d-flex flex-wrap gap-1 mt-1">
-                            {% for specialty in search_params.mapped_specialties %}
-                            <span class="badge bg-info">{{ specialty }}</span>
-                            {% endfor %}
-                        </div>
-                        <small class="text-muted mt-1 d-block">La tua ricerca è stata associata a queste specialità mediche</small>
-                        {% endif %}
-                    </div>
-                    {% endif %}
-                    <div class="col-md-3">
-                        <p class="mb-1"><strong>Specialità:</strong></p>
-                        <p>{{ search_params.specialty if search_params.specialty else 'Tutte' }}</p>
-                    </div>
-                    <div class="col-md-3">
-                        <p class="mb-1"><strong>Regione:</strong></p>
-                        <p>{{ search_params.region if search_params.region else 'Tutte' }}</p>
-                    </div>
-                    <div class="col-md-6">
-                        <p class="mb-1"><strong>Qualità Minima:</strong></p>
-                        <p>{{ search_params.min_quality if search_params.min_quality > 0 else 'Qualsiasi' }}
-                        {% if search_params.min_quality > 0 %}/5{% endif %}</p>
-                    </div>
+        <!-- Filter Summary - Compact Design -->
+        <div class="alert bg-dark border border-secondary rounded p-2 mb-3">
+            <div class="d-flex align-items-center flex-wrap gap-2">
+                <span class="badge bg-secondary text-white p-2 me-1">
+                    <i class="fas fa-filter me-1"></i> Filtri:
+                </span>
+                
+                {% if search_params.query_text %}
+                <span class="badge bg-primary p-2" title="Ricerca testuale">
+                    <i class="fas fa-search me-1"></i> "{{ search_params.original_query if search_params.original_query else search_params.query_text }}"
+                </span>
+                {% endif %}
+                
+                {% if search_params.detected_location %}
+                <span class="badge bg-success p-2" title="Località rilevata">
+                    <i class="fas fa-map-marker-alt me-1"></i> {{ search_params.detected_location }}
+                </span>
+                {% endif %}
+                
+                {% if search_params.specialty %}
+                <span class="badge bg-info p-2" title="Specialità">
+                    <i class="fas fa-stethoscope me-1"></i> {{ search_params.specialty }}
+                </span>
+                {% endif %}
+                
+                {% if search_params.region and not search_params.detected_location %}
+                <span class="badge bg-success p-2" title="Regione">
+                    <i class="fas fa-map me-1"></i> {{ search_params.region }}
+                </span>
+                {% endif %}
+                
+                {% if search_params.min_quality > 0 %}
+                <span class="badge bg-warning text-dark p-2" title="Qualità minima">
+                    <i class="fas fa-star me-1"></i> {{ search_params.min_quality }}/5
+                </span>
+                {% endif %}
+                
+                {% if search_params.mapped_specialties %}
+                <div class="ms-auto">
+                    <small class="text-muted me-1">Specialità rilevate:</small>
+                    {% for specialty in search_params.mapped_specialties %}
+                    <span class="badge bg-info p-1">{{ specialty }}</span>
+                    {% endfor %}
                 </div>
+                {% endif %}
             </div>
         </div>
         
