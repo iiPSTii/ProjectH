@@ -95,9 +95,9 @@
                         <label for="sort_by" class="form-label me-2">Ordina per:</label>
                         <select class="form-select form-select-sm d-inline-block w-auto" id="sort_by" name="sort_by" onchange="document.getElementById('sortForm').submit();">
                             {% if search_params.is_address_search %}
-                            <option value="distance" selected>Distanza (Più vicine prima)</option>
+                            <option value="distance" {% if search_params.sort_by == 'distance' %}selected{% endif %}>Distanza (Più vicine prima)</option>
                             {% endif %}
-                            <option value="quality_desc" {% if search_params.sort_by == 'quality_desc' and not search_params.is_address_search %}selected{% endif %}>Qualità (Migliore prima)</option>
+                            <option value="quality_desc" {% if search_params.sort_by == 'quality_desc' %}selected{% endif %}>Qualità (Migliore prima)</option>
                             <option value="quality_asc" {% if search_params.sort_by == 'quality_asc' %}selected{% endif %}>Qualità (Peggiore prima)</option>
                             <option value="name_asc" {% if search_params.sort_by == 'name_asc' %}selected{% endif %}>Nome (A-Z)</option>
                             <option value="name_desc" {% if search_params.sort_by == 'name_desc' %}selected{% endif %}>Nome (Z-A)</option>

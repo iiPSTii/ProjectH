@@ -337,14 +337,34 @@ with app.app_context():
 
         # Check if we're using address search results
         if is_address_search and address_search_results and address_search_results.get('facilities'):
-            # Use the pre-sorted facilities from our address search
+            # Get the facilities from our address search
             facilities = address_search_results['facilities']
             search_location = address_search_results['search_location']
             
             # Add distance information for display
             mapped_specialties = [f"Strutture entro 30 km da {search_location.get('display_name', query_text)}"]
             
-            logger.debug(f"Using address search results sorted by distance")
+            # Check if user wants to sort by something other than distance
+            if sort_by != 'distance':
+                logger.debug(f"Resorting address search results by {sort_by} instead of distance")
+                
+                # Use the same sorting functions as for normal searches
+                sorting_functions = {
+                    'quality_desc': lambda x: (x.quality_score if x.quality_score is not None else -1) * -1,
+                    'quality_asc': lambda x: x.quality_score if x.quality_score is not None else float('inf'),
+                    'name_asc': lambda x: x.name.lower(),
+                    'name_desc': lambda x: x.name.lower(),
+                    'city_asc': lambda x: (x.city or '').lower(),
+                    'city_desc': lambda x: (x.city or '').lower(),
+                    'distance': lambda x: x.distance if hasattr(x, 'distance') else float('inf')  # Keep original distance sort
+                }
+                
+                reverse_sort = sort_by.endswith('_desc') and sort_by != 'quality_desc'
+                sort_function = sorting_functions.get(sort_by, sorting_functions['distance'])
+                facilities = sorted(facilities, key=sort_function, reverse=reverse_sort)
+                logger.debug(f"Re-sorted facilities by {sort_by}")
+            else:
+                logger.debug(f"Using address search results with original distance sorting")
             
             # Add is_address_search flag to indicate this is an address search
             return render_template('results_stars_only.html', facilities=facilities, db_status=db_status, search_params={
@@ -355,7 +375,7 @@ with app.app_context():
                 'original_query': original_query,
                 'detected_location': detected_location,
                 'mapped_specialties': mapped_specialties,
-                'sort_by': 'distance',
+                'sort_by': sort_by,  # Pass the actual sort_by parameter instead of hardcoding 'distance'
                 'is_address_search': True,
                 'search_location': search_location
             })
