@@ -17,6 +17,30 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
+    // Track phone number clicks for Twitter ad conversion tracking
+    const phoneLinks = document.querySelectorAll('a.phone-link');
+    if (phoneLinks.length > 0) {
+        phoneLinks.forEach(function(link) {
+            link.addEventListener('click', function(e) {
+                // Track the click as a conversion if Twitter pixel is available
+                if (typeof twq !== 'undefined') {
+                    // Get the facility name from closest facility-card parent
+                    const facilityCard = this.closest('.facility-card');
+                    const facilityName = facilityCard ? facilityCard.getAttribute('data-name') : 'unknown';
+                    
+                    // Track the phone call conversion
+                    twq('track', 'PhoneCall', {
+                        content_name: facilityName,
+                        content_category: 'medical_facility',
+                        content_type: 'phone_number'
+                    });
+                    
+                    console.log('Tracked phone call conversion for: ' + facilityName);
+                }
+            });
+        });
+    }
+    
     // Add loading spinner to search form
     const searchForm = document.getElementById('searchForm');
     if (searchForm) {

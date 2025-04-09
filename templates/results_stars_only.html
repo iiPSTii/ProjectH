@@ -480,6 +480,27 @@ document.addEventListener('DOMContentLoaded', function() {
             viewGrid.classList.remove('active');
         });
     }
+    
+    // Twitter Conversion Tracking for Successful Search
+    if (typeof twq !== 'undefined') {
+        // This tracks a successful search as a conversion
+        twq('track', 'Search', {
+            // You can add additional parameters if needed
+            content_type: 'medical_search',
+            num_results: '{{ facilities|length }}',
+            {% if search_params.specialty %}
+            specialty: '{{ search_params.specialty }}',
+            {% endif %}
+            {% if search_params.region %}
+            region: '{{ search_params.region }}',
+            {% endif %}
+            {% if search_params.is_address_search %}
+            search_type: 'address',
+            {% else %}
+            search_type: 'general',
+            {% endif %}
+        });
+    }
 });
 </script>
 {% endblock %}
