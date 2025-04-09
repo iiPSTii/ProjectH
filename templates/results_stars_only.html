@@ -50,8 +50,12 @@
                 {% if search_params.query_text or search_params.specialty or search_params.region or search_params.min_quality > 0 or search_params.mapped_specialties|length > 0 %}
                 <small class="text-muted d-block mt-1">
                     <i class="fas fa-filter me-1"></i>
-                    {% if search_params.query_text %}"{{ search_params.original_query if search_params.original_query else search_params.query_text }}"{% endif %}
-                    {% if search_params.detected_location %} · {{ search_params.detected_location }}{% endif %}
+                    {% if search_params.is_address_search %}
+                        <i class="fas fa-route text-success me-1"></i><span class="text-success">Ricerca per indirizzo:</span> "{{ search_params.original_query }}"
+                    {% elif search_params.query_text %}
+                        "{{ search_params.original_query if search_params.original_query else search_params.query_text }}"
+                    {% endif %}
+                    {% if search_params.detected_location and not search_params.is_address_search %} · {{ search_params.detected_location }}{% endif %}
                     {% if search_params.specialty %} · {{ search_params.specialty }}{% endif %}
                     {% if search_params.region and not search_params.detected_location %} · {{ search_params.region }}{% endif %}
                     {% if search_params.min_quality > 0 %} · min {{ search_params.min_quality }}/5{% endif %}
@@ -84,7 +88,10 @@
                         
                         <label for="sort_by" class="form-label me-2">Ordina per:</label>
                         <select class="form-select form-select-sm d-inline-block w-auto" id="sort_by" name="sort_by" onchange="document.getElementById('sortForm').submit();">
-                            <option value="quality_desc" {% if search_params.sort_by == 'quality_desc' %}selected{% endif %}>Qualità (Migliore prima)</option>
+                            {% if search_params.is_address_search %}
+                            <option value="distance" selected>Distanza (Più vicine prima)</option>
+                            {% endif %}
+                            <option value="quality_desc" {% if search_params.sort_by == 'quality_desc' and not search_params.is_address_search %}selected{% endif %}>Qualità (Migliore prima)</option>
                             <option value="quality_asc" {% if search_params.sort_by == 'quality_asc' %}selected{% endif %}>Qualità (Peggiore prima)</option>
                             <option value="name_asc" {% if search_params.sort_by == 'name_asc' %}selected{% endif %}>Nome (A-Z)</option>
                             <option value="name_desc" {% if search_params.sort_by == 'name_desc' %}selected{% endif %}>Nome (Z-A)</option>
@@ -124,6 +131,9 @@
                             {{ facility.address }}, {{ facility.city }}
                             {% if facility.region %}
                             <br><i class="fas fa-map me-2"></i>{{ facility.region.name }}
+                            {% endif %}
+                            {% if search_params.is_address_search and facility.distance %}
+                            <br><i class="fas fa-route me-2 text-success"></i><span class="text-success">Distanza: {{ facility.distance_text }}</span>
                             {% endif %}
                         </p>
                         
@@ -323,6 +333,9 @@
                                 <i class="fas fa-map-marker-alt me-1"></i> {{ facility.address }}, {{ facility.city }} 
                                 {% if facility.region %}
                                 <span class="ms-2"><i class="fas fa-map me-1"></i>{{ facility.region.name }}</span>
+                                {% endif %}
+                                {% if search_params.is_address_search and facility.distance %}
+                                <br><i class="fas fa-route me-1 text-success"></i><span class="text-success">Distanza: {{ facility.distance_text }}</span>
                                 {% endif %}
                             </p>
                             

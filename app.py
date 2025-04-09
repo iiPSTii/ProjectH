@@ -7,6 +7,7 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 from medical_mapping import map_query_to_specialties
 from medical_professionals import map_profession_to_specialties, PROFESSION_TO_SPECIALTY_MAP
 from location_mapping import detect_location_in_query
+from geocoding import is_address_query, find_facilities_near_address
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -78,28 +79,53 @@ with app.app_context():
         # Process the search query to extract location information
         detected_location = None
         original_query = query_text
+        is_address_search = False
+        address_search_results = None
 
         if query_text:
-            # Try to detect location/city references in the query
-            cleaned_query, detected_region = detect_location_in_query(query_text)
+            # First check if this is an address search
+            if is_address_query(query_text):
+                logger.debug(f"Detected address search query: '{query_text}'")
+                is_address_search = True
+                
+                # Get all facilities to find ones near this address
+                all_facilities = db.session.query(MedicalFacility).all()
+                
+                # Find facilities near the specified address
+                address_search_results = find_facilities_near_address(query_text, all_facilities, max_distance=15.0)
+                
+                if address_search_results and address_search_results.get('facilities'):
+                    logger.debug(f"Found {len(address_search_results['facilities'])} facilities near address: '{query_text}'")
+                    # Get the detected location display name
+                    search_location = address_search_results.get('search_location', {})
+                    detected_location = search_location.get('display_name', query_text)
+                else:
+                    logger.debug(f"No facilities found near address: '{query_text}'")
+                    # If no facilities found near address, fall back to regular search
+                    is_address_search = False
+            
+            # If not an address search or address search found no results, try regular search
+            if not is_address_search:
+                # Try to detect location/city references in the query
+                cleaned_query, detected_region = detect_location_in_query(query_text)
 
-            if detected_region:
-                logger.debug(f"Detected location in query: '{query_text}' -> region: '{detected_region}'")
-                detected_location = detected_region
+                if detected_region:
+                    logger.debug(f"Detected location in query: '{query_text}' -> region: '{detected_region}'")
+                    detected_location = detected_region
 
-                # Only update the query text if we found location
-                if cleaned_query != query_text:
-                    if cleaned_query.strip():
-                        query_text = cleaned_query
-                    else:
-                        # If the query was fully consumed by the location detection,
-                        # set query_text to empty to avoid duplicate filtering
-                        logger.debug(f"Query was fully consumed by location detection: '{original_query}' -> '{detected_region}'")
-                        query_text = ""
+                    # Only update the query text if we found location
+                    if cleaned_query != query_text:
+                        if cleaned_query.strip():
+                            query_text = cleaned_query
+                        else:
+                            # If the query was fully consumed by the location detection,
+                            # set query_text to empty to avoid duplicate filtering
+                            logger.debug(f"Query was fully consumed by location detection: '{original_query}' -> '{detected_region}'")
+                            query_text = ""
 
-                # If no region was specified in the form, use the detected one
-                if not region:
-                    region = detected_region
+                    # If no region was specified in the form, use the detected one
+                    if not region:
+                        region = detected_region
 
         logger.debug(f"Search params: specialty={specialty}, region={region}, min_quality={min_quality}, query_text={query_text}")
 
@@ -248,37 +274,63 @@ with app.app_context():
             facilities = query.all()
             logger.debug(f"Basic filter search found {len(facilities)} facilities")
 
-        # Sort the facilities based on the sort_by parameter
-        sorting_functions = {
-            'quality_desc': lambda x: (x.quality_score if x.quality_score is not None else -1) * -1,  # Default
-            'quality_asc': lambda x: x.quality_score if x.quality_score is not None else float('inf'),
-            'name_asc': lambda x: x.name.lower(),
-            'name_desc': lambda x: x.name.lower(),
-            'city_asc': lambda x: (x.city or '').lower(),
-            'city_desc': lambda x: (x.city or '').lower(),
-        }
+        # Check if we're using address search results
+        if is_address_search and address_search_results and address_search_results.get('facilities'):
+            # Use the pre-sorted facilities from our address search
+            facilities = address_search_results['facilities']
+            search_location = address_search_results['search_location']
+            
+            # Add distance information for display
+            mapped_specialties = [f"Strutture entro 15 km da {search_location.get('display_name', query_text)}"]
+            
+            logger.debug(f"Using address search results sorted by distance")
+            
+            # Add is_address_search flag to indicate this is an address search
+            return render_template('results_stars_only.html', facilities=facilities, db_status=db_status, search_params={
+                'specialty': specialty,
+                'region': region,
+                'min_quality': min_quality,
+                'query_text': query_text,
+                'original_query': original_query,
+                'detected_location': detected_location,
+                'mapped_specialties': mapped_specialties,
+                'sort_by': 'distance',
+                'is_address_search': True,
+                'search_location': search_location
+            })
+        else:
+            # Regular search results - sort the facilities based on the sort_by parameter
+            sorting_functions = {
+                'quality_desc': lambda x: (x.quality_score if x.quality_score is not None else -1) * -1,  # Default
+                'quality_asc': lambda x: x.quality_score if x.quality_score is not None else float('inf'),
+                'name_asc': lambda x: x.name.lower(),
+                'name_desc': lambda x: x.name.lower(),
+                'city_asc': lambda x: (x.city or '').lower(),
+                'city_desc': lambda x: (x.city or '').lower(),
+            }
 
-        reverse_sort = sort_by.endswith('_desc') and sort_by != 'quality_desc'
+            reverse_sort = sort_by.endswith('_desc') and sort_by != 'quality_desc'
 
-        # If sort_by is not in our mapping, default to quality descending
-        sort_function = sorting_functions.get(sort_by, sorting_functions['quality_desc'])
+            # If sort_by is not in our mapping, default to quality descending
+            sort_function = sorting_functions.get(sort_by, sorting_functions['quality_desc'])
 
-        # Sort the facilities
-        facilities = sorted(facilities, key=sort_function, reverse=reverse_sort)
+            # Sort the facilities
+            facilities = sorted(facilities, key=sort_function, reverse=reverse_sort)
 
-        logger.debug(f"Sorted facilities by {sort_by}")
+            logger.debug(f"Sorted facilities by {sort_by}")
 
-        # Return results template
-        return render_template('results_stars_only.html', facilities=facilities, db_status=db_status, search_params={
-            'specialty': specialty,
-            'region': region,
-            'min_quality': min_quality,
-            'query_text': query_text,
-            'original_query': original_query if detected_location else query_text,
-            'detected_location': detected_location,
-            'mapped_specialties': mapped_specialties,
-            'sort_by': sort_by
-        })
+            # Return results template
+            return render_template('results_stars_only.html', facilities=facilities, db_status=db_status, search_params={
+                'specialty': specialty,
+                'region': region,
+                'min_quality': min_quality,
+                'query_text': query_text,
+                'original_query': original_query if detected_location else query_text,
+                'detected_location': detected_location,
+                'mapped_specialties': mapped_specialties,
+                'sort_by': sort_by,
+                'is_address_search': False
+            })
 
     @app.route('/data-manager')
     def data_manager():
