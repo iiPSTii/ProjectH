@@ -21,15 +21,22 @@
             </a>
         </div>
         
-        <!-- Rating methodology information card -->
-        <div class="alert alert-info mb-4" role="alert">
-            <div class="d-flex">
-                <div class="flex-shrink-0 me-3">
-                    <i class="fas fa-info-circle fa-2x"></i>
-                </div>
-                <div>
-                    <h5 class="alert-heading">Il nostro sistema di valutazione delle specialità</h5>
-                    <p class="mb-0">Ogni struttura è valutata da 1 a 5 in 8 specialità chiave (Cardiologia, Ortopedia, Oncologia, Neurologia, Urologia, Chirurgia, Pediatria, Ginecologia) basandosi sui dati ufficiali del Programma Nazionale Esiti (PNE), rapporti AGENAS, e altre fonti verificate come Micuro e QSalute. <a href="#" class="alert-link" data-bs-toggle="modal" data-bs-target="#ratingMethodologyModal">Scopri di più sulla nostra metodologia</a></p>
+        <!-- Rating methodology information card (permanent) -->
+        <div class="card border-info bg-dark shadow-sm mb-4">
+            <div class="card-body">
+                <div class="d-flex">
+                    <div class="flex-shrink-0 me-3">
+                        <div class="rounded-circle bg-info bg-opacity-10 p-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                            <i class="fas fa-info-circle text-info fa-2x"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h5 class="card-title text-info">Il nostro sistema di valutazione delle specialità</h5>
+                        <p class="card-text mb-0">Ogni struttura è valutata da 1 a 5 in 8 specialità chiave (Cardiologia, Ortopedia, Oncologia, Neurologia, Urologia, Chirurgia, Pediatria, Ginecologia) basandosi sui dati ufficiali del Programma Nazionale Esiti (PNE), rapporti AGENAS, e altre fonti verificate come Micuro e QSalute.</p>
+                        <button class="btn btn-sm btn-info mt-2" data-bs-toggle="modal" data-bs-target="#ratingMethodologyModal">
+                            <i class="fas fa-search-plus me-1"></i> Scopri di più sulla nostra metodologia
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -78,14 +85,24 @@
             </div>
         </div>
         
-        <!-- Results Count -->
-        <div class="alert {% if facilities|length > 0 %}alert-info{% else %}alert-warning{% endif %} mb-4">
-            {% if facilities|length > 0 %}
-                <i class="fas fa-info-circle me-2"></i> Trovate {{ facilities|length }} strutture sanitarie che corrispondono ai criteri di ricerca.
-                <small class="d-block mt-2"><i class="fas fa-lightbulb me-1"></i> Nota: Per garantire le migliori prestazioni dell'applicazione, abbiamo limitato i dati a 5 strutture per ciascuna delle 20 regioni italiane, recuperati da fonti dati pubbliche.</small>
-            {% else %}
-                <i class="fas fa-exclamation-triangle me-2"></i> Nessuna struttura sanitaria trovata con i criteri selezionati. Prova a modificare i filtri di ricerca.
-            {% endif %}
+        <!-- Results Count (in permanent card) -->
+        <div class="card border-{% if facilities|length > 0 %}info{% else %}warning{% endif %} bg-dark shadow-sm mb-4">
+            <div class="card-body">
+                {% if facilities|length > 0 %}
+                    <h5 class="card-title text-info">
+                        <i class="fas fa-info-circle me-2"></i>Risultati della Ricerca
+                    </h5>
+                    <p class="card-text">Trovate {{ facilities|length }} strutture sanitarie che corrispondono ai criteri di ricerca.</p>
+                    <p class="card-text text-muted mb-0">
+                        <i class="fas fa-lightbulb me-1"></i> Nota: Per garantire le migliori prestazioni dell'applicazione, abbiamo limitato i dati a 5 strutture per ciascuna delle 20 regioni italiane, recuperati da fonti dati pubbliche.
+                    </p>
+                {% else %}
+                    <h5 class="card-title text-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Nessun Risultato
+                    </h5>
+                    <p class="card-text mb-0">Nessuna struttura sanitaria trovata con i criteri selezionati. Prova a modificare i filtri di ricerca.</p>
+                {% endif %}
+            </div>
         </div>
         
         <!-- Sort Controls -->
