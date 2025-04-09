@@ -1566,8 +1566,8 @@ def load_data(batch=0):
             break
         facilities_added = 0
         
-        # Create only 3-4 facilities for each region to minimize database load
-        num_facilities = random.randint(3, 4)
+        # Create more facilities for each region for comprehensive data
+        num_facilities = random.randint(15, 20)
         
         for i in range(num_facilities):
             try:
@@ -1711,10 +1711,9 @@ def process_scraped_data(df, region, source_name, attribution):
         logger.warning(f"Could not find name column in {source_name} data")
         return 0
     
-    # Process fewer facilities per region to avoid timeouts
-    # Reduced from 6 back to 3 to improve reliability
-    max_items = min(3, len(df))
-    logger.info(f"Processing {max_items} facilities for {region.name} from {source_name} (out of {len(df)} available)")
+    # Process all available facilities per region
+    max_items = len(df)
+    logger.info(f"Processing {max_items} facilities for {region.name} from {source_name}")
     
     for idx in range(max_items):
         # Check if we've exceeded our time limit
@@ -1870,13 +1869,13 @@ def process_scraped_data(df, region, source_name, attribution):
                         specialties_text = ''.join(c for c in specialties_text if ord(c) < 128)
                         specialty_names = extract_specialties(specialties_text)
                         
-                        # Limit number of specialties to process - reduced to 3 for better reliability
-                        specialty_names = specialty_names[:3] if len(specialty_names) > 3 else specialty_names
+                        # Process all specialties
+                        specialty_names = specialty_names
                         
                         # Add specialties one by one to avoid batch issues
                         processed_specialty_ids = set()
                         for specialty_name in specialty_names:
-                            if specialties_processed >= 3:  # Reduced limit from 5 back to 3 specialties per facility
+                            if specialties_processed >= 10:  # Increased limit for more specialty coverage
                                 break
                                 
                             # Start a new nested transaction for each specialty
