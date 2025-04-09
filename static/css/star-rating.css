@@ -1,0 +1,31 @@
+.star-rating {
+    display: inline-flex;
+    align-items: center;
+}
+
+.star-rating .fas.fa-star {
+    color: #ffb400;
+    font-size: 1.2rem;
+    margin-right: 2px;
+}
+
+.star-rating .fas.fa-star-half-alt {
+    color: #ffb400;
+    font-size: 1.2rem;
+    margin-right: 2px;
+}
+
+.star-rating .far.fa-star {
+    color: #777;
+    font-size: 1.2rem;
+    margin-right: 2px;
+}
+
+.quality-stars {
+    display: flex;
+    align-items: center;
+}
+
+.quality-value {
+    margin-left: 10px;
+}
