@@ -15,16 +15,18 @@
     <meta property="og:title" content="FindMyCure Italia - Trova le Strutture Sanitarie in Italia">
     <meta property="og:description" content="Cerca e confronta strutture sanitarie in tutta Italia per specialità, posizione e qualità con valutazioni verificate.">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://findmycure-italia.replit.app/">
+    <meta property="og:url" content="https://findmycure.it/">
     <meta property="og:locale" content="it_IT">
+    
+    <!-- Canonical URL for SEO -->
+    <link rel="canonical" href="https://findmycure.it{{ request.path }}" />
     
     <!-- Twitter Card data -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="FindMyCure Italia - Trova le Strutture Sanitarie in Italia">
     <meta name="twitter:description" content="Cerca e confronta strutture sanitarie in tutta Italia per specialità, posizione e qualità con valutazioni verificate.">
     
-    <!-- Canonical URL -->
-    <link rel="canonical" href="https://findmycure-italia.replit.app{{ request.path }}">
+    <!-- Removed duplicate canonical URL -->
     <title>FindMyCure Italia - {% block title %}Trova le Strutture Sanitarie in Italia{% endblock %}</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">

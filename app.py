@@ -626,11 +626,11 @@ Preferred-Languages: it, en
                 "@context": "https://schema.org",
                 "@type": "WebSite",
                 "name": "FindMyCure Italia",
-                "url": "https://findmycure-italia.replit.app/",
+                "url": "https://findmycure.it/",
                 "description": "Trova e confronta strutture sanitarie in Italia con valutazioni reali basate su dati ufficiali.",
                 "potentialAction": {
                     "@type": "SearchAction",
-                    "target": "https://findmycure-italia.replit.app/search?query_text={search_term}",
+                    "target": "https://findmycure.it/search?query_text={search_term}",
                     "query-input": "required name=search_term"
                 }
             }
@@ -668,7 +668,7 @@ Preferred-Languages: it, en
                     "publisher": {
                         "@type": "Organization",
                         "name": "FindMyCure Italia",
-                        "url": "https://findmycure-italia.replit.app/"
+                        "url": "https://findmycure.it/"
                     }
                 }
             

@@ -6,7 +6,7 @@
 
   <!-- Homepage -->
   <url>
-    <loc>https://findmycure-italia.replit.app/</loc>
+    <loc>https://findmycure.it/</loc>
     <lastmod>2025-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
@@ -14,7 +14,7 @@
 
   <!-- Methodology Page -->
   <url>
-    <loc>https://findmycure-italia.replit.app/methodology</loc>
+    <loc>https://findmycure.it/methodology</loc>
     <lastmod>2025-04-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -22,19 +22,19 @@
 
   <!-- Landing Pages -->
   <url>
-    <loc>https://findmycure-italia.replit.app/cardiologia</loc>
+    <loc>https://findmycure.it/cardiologia</loc>
     <lastmod>2025-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://findmycure-italia.replit.app/oncologia</loc>
+    <loc>https://findmycure.it/oncologia</loc>
     <lastmod>2025-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://findmycure-italia.replit.app/milano-strutture-sanitarie</loc>
+    <loc>https://findmycure.it/milano-strutture-sanitarie</loc>
     <lastmod>2025-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
@@ -42,31 +42,31 @@
 
   <!-- Common Search Queries -->
   <url>
-    <loc>https://findmycure-italia.replit.app/search?query_text=cardiologo</loc>
+    <loc>https://findmycure.it/search?query_text=cardiologo</loc>
     <lastmod>2025-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://findmycure-italia.replit.app/search?query_text=oncologo</loc>
+    <loc>https://findmycure.it/search?query_text=oncologo</loc>
     <lastmod>2025-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://findmycure-italia.replit.app/search?query_text=pediatra</loc>
+    <loc>https://findmycure.it/search?query_text=pediatra</loc>
     <lastmod>2025-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://findmycure-italia.replit.app/search?query_text=ortopedico</loc>
+    <loc>https://findmycure.it/search?query_text=ortopedico</loc>
     <lastmod>2025-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://findmycure-italia.replit.app/search?query_text=ginecologo</loc>
+    <loc>https://findmycure.it/search?query_text=ginecologo</loc>
     <lastmod>2025-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -74,31 +74,31 @@
 
   <!-- Popular City Searches -->
   <url>
-    <loc>https://findmycure-italia.replit.app/search?query_text=Milano</loc>
+    <loc>https://findmycure.it/search?query_text=Milano</loc>
     <lastmod>2025-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://findmycure-italia.replit.app/search?query_text=Roma</loc>
+    <loc>https://findmycure.it/search?query_text=Roma</loc>
     <lastmod>2025-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://findmycure-italia.replit.app/search?query_text=Napoli</loc>
+    <loc>https://findmycure.it/search?query_text=Napoli</loc>
     <lastmod>2025-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://findmycure-italia.replit.app/search?query_text=Firenze</loc>
+    <loc>https://findmycure.it/search?query_text=Firenze</loc>
     <lastmod>2025-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://findmycure-italia.replit.app/search?query_text=Bologna</loc>
+    <loc>https://findmycure.it/search?query_text=Bologna</loc>
     <lastmod>2025-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -106,25 +106,25 @@
 
   <!-- Region Searches -->
   <url>
-    <loc>https://findmycure-italia.replit.app/search?region=Lombardia</loc>
+    <loc>https://findmycure.it/search?region=Lombardia</loc>
     <lastmod>2025-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://findmycure-italia.replit.app/search?region=Lazio</loc>
+    <loc>https://findmycure.it/search?region=Lazio</loc>
     <lastmod>2025-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://findmycure-italia.replit.app/search?region=Toscana</loc>
+    <loc>https://findmycure.it/search?region=Toscana</loc>
     <lastmod>2025-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://findmycure-italia.replit.app/search?region=Puglia</loc>
+    <loc>https://findmycure.it/search?region=Puglia</loc>
     <lastmod>2025-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -132,31 +132,31 @@
 
   <!-- Specialty Searches -->
   <url>
-    <loc>https://findmycure-italia.replit.app/search?specialty=Cardiologia</loc>
+    <loc>https://findmycure.it/search?specialty=Cardiologia</loc>
     <lastmod>2025-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://findmycure-italia.replit.app/search?specialty=Oncologia</loc>
+    <loc>https://findmycure.it/search?specialty=Oncologia</loc>
     <lastmod>2025-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://findmycure-italia.replit.app/search?specialty=Ortopedia</loc>
+    <loc>https://findmycure.it/search?specialty=Ortopedia</loc>
     <lastmod>2025-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://findmycure-italia.replit.app/search?specialty=Neurologia</loc>
+    <loc>https://findmycure.it/search?specialty=Neurologia</loc>
     <lastmod>2025-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://findmycure-italia.replit.app/search?specialty=Ginecologia</loc>
+    <loc>https://findmycure.it/search?specialty=Ginecologia</loc>
     <lastmod>2025-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
