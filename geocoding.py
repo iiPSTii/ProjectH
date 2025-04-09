@@ -8,6 +8,7 @@ import requests
 import math
 import re
 import logging
+import time
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -17,6 +18,11 @@ logger = logging.getLogger(__name__)
 NOMINATIM_API = "https://nominatim.openstreetmap.org/search"
 NOMINATIM_REVERSE_API = "https://nominatim.openstreetmap.org/reverse"
 DEFAULT_COUNTRY = "Italy"
+
+# Rate limiting and timeouts
+GEOCODING_TIMEOUT = 3  # seconds
+GEOCODING_DELAY = 1.0  # seconds between requests
+MAX_FACILITIES_TO_GEOCODE = 30  # maximum number of facilities to geocode
 
 # Functions for address parsing and geocoding
 def parse_address(query_text):
@@ -82,18 +88,23 @@ def geocode_address(address_components):
     }
     
     try:
-        response = requests.get(NOMINATIM_API, params=params, headers=headers)
+        # Add timeout to prevent hanging
+        response = requests.get(NOMINATIM_API, params=params, headers=headers, timeout=GEOCODING_TIMEOUT)
         results = response.json()
         
         if results and len(results) > 0:
             # Get the first (best) match
             result = results[0]
+            # Add a small delay to respect rate limits
+            time.sleep(GEOCODING_DELAY)
             return {
                 'lat': float(result['lat']),
                 'lon': float(result['lon']),
                 'display_name': result['display_name'],
                 'address': result.get('address', {})
             }
+    except requests.exceptions.Timeout:
+        logger.error(f"Timeout geocoding address: {search_query}")
     except Exception as e:
         logger.error(f"Error geocoding address: {str(e)}")
     
@@ -156,6 +167,40 @@ def is_address_query(query_text):
     
     return False
 
+def extract_address_part(query_text):
+    """
+    Extract the address part from a complex query containing other terms.
+    
+    Args:
+        query_text (str): The search query text
+        
+    Returns:
+        str: The extracted address part, or original query if no address is found
+    """
+    # Extract address using pattern matching
+    street_prefixes = ['via', 'corso', 'piazza', 'viale', 'vicolo', 'strada', 'largo']
+    
+    # Normalize query text
+    query_lower = query_text.lower()
+    
+    # Find the first occurrence of a street prefix
+    start_index = -1
+    prefix_found = None
+    
+    for prefix in street_prefixes:
+        pattern = r'\b' + prefix + r'\b'
+        match = re.search(pattern, query_lower)
+        if match and (start_index == -1 or match.start() < start_index):
+            start_index = match.start()
+            prefix_found = prefix
+    
+    if start_index >= 0:
+        # Extract everything from the prefix to the end
+        address_part = query_text[start_index:]
+        return address_part
+    
+    return query_text
+
 def extract_coordinates_from_facilities(facilities):
     """
     Extract coordinates from a list of medical facilities.
@@ -211,15 +256,20 @@ def extract_coordinates_from_address(address, city=None):
     }
     
     try:
-        response = requests.get(NOMINATIM_API, params=params, headers=headers)
+        # Add timeout to prevent blocking the app
+        response = requests.get(NOMINATIM_API, params=params, headers=headers, timeout=GEOCODING_TIMEOUT)
         results = response.json()
         
         if results and len(results) > 0:
             result = results[0]
+            # Add a short delay to respect rate limiting
+            time.sleep(GEOCODING_DELAY)
             return {
                 'lat': float(result['lat']),
                 'lon': float(result['lon'])
             }
+    except requests.exceptions.Timeout:
+        logger.error(f"Timeout while geocoding address: {search_query}")
     except Exception as e:
         logger.error(f"Error geocoding facility address: {str(e)}")
     
@@ -237,44 +287,66 @@ def find_facilities_near_address(query_text, facilities, max_distance=10.0):
     Returns:
         list: Facilities sorted by distance with distance info added
     """
+    # If the query might contain medical terms along with an address,
+    # extract just the address part
+    address_text = extract_address_part(query_text)
+    
     # Parse and geocode the address
-    address_components = parse_address(query_text)
+    address_components = parse_address(address_text)
     if not address_components:
-        return []
+        logger.warning(f"Could not parse address components from: {address_text}")
+        return {}
     
     geocoded_address = geocode_address(address_components)
     if not geocoded_address:
-        return []
+        logger.warning(f"Could not geocode address: {address_text}")
+        return {}
     
     # Save the search coordinates
     search_lat = geocoded_address['lat']
     search_lon = geocoded_address['lon']
     search_display = geocoded_address['display_name']
     
+    logger.info(f"Successfully geocoded address: {address_text} -> {search_display}")
+    
     # Calculate distances for each facility
     facilities_with_distance = []
     
-    for facility in facilities:
-        # Get facility coordinates (ideally these would be stored in the database)
-        # For now, we'll geocode the facility address on-the-fly
-        facility_coords = extract_coordinates_from_address(facility.address, facility.city)
-        
-        if facility_coords:
-            facility_lat = facility_coords['lat']
-            facility_lon = facility_coords['lon']
+    # Limit the number of facilities we process to avoid timeouts
+    limited_facilities = facilities[:MAX_FACILITIES_TO_GEOCODE]
+    
+    if len(facilities) > MAX_FACILITIES_TO_GEOCODE:
+        logger.warning(f"Limiting geocoding to {MAX_FACILITIES_TO_GEOCODE} facilities out of {len(facilities)}")
+    
+    for facility in limited_facilities:
+        try:
+            # Get facility coordinates (ideally these would be stored in the database)
+            # For now, we'll geocode the facility address on-the-fly
+            facility_coords = extract_coordinates_from_address(facility.address, facility.city)
             
-            # Calculate distance
-            distance = calculate_distance(search_lat, search_lon, facility_lat, facility_lon)
-            
-            # Only include facilities within the specified distance
-            if distance <= max_distance:
-                # Add distance to the facility object (temporary attribute)
-                facility.distance = distance
-                facility.distance_text = f"{distance:.1f} km"
-                facilities_with_distance.append(facility)
+            if facility_coords:
+                facility_lat = facility_coords['lat']
+                facility_lon = facility_coords['lon']
+                
+                # Calculate distance
+                distance = calculate_distance(search_lat, search_lon, facility_lat, facility_lon)
+                
+                # Only include facilities within the specified distance
+                if distance <= max_distance:
+                    # Add distance to the facility object (temporary attribute)
+                    facility.distance = distance
+                    facility.distance_text = f"{distance:.1f} km"
+                    facilities_with_distance.append(facility)
+                    
+                    logger.debug(f"Added facility {facility.name} at distance {distance:.1f} km")
+        except Exception as e:
+            logger.error(f"Error processing facility {facility.name}: {str(e)}")
+            continue
     
     # Sort by distance
     facilities_with_distance.sort(key=lambda x: x.distance)
+    
+    logger.info(f"Found {len(facilities_with_distance)} facilities within {max_distance} km of {search_display}")
     
     # Add search location info to the results
     return {

@@ -7,7 +7,7 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 from medical_mapping import map_query_to_specialties
 from medical_professionals import map_profession_to_specialties, PROFESSION_TO_SPECIALTY_MAP
 from location_mapping import detect_location_in_query
-from geocoding import is_address_query, find_facilities_near_address
+from geocoding import is_address_query, extract_address_part, find_facilities_near_address
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -88,11 +88,15 @@ with app.app_context():
                 logger.debug(f"Detected address search query: '{query_text}'")
                 is_address_search = True
                 
+                # Extract the address part from the query if it contains other terms
+                address_part = extract_address_part(query_text)
+                logger.debug(f"Extracted address part: '{address_part}'")
+                
                 # Get all facilities to find ones near this address
                 all_facilities = db.session.query(MedicalFacility).all()
                 
                 # Find facilities near the specified address
-                address_search_results = find_facilities_near_address(query_text, all_facilities, max_distance=15.0)
+                address_search_results = find_facilities_near_address(address_part, all_facilities, max_distance=15.0)
                 
                 if address_search_results and address_search_results.get('facilities'):
                     logger.debug(f"Found {len(address_search_results['facilities'])} facilities near address: '{query_text}'")
