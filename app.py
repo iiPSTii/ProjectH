@@ -232,7 +232,7 @@ with app.app_context():
         logger.debug(f"Sorted facilities by {sort_by}")
 
         # Return results template
-        return render_template('results_with_stars.html', facilities=facilities, db_status=db_status, search_params={
+        return render_template('results_stars_only.html', facilities=facilities, db_status=db_status, search_params={
             'specialty': specialty,
             'region': region,
             'min_quality': min_quality,
