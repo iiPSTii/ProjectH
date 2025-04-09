@@ -51,24 +51,22 @@
         </div>
         {% endif %}
         
-        <!-- Results Count (in permanent card) -->
-        <div class="card border-{% if facilities|length > 0 %}info{% else %}warning{% endif %} bg-dark shadow-sm mb-4">
-            <div class="card-body">
-                {% if facilities|length > 0 %}
-                    <h5 class="card-title text-info">
-                        <i class="fas fa-info-circle me-2"></i>Risultati della Ricerca
-                    </h5>
-                    <p class="card-text">Trovate {{ facilities|length }} strutture sanitarie che corrispondono ai criteri di ricerca.</p>
-                    <p class="card-text text-muted mb-0">
-                        <i class="fas fa-lightbulb me-1"></i> Nota: Mostriamo tutti i dati disponibili dalle 20 regioni italiane, recuperati da fonti dati pubbliche.
-                    </p>
-                {% else %}
-                    <h5 class="card-title text-warning">
-                        <i class="fas fa-exclamation-triangle me-2"></i>Nessun Risultato
-                    </h5>
-                    <p class="card-text mb-0">Nessuna struttura sanitaria trovata con i criteri selezionati. Prova a modificare i filtri di ricerca.</p>
-                {% endif %}
-            </div>
+        <!-- Ultra-minimal Results Count -->
+        <div class="mb-3">
+            {% if facilities|length > 0 %}
+                <p class="text-{% if facilities|length > 0 %}info{% else %}warning{% endif %} mb-1">
+                    <i class="fas fa-{% if facilities|length > 0 %}info-circle{% else %}exclamation-triangle{% endif %} me-1"></i>
+                    {% if facilities|length > 0 %}
+                        Trovate {{ facilities|length }} strutture sanitarie
+                    {% else %}
+                        Nessun risultato. Prova a modificare i filtri.
+                    {% endif %}
+                </p>
+            {% else %}
+                <p class="text-warning mb-0">
+                    <i class="fas fa-exclamation-triangle me-1"></i>Nessun risultato. Prova a modificare i filtri.
+                </p>
+            {% endif %}
         </div>
         
         <!-- Sort Controls -->
