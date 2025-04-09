@@ -23,14 +23,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Dismiss flash messages after 5 seconds
-    setTimeout(function() {
-        const alerts = document.querySelectorAll('.alert');
-        alerts.forEach(alert => {
-            const bsAlert = new bootstrap.Alert(alert);
-            bsAlert.close();
-        });
-    }, 5000);
+    // We've removed the auto-dismiss code for alerts
+    // All informational elements now use permanent cards instead of alerts
     
     // Grid/List view toggle
     const viewGridBtn = document.getElementById('viewGrid');
