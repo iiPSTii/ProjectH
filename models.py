@@ -64,6 +64,11 @@ class MedicalFacility(db.Model):
     gynecology_rating = db.Column(db.Float, default=None)
     strengths_summary = db.Column(db.String(500), default=None)
     
+    # Geolocation coordinates
+    latitude = db.Column(db.Float, default=None)
+    longitude = db.Column(db.Float, default=None)
+    geocoded = db.Column(db.Boolean, default=False)
+    
     # Data source and attribution
     data_source = db.Column(db.String(100))
     attribution = db.Column(db.String(200))

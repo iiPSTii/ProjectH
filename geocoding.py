@@ -277,7 +277,7 @@ def extract_coordinates_from_address(address, city=None):
 
 def find_facilities_near_address(query_text, facilities, max_distance=10.0):
     """
-    Find facilities near a specified address.
+    Find facilities near a specified address using stored coordinates.
     
     Args:
         query_text (str): The address query text
@@ -285,7 +285,7 @@ def find_facilities_near_address(query_text, facilities, max_distance=10.0):
         max_distance (float): Maximum distance in kilometers (default: 10km)
         
     Returns:
-        list: Facilities sorted by distance with distance info added
+        dict: Dictionary with facilities sorted by distance and search location details
     """
     # If the query might contain medical terms along with an address,
     # extract just the address part
@@ -309,24 +309,15 @@ def find_facilities_near_address(query_text, facilities, max_distance=10.0):
     
     logger.info(f"Successfully geocoded address: {address_text} -> {search_display}")
     
-    # Calculate distances for each facility
+    # Calculate distances for each facility that has coordinates
     facilities_with_distance = []
     
-    # Limit the number of facilities we process to avoid timeouts
-    limited_facilities = facilities[:MAX_FACILITIES_TO_GEOCODE]
-    
-    if len(facilities) > MAX_FACILITIES_TO_GEOCODE:
-        logger.warning(f"Limiting geocoding to {MAX_FACILITIES_TO_GEOCODE} facilities out of {len(facilities)}")
-    
-    for facility in limited_facilities:
+    for facility in facilities:
         try:
-            # Get facility coordinates (ideally these would be stored in the database)
-            # For now, we'll geocode the facility address on-the-fly
-            facility_coords = extract_coordinates_from_address(facility.address, facility.city)
-            
-            if facility_coords:
-                facility_lat = facility_coords['lat']
-                facility_lon = facility_coords['lon']
+            # Use the stored coordinates from the database
+            if facility.latitude is not None and facility.longitude is not None:
+                facility_lat = facility.latitude
+                facility_lon = facility.longitude
                 
                 # Calculate distance
                 distance = calculate_distance(search_lat, search_lon, facility_lat, facility_lon)

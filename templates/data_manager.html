@@ -100,6 +100,61 @@
                     </div>
                 </div>
             </div>
+            
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title mb-0">Geocoding Status</h3>
+                </div>
+                <div class="card-body">
+                    <p class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> For address-based search functionality, facility coordinates need to be pre-geocoded. This prevents timeouts during searches by avoiding real-time geocoding of all facilities.
+                    </p>
+                    
+                    <h5>Geocoding Statistics:</h5>
+                    <ul class="list-group list-group-flush mb-4">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Geocoded Facilities:
+                            <span class="badge bg-{{ 'success' if geocoded_percentage >= 90 else 'warning' }} rounded-pill">{{ geocoded_facilities }} / {{ total_facilities }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Facilities with Coordinates:
+                            <span class="badge bg-{{ 'success' if facilities_with_coords >= (total_facilities * 0.8) else 'warning' }} rounded-pill">{{ facilities_with_coords }}</span>
+                        </li>
+                    </ul>
+                    
+                    <div class="progress mb-4" style="height: 25px;">
+                        <div class="progress-bar progress-bar-striped {{ 'bg-success' if geocoded_percentage >= 90 else '' }}" 
+                             role="progressbar" 
+                             style="width: {{ geocoded_percentage }}%;" 
+                             aria-valuenow="{{ geocoded_percentage }}" 
+                             aria-valuemin="0" 
+                             aria-valuemax="100">
+                            {{ geocoded_percentage }}% Geocoded
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-3 bg-light">
+                        <div class="card-body">
+                            <h5 class="card-title">Command to Geocode Facilities:</h5>
+                            <pre class="bg-dark text-light p-3 rounded"><code>{{ geocode_command }}</code></pre>
+                            <p class="card-text mt-3">This will geocode all facilities in the database and store their coordinates for faster address searches.</p>
+                            <p class="card-text"><small class="text-muted">Note: This process may take several minutes to complete due to rate limiting of the geocoding service.</small></p>
+                            
+                            <div class="d-flex gap-2 mt-3">
+                                <a href="/geocode-facilities/20" class="btn btn-primary">
+                                    <i class="bi bi-geo-alt"></i> Geocode 20 Facilities
+                                </a>
+                                <a href="/geocode-facilities/50" class="btn btn-outline-primary">
+                                    <i class="bi bi-geo-alt"></i> Geocode 50 Facilities
+                                </a>
+                                <a href="#" class="btn btn-outline-secondary" onclick="copyGeocodeCommand()">
+                                    <i class="bi bi-clipboard"></i> Copy Command for Terminal
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <div class="row mb-4">
                 <div class="col-md-6 col-xl-3 mb-3">
@@ -228,6 +283,15 @@
                 var command = "{{ full_db_init_command }}";
                 navigator.clipboard.writeText(command).then(function() {
                     alert("Command copied to clipboard: " + command);
+                }, function() {
+                    alert("Failed to copy command. Please copy it manually from the page.");
+                });
+            }
+            
+            function copyGeocodeCommand() {
+                var command = "{{ geocode_command }}";
+                navigator.clipboard.writeText(command).then(function() {
+                    alert("Geocode command copied to clipboard: " + command);
                 }, function() {
                     alert("Failed to copy command. Please copy it manually from the page.");
                 });

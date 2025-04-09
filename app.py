@@ -349,8 +349,17 @@ with app.app_context():
         # Count facilities
         try:
             total_facilities = db.session.query(MedicalFacility).count()
+            geocoded_facilities = db.session.query(MedicalFacility).filter(MedicalFacility.geocoded == True).count()
+            facilities_with_coords = db.session.query(MedicalFacility)\
+                .filter(MedicalFacility.latitude != None)\
+                .filter(MedicalFacility.longitude != None).count()
+            
+            geocoded_percentage = round((geocoded_facilities / total_facilities) * 100) if total_facilities > 0 else 0
         except:
             total_facilities = 0
+            geocoded_facilities = 0
+            facilities_with_coords = 0
+            geocoded_percentage = 0
 
         # Calculate progress percentage (assume 20 regions is 100%)
         total_regions_count = len(regions)
@@ -376,8 +385,9 @@ with app.app_context():
 
         all_batches_loaded = all(batch_status.values())
 
-        # Add command to run full database initialization
+        # Add commands for database operations
         full_db_init_command = "python initialize_database.py"
+        geocode_command = "python geocode_facilities.py"
 
         return render_template(
             'data_manager.html',
@@ -388,7 +398,11 @@ with app.app_context():
             batch_status=batch_status,
             all_batches_loaded=all_batches_loaded,
             db_status=db_status,
-            full_db_init_command=full_db_init_command
+            full_db_init_command=full_db_init_command,
+            geocode_command=geocode_command,
+            geocoded_facilities=geocoded_facilities,
+            facilities_with_coords=facilities_with_coords,
+            geocoded_percentage=geocoded_percentage
         )
 
     @app.route('/load-data')
@@ -452,6 +466,53 @@ with app.app_context():
         
         return render_template('methodology.html', regions=regions, specialties=specialties)
 
+    @app.route('/geocode-facilities')
+    @app.route('/geocode-facilities/<int:batch_size>')
+    def geocode_facilities_route(batch_size=20):
+        """Geocode facilities and store their coordinates in the database"""
+        try:
+            # This is a limited version that won't timeout but will only process a small batch
+            from geocode_facilities import geocode_facilities
+            
+            # Get statistics before
+            with app.app_context():
+                facilities_before = db.session.query(MedicalFacility).filter(MedicalFacility.geocoded == True).count()
+                coords_before = db.session.query(MedicalFacility).filter(
+                    MedicalFacility.latitude != None, 
+                    MedicalFacility.longitude != None
+                ).count()
+            
+            # Import the geocoding module and run the geocoding
+            # For web requests, limit to small batch and set max_facilities to avoid timeouts
+            geocode_facilities(batch_size=5, max_facilities=batch_size)
+            
+            # Get statistics after
+            with app.app_context():
+                facilities_after = db.session.query(MedicalFacility).filter(MedicalFacility.geocoded == True).count()
+                coords_after = db.session.query(MedicalFacility).filter(
+                    MedicalFacility.latitude != None, 
+                    MedicalFacility.longitude != None
+                ).count()
+            
+            # Calculate how many were processed
+            facilities_processed = facilities_after - facilities_before
+            coords_added = coords_after - coords_before
+            
+            flash(f"Geocoded {facilities_processed} facilities, with {coords_added} successful coordinate lookups.", "success")
+            
+            # Remind about command-line option for full processing
+            flash(f"For full geocoding, use the terminal command: python geocode_facilities.py", "info")
+            
+            logger.info(f"Geocoded {facilities_processed} facilities (web batch), added {coords_added} coordinates")
+            
+        except Exception as e:
+            logger.error(f"Error geocoding facilities: {str(e)}")
+            logger.exception(e)
+            flash(f"Error geocoding facilities: {str(e)}", "danger")
+        
+        # Redirect to the data manager page
+        return redirect('/data-manager')
+    
     @app.route('/download-db')
     def download_database():
         """Download the PostgreSQL database as CSV files in a ZIP archive"""
