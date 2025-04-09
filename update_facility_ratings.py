@@ -62,14 +62,13 @@ def verify_rating_columns():
         logger.error(f"Error verifying rating columns: {e}")
         return False
 
-def update_facility_ratings(ratings_data, batch_size=20):
+def update_facility_ratings(ratings_data):
     """
-    Update facilities with ratings data in batches to avoid timeouts
+    Update facilities with ratings data
     
     Args:
         ratings_data: List of dictionaries with rating data
-        batch_size: Number of facilities to update in each batch
-        
+    
     Returns:
         dict: Statistics about the update
     """
@@ -80,112 +79,123 @@ def update_facility_ratings(ratings_data, batch_size=20):
         'errors': 0
     }
     
-    # Process ratings in batches
-    total_batches = (len(ratings_data) + batch_size - 1) // batch_size
-    logger.info(f"Processing {len(ratings_data)} ratings in {total_batches} batches of {batch_size}")
-    
-    for batch_index in range(total_batches):
-        batch_start = batch_index * batch_size
-        batch_end = min(batch_start + batch_size, len(ratings_data))
-        batch = ratings_data[batch_start:batch_end]
-        
-        logger.info(f"Processing batch {batch_index + 1}/{total_batches} - items {batch_start+1} to {batch_end}")
-        
-        batch_matched = 0
-        
-        for rating in batch:
-            try:
-                # Try to find the facility by name and region/city
-                facility_name = rating['facility']
-                region_name = rating['region']
-                city_name = rating['city']
-                
-                # Log the facility we're trying to match (debug level to reduce log output)
-                logger.debug(f"Looking for facility: '{facility_name}' in {city_name}, {region_name}")
-                
-                # Get facilities that match the name exactly or with LIKE
-                query = MedicalFacility.query.filter(
-                    db.or_(
-                        MedicalFacility.name == facility_name,
-                        MedicalFacility.name.ilike(f"%{facility_name}%")
-                    )
-                )
-                
-                # Further filter by region and city
-                candidates = []
-                for facility in query.all():
-                    # Check for region match if we have region data
-                    region_match = False
-                    if facility.region and region_name:
-                        if region_name.lower() in facility.region.name.lower():
-                            region_match = True
-                    
-                    # Check for city match if we have city data
-                    city_match = False
-                    if facility.city and city_name:
-                        if city_name.lower() in facility.city.lower():
-                            city_match = True
-                    
-                    # Add to candidates if it matches region or city
-                    if region_match or city_match:
-                        candidates.append(facility)
-                
-                # If we found matching facilities, update them
-                if candidates:
-                    logger.debug(f"Found {len(candidates)} matches for {facility_name}")
-                    for facility in candidates:
-                        # Update specialty ratings - log before and after values (debug level)
-                        logger.debug(f"Updating {facility.name} (ID: {facility.id}) ratings")
-                        
-                        # Direct SQL update to ensure it's working
-                        db.session.execute(
-                            text(f"""
-                            UPDATE medical_facilities SET 
-                                cardiology_rating = :cardiology,
-                                orthopedics_rating = :orthopedics,
-                                oncology_rating = :oncology,
-                                neurology_rating = :neurology,
-                                surgery_rating = :surgery,
-                                urology_rating = :urology,
-                                pediatrics_rating = :pediatrics,
-                                gynecology_rating = :gynecology,
-                                strengths_summary = :summary
-                            WHERE id = :id
-                            """),
-                            {
-                                'cardiology': float(rating.get('cardiology_rating')),
-                                'orthopedics': float(rating.get('orthopedics_rating')),
-                                'oncology': float(rating.get('oncology_rating')),
-                                'neurology': float(rating.get('neurology_rating')),
-                                'surgery': float(rating.get('surgery_rating')),
-                                'urology': float(rating.get('urology_rating')),
-                                'pediatrics': float(rating.get('pediatrics_rating')),
-                                'gynecology': float(rating.get('gynecology_rating')),
-                                'summary': rating.get('strengths_summary', ''),
-                                'id': facility.id
-                            }
-                        )
-                    
-                    batch_matched += 1
-                else:
-                    logger.debug(f"No match found for {facility_name} in {region_name}, {city_name}")
-                    stats['not_found'] += 1
-                    
-            except Exception as e:
-                logger.error(f"Error updating facility {rating.get('facility')}: {e}")
-                stats['errors'] += 1
-        
-        # Commit the batch
+    for rating in ratings_data:
         try:
-            db.session.commit()
-            logger.info(f"Batch {batch_index + 1}/{total_batches} - Successfully updated {batch_matched} facilities")
-            stats['matched'] += batch_matched
-        except SQLAlchemyError as e:
-            logger.error(f"Error committing batch {batch_index + 1}: {e}")
-            db.session.rollback()
-            stats['errors'] += batch_matched
+            # Try to find the facility by name and region/city
+            facility_name = rating['facility']
+            region_name = rating['region']
+            city_name = rating['city']
             
-    logger.info(f"Completed all batches. Updated {stats['matched']} facilities with specialty ratings")
+            # Log the facility we're trying to match
+            logger.info(f"Looking for facility: '{facility_name}' in {city_name}, {region_name}")
+            
+            # Get facilities that match the name exactly or with LIKE
+            query = MedicalFacility.query.filter(
+                db.or_(
+                    MedicalFacility.name == facility_name,
+                    MedicalFacility.name.ilike(f"%{facility_name}%")
+                )
+            )
+            
+            # Further filter by region and city
+            candidates = []
+            for facility in query.all():
+                # Check for region match if we have region data
+                region_match = False
+                if facility.region and region_name:
+                    if region_name.lower() in facility.region.name.lower():
+                        region_match = True
+                
+                # Check for city match if we have city data
+                city_match = False
+                if facility.city and city_name:
+                    if city_name.lower() in facility.city.lower():
+                        city_match = True
+                
+                # Add to candidates if it matches region or city
+                if region_match or city_match:
+                    candidates.append(facility)
+            
+            # If we found matching facilities, update them
+            if candidates:
+                logger.info(f"Found {len(candidates)} matches for {facility_name}")
+                for facility in candidates:
+                    # Update specialty ratings - log before and after values
+                    logger.info(f"Updating {facility.name} (ID: {facility.id}) ratings:")
+                    logger.info(f"  Before - Cardiology: {facility.cardiology_rating}, Oncology: {facility.oncology_rating}")
+                    
+                    # Direct SQL update to ensure it's working
+                    db.session.execute(
+                        text(f"""
+                        UPDATE medical_facilities SET 
+                            cardiology_rating = :cardiology,
+                            orthopedics_rating = :orthopedics,
+                            oncology_rating = :oncology,
+                            neurology_rating = :neurology,
+                            surgery_rating = :surgery,
+                            urology_rating = :urology,
+                            pediatrics_rating = :pediatrics,
+                            gynecology_rating = :gynecology,
+                            strengths_summary = :summary
+                        WHERE id = :id
+                        """),
+                        {
+                            'cardiology': float(rating.get('cardiology_rating')),
+                            'orthopedics': float(rating.get('orthopedics_rating')),
+                            'oncology': float(rating.get('oncology_rating')),
+                            'neurology': float(rating.get('neurology_rating')),
+                            'surgery': float(rating.get('surgery_rating')),
+                            'urology': float(rating.get('urology_rating')),
+                            'pediatrics': float(rating.get('pediatrics_rating')),
+                            'gynecology': float(rating.get('gynecology_rating')),
+                            'summary': rating.get('strengths_summary', ''),
+                            'id': facility.id
+                        }
+                    )
+                    
+                    # Also update using the ORM approach
+                    facility.cardiology_rating = float(rating.get('cardiology_rating'))
+                    facility.orthopedics_rating = float(rating.get('orthopedics_rating'))
+                    facility.oncology_rating = float(rating.get('oncology_rating'))
+                    facility.neurology_rating = float(rating.get('neurology_rating'))
+                    facility.surgery_rating = float(rating.get('surgery_rating'))
+                    facility.urology_rating = float(rating.get('urology_rating'))
+                    facility.pediatrics_rating = float(rating.get('pediatrics_rating'))
+                    facility.gynecology_rating = float(rating.get('gynecology_rating'))
+                    facility.strengths_summary = rating.get('strengths_summary', '')
+                    
+                    # Refresh the facility from the database
+                    db.session.flush()
+                    db.session.refresh(facility)
+                    
+                    logger.info(f"  After - Cardiology: {facility.cardiology_rating}, Oncology: {facility.oncology_rating}")
+                    
+                    # DO NOT recalculate overall quality score as average of specialty ratings
+                    # The original quality score is preserved as a "general" rating
+                    # that is independent from specialty-specific ratings
+                    
+                    # Log that we're keeping the original quality score
+                    logger.info(f"  Keeping original quality score: {facility.quality_score}")
+                    
+                stats['matched'] += 1
+            else:
+                logger.warning(f"No match found for {facility_name} in {region_name}, {city_name}")
+                stats['not_found'] += 1
+                
+        except Exception as e:
+            logger.error(f"Error updating facility {rating.get('facility')}: {e}")
+            stats['errors'] += 1
+    
+    # Commit all changes
+    try:
+        db.session.commit()
+        logger.info(f"Successfully updated {stats['matched']} facilities with specialty ratings")
+    except SQLAlchemyError as e:
+        logger.error(f"Error committing changes: {e}")
+        db.session.rollback()
+        stats['errors'] += stats['matched']
+        stats['matched'] = 0
+    
     return stats
 
 def update_database_status(stats):
