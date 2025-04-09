@@ -304,6 +304,23 @@ with app.app_context():
                 'search_location': search_location
             })
         else:
+            # Special case for address searches that found no nearby facilities
+            # but did successfully recognize a location
+            if len(facilities) == 0 and is_address_query(query_text) and not is_address_search:
+                logger.debug(f"Address search failed to find nearby facilities, showing all in detected region: {region}")
+                
+                # If we've detected a region from the address query and have no results,
+                # show all facilities in that region without other filters
+                if region:
+                    # Clear query and create a fresh one with just the region filter
+                    query = db.session.query(MedicalFacility)
+                    query = query.join(MedicalFacility.region).filter(Region.name.ilike(f'%{region}%'))
+                    facilities = query.all()
+                    
+                    # Add message about showing all facilities in region
+                    mapped_specialties = [f"Tutte le strutture nella regione {region}"]
+                    logger.debug(f"Showing all {len(facilities)} facilities in region {region}")
+            
             # Regular search results - sort the facilities based on the sort_by parameter
             sorting_functions = {
                 'quality_desc': lambda x: (x.quality_score if x.quality_score is not None else -1) * -1,  # Default
