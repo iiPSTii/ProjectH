@@ -102,6 +102,20 @@ body::before {
     border-color: var(--medical-blue) !important;
 }
 
+/* Fix for dropdown menu option colors */
+.form-select option {
+    background-color: #1a1b26 !important; 
+    color: #ffffff !important;
+}
+
+/* Ensure dropdown items are visible in all browsers */
+select.form-select option, 
+select option {
+    background-color: #1a1b26 !important;
+    color: #fff !important;
+    text-shadow: none !important;
+}
+
 .input-group-text {
     background-color: rgba(0, 119, 204, 0.1) !important;
     border-color: rgba(255, 255, 255, 0.1) !important;
