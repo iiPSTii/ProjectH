@@ -39,33 +39,17 @@
             </div>
         </div>
         
-        <!-- Super Minimal Filter Pills -->
-        <div class="d-flex flex-wrap gap-1 mb-2 text-muted small">
-            <i class="fas fa-filter me-1 mt-1"></i>
-            {% if search_params.query_text %}
-            <span class="badge bg-primary rounded-pill">{{ search_params.original_query if search_params.original_query else search_params.query_text }}</span>
-            {% endif %}
-            
-            {% if search_params.detected_location %}
-            <span class="badge bg-success rounded-pill">{{ search_params.detected_location }}</span>
-            {% endif %}
-            
-            {% if search_params.specialty %}
-            <span class="badge bg-info rounded-pill">{{ search_params.specialty }}</span>
-            {% endif %}
-            
-            {% if search_params.region and not search_params.detected_location %}
-            <span class="badge bg-success rounded-pill">{{ search_params.region }}</span>
-            {% endif %}
-            
-            {% if search_params.min_quality > 0 %}
-            <span class="badge bg-warning text-dark rounded-pill">min. {{ search_params.min_quality }}/5</span>
-            {% endif %}
-            
-            {% if search_params.mapped_specialties and search_params.mapped_specialties|length > 0 %}
-            <span class="badge bg-secondary rounded-pill">trovato: {{ search_params.mapped_specialties|join(', ') }}</span>
-            {% endif %}
+        <!-- Ultra-compact search info -->
+        {% if search_params.query_text or search_params.specialty or search_params.region or search_params.min_quality > 0 or search_params.mapped_specialties|length > 0 %}
+        <div class="opacity-75" style="font-size: 0.75rem; margin-top: -5px; margin-bottom: 5px;">
+            {% if search_params.query_text %}"{{ search_params.original_query if search_params.original_query else search_params.query_text }}"{% endif %}
+            {% if search_params.detected_location %} · {{ search_params.detected_location }}{% endif %}
+            {% if search_params.specialty %} · {{ search_params.specialty }}{% endif %}
+            {% if search_params.region and not search_params.detected_location %} · {{ search_params.region }}{% endif %}
+            {% if search_params.min_quality > 0 %} · min {{ search_params.min_quality }}/5{% endif %}
+            {% if search_params.mapped_specialties and search_params.mapped_specialties|length > 0 %} · trovato: {{ search_params.mapped_specialties|join(', ') }}{% endif %}
         </div>
+        {% endif %}
         
         <!-- Results Count (in permanent card) -->
         <div class="card border-{% if facilities|length > 0 %}info{% else %}warning{% endif %} bg-dark shadow-sm mb-4">
