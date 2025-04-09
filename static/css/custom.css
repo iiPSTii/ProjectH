@@ -160,31 +160,21 @@ body::before {
     align-items: center;
 }
 
-.facility-rating .stars {
-    position: relative;
-    font-size: 1rem;
-    display: inline-block;
-    white-space: nowrap;
+.star-rating {
+    display: inline-flex;
+    font-size: 1.1rem;
 }
 
-/* Empty (gray) stars */
-.facility-rating .stars i {
-    color: rgba(255, 255, 255, 0.2);
-    margin-right: 2px;
+.star-rating i {
+    margin-right: 3px;
 }
 
-/* Yellow stars overlay */
-.facility-rating .stars .overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    white-space: nowrap;
-    overflow: hidden;
-    width: calc(var(--rating) * 20%);
+.fa-star, .fa-star-half-alt {
+    color: #ffc107;
 }
 
-.facility-rating .stars .overlay i {
-    color: var(--medical-green);
+.far.fa-star {
+    color: rgba(255, 215, 0, 0.3);
 }
 
 /* Cards and list items hover effect */
