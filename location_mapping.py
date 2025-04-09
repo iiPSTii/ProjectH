@@ -202,5 +202,12 @@ def detect_location_in_query(query):
         # Clean up any double spaces
         while "  " in cleaned_query:
             cleaned_query = cleaned_query.replace("  ", " ")
+            
+        # If the query equals the city name (or becomes empty after removal),
+        # we should treat this as a region-only search with no additional text filter
+        if not cleaned_query or cleaned_query.isspace():
+            # Log this special case
+            print(f"Query '{query}' was fully consumed by location '{detected_city}', setting cleaned_query to empty")
+            cleaned_query = ""
     
     return cleaned_query, detected_region

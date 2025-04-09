@@ -88,8 +88,14 @@ with app.app_context():
                 detected_location = detected_region
 
                 # Only update the query text if we found location
-                if cleaned_query != query_text and cleaned_query.strip():
-                    query_text = cleaned_query
+                if cleaned_query != query_text:
+                    if cleaned_query.strip():
+                        query_text = cleaned_query
+                    else:
+                        # If the query was fully consumed by the location detection,
+                        # set query_text to empty to avoid duplicate filtering
+                        logger.debug(f"Query was fully consumed by location detection: '{original_query}' -> '{detected_region}'")
+                        query_text = ""
 
                 # If no region was specified in the form, use the detected one
                 if not region:
@@ -147,12 +153,17 @@ with app.app_context():
                     Specialty.name.in_(mapped_specialties)
                 )
 
-            # Special case for "ospedale [region]" patterns 
-            if 'ospedale' in query_text.lower() and region:
+            # Special case for "ospedale [region]" patterns or when query is empty but region is set
+            # and original query had "ospedale"
+            if ('ospedale' in query_text.lower() and region) or (query_text == "" and region and 'ospedale' in original_query.lower()):
                 # This will find all hospitals in the specified region
                 search_term = "%ospedale%"
                 query = query.filter(db.func.lower(MedicalFacility.name).like(search_term))
                 specialty_search_applied = True
+                # For logging and user interface clarity
+                if query_text == "":
+                    logger.debug(f"Empty query_text with 'ospedale' in original query '{original_query}', showing all hospitals in '{region}'")
+                    mapped_specialties = ["Tutti gli ospedali della regione"]
             # Special case for "[profession] [city]" patterns (e.g., "oncologo trieste")
             elif any(p in query_text.lower() for p in PROFESSION_TO_SPECIALTY_MAP.keys()) and region:
                 # Get the profession term
