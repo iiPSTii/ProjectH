@@ -32,10 +32,8 @@
                     </div>
                     <div>
                         <h5 class="card-title text-info">Il nostro sistema di valutazione delle specialità</h5>
-                        <p class="card-text mb-0">Ogni struttura è valutata da 1 a 5 in 8 specialità chiave (Cardiologia, Ortopedia, Oncologia, Neurologia, Urologia, Chirurgia, Pediatria, Ginecologia) basandosi sui dati ufficiali del Programma Nazionale Esiti (PNE), rapporti AGENAS, e altre fonti verificate come Micuro e QSalute.</p>
-                        <button type="button" class="btn btn-sm btn-info mt-2" data-bs-toggle="modal" data-bs-target="#ratingMethodologyModal">
-                            <i class="fas fa-search-plus me-1"></i> Scopri di più sulla nostra metodologia
-                        </button>
+                        <p class="card-text">Ogni struttura è valutata da 1 a 5 in 8 specialità chiave (Cardiologia, Ortopedia, Oncologia, Neurologia, Urologia, Chirurgia, Pediatria, Ginecologia) basandosi sui dati ufficiali del Programma Nazionale Esiti (PNE), rapporti AGENAS, e altre fonti verificate come Micuro e QSalute.</p>
+                        <p class="card-text mb-0">Il nostro sistema si basa su dati pubblici ufficiali, integrando reputazione istituzionale, classifiche regionali e feedback verificati dove necessario. Ad ogni struttura è assegnato un punteggio da 1 a 5 per ogni specialità, creando un dataset comparativo che aiuta a identificare la struttura migliore per ogni esigenza.</p>
                     </div>
                 </div>
             </div>
@@ -427,50 +425,6 @@
     </div>
 </div>
 {% endblock %}
-
-<!-- Rating Methodology Modal -->
-<div class="modal fade" id="ratingMethodologyModal" tabindex="-1" aria-labelledby="ratingMethodologyModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content bg-dark">
-            <div class="modal-header">
-                <h5 class="modal-title" id="ratingMethodologyModalLabel">Metodologia di Valutazione delle Specialità</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="mb-4">
-                    <h6 class="text-info"><i class="fas fa-chart-line me-2"></i>Analisi dei Dati e Sistema di Classificazione</h6>
-                    <p>Abbiamo sviluppato un sistema di classificazione completo e strutturato per le strutture mediche in tutta Italia analizzando un ampio dataset di ospedali e cliniche. Il nostro obiettivo è stato identificare i punti di forza di ciascuna struttura tra le specialità mediche chiave — cardiologia, ortopedia, oncologia, neurologia, urologia, chirurgia generale, pediatria e ginecologia — e assegnare a ciascuna un rating di prestazione da 1 a 5 per specialità.</p>
-                </div>
-                
-                <div class="mb-4">
-                    <h6 class="text-info"><i class="fas fa-database me-2"></i>Fonti di Dati</h6>
-                    <p>Questa valutazione si basa principalmente su dati pubblici ufficiali, come rapporti nazionali di outcome del Programma Nazionale Esiti (PNE) di AGENAS, ed è stata arricchita con fonti esterne affidabili tra cui Micuro, QSalute e rapporti istituzionali dove disponibili. Dove i dati pubblici erano carenti, abbiamo integrato utilizzando la reputazione istituzionale, le classifiche regionali e il feedback verificato degli utenti.</p>
-                </div>
-                
-                <div class="mb-4">
-                    <h6 class="text-info"><i class="fas fa-star-half-alt me-2"></i>Scala di Valutazione</h6>
-                    <p>Ogni struttura è valutata su una scala da 1 a 5:</p>
-                    <ul>
-                        <li><strong>5 stelle:</strong> Eccezionale - Centro di eccellenza riconosciuto a livello nazionale</li>
-                        <li><strong>4 stelle:</strong> Ottimo - Prestazioni superiori alla media in questa specialità</li>
-                        <li><strong>3 stelle:</strong> Buono - Prestazioni nella media con punti di forza in questa specialità</li>
-                        <li><strong>2 stelle:</strong> Adeguato - Struttura con servizi di base in questa specialità</li>
-                        <li><strong>1 stella:</strong> Limitato - Presenza minima o periferica della specialità</li>
-                    </ul>
-                    <p>Le specialità di ogni struttura sono state identificate e una scala di valutazione è stata applicata per riflettere le sue prestazioni o il riconoscimento in quelle aree.</p>
-                </div>
-                
-                <div>
-                    <h6 class="text-info"><i class="fas fa-search me-2"></i>Risultato della Nostra Analisi</h6>
-                    <p>Il risultato è un dataset comparativo e consultabile che aiuta pazienti, professionisti o amministratori sanitari a identificare rapidamente la struttura migliore per qualsiasi specialità o esigenza di trattamento — con sicurezza basata sui dati e copertura nazionale.</p>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 {% block extra_js %}
 <script>
