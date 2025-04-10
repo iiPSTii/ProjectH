@@ -427,7 +427,8 @@ with app.app_context():
                 'mapped_specialties': mapped_specialties,
                 'sort_by': sort_by,  # Pass the actual sort_by parameter instead of hardcoding 'distance'
                 'is_address_search': True,
-                'search_location': search_location
+                'search_location': search_location,
+                'search_radius': int(search_radius)  # Pass the actual search radius used
             })
         else:
             # Special case for address searches that found no nearby facilities
@@ -477,7 +478,8 @@ with app.app_context():
                 'detected_location': detected_location,
                 'mapped_specialties': mapped_specialties,
                 'sort_by': sort_by,
-                'is_address_search': False
+                'is_address_search': False,
+                'search_radius': int(search_radius) if search_radius else 30  # Default to 30 if not an address search
             })
 
     @app.route('/data-manager')

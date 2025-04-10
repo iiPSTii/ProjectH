@@ -162,20 +162,31 @@ document.addEventListener('DOMContentLoaded', function() {
                     const indicator = document.getElementById('location-selected-indicator');
                     if (indicator) {
                         indicator.classList.remove('d-none');
-                    }
-                    
-                    // Update the main search button to indicate location search
-                    const searchButton = document.getElementById('searchButton');
-                    if (searchButton) {
-                        // Get the current radius value
+                        
+                        // Update the location name in the indicator
+                        const locationNameIndicator = indicator.querySelector('.location-name');
+                        if (locationNameIndicator) {
+                            locationNameIndicator.textContent = this.dataset.displayName.substring(0, 25) + 
+                                                (this.dataset.displayName.length > 25 ? '...' : '');
+                        }
+                        
+                        // Update the radius indicator
                         const radiusElement = document.getElementById('radius');
                         const radiusValue = radiusElement ? radiusElement.value : '30';
+                        const radiusIndicator = indicator.querySelector('.radius-indicator');
+                        if (radiusIndicator) {
+                            radiusIndicator.textContent = radiusValue + ' km';
+                        }
+                    }
+                    
+                    // Keep the search button clean with just "Cerca Strutture"
+                    const searchButton = document.getElementById('searchButton');
+                    if (searchButton) {
+                        // Focus on the search button for better UX
+                        searchButton.focus();
                         
-                        // Update the button with location and radius information
-                        searchButton.innerHTML = '<i class="fas fa-map-marker-alt me-2"></i> Cerca Strutture nel raggio di ' +
-                                               '<span class="badge bg-warning">' + radiusValue + ' km</span> da ' +
-                                               '<span class="badge bg-info">' + this.dataset.displayName.substring(0, 15) + 
-                                               (this.dataset.displayName.length > 15 ? '...' : '') + '</span>';
+                        // Scroll to the search button for better visibility
+                        searchButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     }
                     
                     // Hide suggestions
