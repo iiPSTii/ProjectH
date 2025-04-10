@@ -119,12 +119,9 @@ document.addEventListener('DOMContentLoaded', function() {
         locationInput.classList.add('loading');
         console.log("Added loading class to input");
         
-        // Per l'autofill mostriamo sempre suggerimenti, ma per l'input manuale solo dopo almeno 8 caratteri
-        // o quando sembra un indirizzo completo
-        const isAddressTyping = query.toLowerCase().includes('via') && query.split(' ').length >= 3;
-        const isAutoFilledAddress = query.length > 15 && query.includes(',');
-        
-        if (isCompleteAddress(query) || query.length > 8 || isAddressTyping || isAutoFilledAddress) {
+        // SOLUZIONE SEMPLICE: Mostra sempre i suggerimenti per qualsiasi query
+        // Questo risolve tutti i problemi di autofill e digitazione manuale
+        {
             console.log("Showing suggestions for:", query);
             locationSuggestions.innerHTML = '';
             
@@ -401,8 +398,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Update last known value to detect autofill
         lastInputValue = query;
         
-        // Don't search for very short queries
-        if (query.length < 3) {
+        // Don't search for single letters or empty queries
+        if (query.length < 2) {
             locationSuggestions.innerHTML = '';
             locationSuggestions.style.display = 'none';
             return;
