@@ -119,10 +119,13 @@ document.addEventListener('DOMContentLoaded', function() {
         locationInput.classList.add('loading');
         console.log("Added loading class to input");
         
-        // DEBUG - Per test, mostra sempre suggerimenti per qualsiasi indirizzo
-        // Questo garantisce che l'autofill funzioni sempre, bypassando l'API
-        {
-            console.log("DEBUG MODE: Creating test suggestions for any address:", query);
+        // Per l'autofill mostriamo sempre suggerimenti, ma per l'input manuale solo dopo almeno 8 caratteri
+        // o quando sembra un indirizzo completo
+        const isAddressTyping = query.toLowerCase().includes('via') && query.split(' ').length >= 3;
+        const isAutoFilledAddress = query.length > 15 && query.includes(',');
+        
+        if (isCompleteAddress(query) || query.length > 8 || isAddressTyping || isAutoFilledAddress) {
+            console.log("Showing suggestions for:", query);
             locationSuggestions.innerHTML = '';
             
             // Create test items basati sull'indirizzo inserito
