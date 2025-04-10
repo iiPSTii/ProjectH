@@ -87,6 +87,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     latitudeInput.value = this.dataset.lat;
                     longitudeInput.value = this.dataset.lon;
                     
+                    // Also update the query_text hidden field with the display name
+                    // This ensures compatibility with the backend which expects query_text
+                    if (document.getElementById('query_text')) {
+                        document.getElementById('query_text').value = this.dataset.displayName;
+                    }
+                    
                     // Store selected location
                     selectedLocation = {
                         lat: this.dataset.lat,
@@ -152,9 +158,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 loadingSpinner.style.display = 'inline-block';
             }
             
-            // If user hasn't selected from dropdown but has text, try to geocode it
+            // If user hasn't selected from dropdown but has text, update query_text and let backend handle geocoding
             if (!selectedLocation && locationInput.value.trim().length > 0) {
-                // Allow form to submit normally - backend will handle geocoding
+                const queryTextInput = document.getElementById('query_text');
+                if (queryTextInput) {
+                    queryTextInput.value = locationInput.value.trim();
+                }
+            }
+            
+            // If both lat/lon are present, make sure query_text contains the location name
+            if (latitudeInput.value && longitudeInput.value) {
+                const queryTextInput = document.getElementById('query_text');
+                if (queryTextInput && !queryTextInput.value) {
+                    queryTextInput.value = locationInput.value.trim();
+                }
             }
         });
     }

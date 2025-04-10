@@ -75,6 +75,10 @@ with app.app_context():
         min_quality = request.args.get('min_quality', 0, type=float)
         query_text = request.args.get('query_text', '')
         sort_by = request.args.get('sort_by', 'quality_desc')  # Default sort by quality descending
+        
+        # Get latitude and longitude if provided by the autocomplete
+        latitude = request.args.get('latitude', '', type=str)
+        longitude = request.args.get('longitude', '', type=str)
 
         # Process the search query to extract location information
         detected_location = None
@@ -82,7 +86,44 @@ with app.app_context():
         is_address_search = False
         address_search_results = None
 
-        if query_text:
+        # Check if we have coordinates from the location autocomplete
+        if latitude and longitude:
+            # Use the provided coordinates directly
+            logger.debug(f"Using provided coordinates: lat={latitude}, lon={longitude}")
+            is_address_search = True
+            
+            # Get all facilities to find ones near these coordinates
+            all_facilities = db.session.query(MedicalFacility).all()
+            
+            # Create a special search location with the provided coordinates
+            search_location = {
+                'lat': float(latitude),
+                'lon': float(longitude),
+                'display_name': query_text
+            }
+            
+            # Find facilities near these coordinates
+            facilities_with_distance = []
+            for facility in all_facilities:
+                if facility.latitude and facility.longitude:
+                    distance = calculate_distance(
+                        float(latitude), float(longitude), 
+                        facility.latitude, facility.longitude
+                    )
+                    if distance <= 30.0:  # 30km radius
+                        facility_dict = facility.to_dict()
+                        facility_dict['distance'] = distance
+                        facilities_with_distance.append(facility_dict)
+            
+            # Sort by distance
+            facilities_with_distance.sort(key=lambda x: x['distance'])
+            
+            # Create address search results structure
+            address_search_results = {
+                'facilities': facilities_with_distance,
+                'search_location': search_location
+            }
+        elif query_text:
             # Prioritize address/location search mode for new search interface
             # Now we treat any query from the main search field as a potential address or city name
             logger.debug(f"Treating query as potential address/location: '{query_text}'")
