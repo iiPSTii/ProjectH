@@ -30,24 +30,13 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('Autofill detected:', currentValue);
             lastInputValue = currentValue;
             
-            // For autofill, instead of showing suggestions, directly set the query value
-            // and submit the search if it appears to be a complete address
-            if (isCompleteAddress(currentValue)) {
-                console.log('Complete address detected in autofill, submitting search directly');
-                
-                // Update the query_text field with the autofilled value
-                if (document.getElementById('query_text')) {
-                    document.getElementById('query_text').value = currentValue;
-                }
-                
-                // Submit the form directly for autofilled values
-                const searchButton = document.getElementById('searchButton');
-                if (searchButton) {
-                    searchButton.click();
-                }
-            } else {
-                // For partial addresses, still try to fetch suggestions
-                fetchSuggestions(currentValue);
+            // For autofill, always show dropdown suggestions instead of auto-submitting
+            // This gives the user the chance to select the correct address with coordinates
+            fetchSuggestions(currentValue);
+            
+            // Update the query_text field with the autofilled value as a fallback
+            if (document.getElementById('query_text')) {
+                document.getElementById('query_text').value = currentValue;
             }
         }
     }
@@ -280,16 +269,6 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Update last known value to detect autofill
         lastInputValue = query;
-        
-        // For autofilled complete addresses, submit directly for better UX
-        if (query.length > 15 && isCompleteAddress(query)) {
-            console.log('Complete address detected in input event, submitting directly');
-            // Update the query_text field
-            if (document.getElementById('query_text')) {
-                document.getElementById('query_text').value = query;
-            }
-            return; // Don't show suggestions, let the user submit
-        }
         
         // Don't search for very short queries
         if (query.length < 3) {
