@@ -24,13 +24,13 @@
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
                                 <input type="text" class="form-control form-control-lg" id="query_text" name="query_text" 
-                                       placeholder="Inserisci un indirizzo (es: Via Roma 1, Milano)" aria-label="Cerca per indirizzo">
+                                       placeholder="Inserisci un indirizzo o città (es: Via Roma 1, Milano o semplicemente Milano)" aria-label="Cerca per indirizzo">
                                 <button type="submit" class="btn btn-primary px-4" id="addressSearchButton">
                                     <i class="fas fa-search me-2"></i> Cerca
                                 </button>
                             </div>
                             <small class="form-text text-muted">
-                                Trova le strutture più vicine alla tua posizione (entro 30km)
+                                Trova le strutture più vicine alla tua posizione (entro 30km). Se cerchi solo un nome di città, verranno usate le coordinate del centro città.
                             </small>
                         </div>
                         
@@ -200,6 +200,7 @@
                                     <p>La modalità più semplice per trovare le strutture sanitarie è inserire un indirizzo:</p>
                                     <ul>
                                         <li>Inserisci il tuo indirizzo completo (es. "Via Roma 1, Milano")</li>
+                                        <li>In alternativa, puoi inserire solo il nome di una città (es. "Milano", "Roma", "Firenze") - il sistema utilizzerà automaticamente le coordinate del centro città</li>
                                         <li>Otterrai i risultati delle strutture più vicine a te, entro un raggio di 30km</li>
                                         <li>I risultati saranno ordinati per distanza, con le strutture più vicine in cima</li>
                                         <li>Puoi poi riordinare i risultati in base alla qualità o altri criteri</li>
