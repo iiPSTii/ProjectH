@@ -72,7 +72,7 @@ with app.app_context():
         """
         Get the specialty-specific score for a facility.
         If the facility has the specific specialty, returns its score.
-        Otherwise, returns the general quality score.
+        Otherwise, returns a much lower score to push these facilities to the end.
         
         Args:
             facility: The MedicalFacility object
@@ -100,15 +100,15 @@ with app.app_context():
         # Normalize specialty name to lowercase for matching
         normalized_specialty = specialty_name.lower()
         
-        # Check direct mapping
+        # Check direct mapping - first priority: facilities with the specific rating
         for specialty_key, attribute_name in specialty_to_attribute.items():
             if specialty_key in normalized_specialty:
                 rating = getattr(facility, attribute_name, None)
                 if rating is not None:
-                    return rating
+                    # Found a specialty-specific rating, return it with high priority
+                    return rating + 10.0  # Add 10 points to ensure these appear first
         
-        # If we have the specific specialty but no direct mapping,
-        # check if the facility has at least the specialty
+        # Second priority: check if the facility has the specialty even without a specific rating
         has_specialty = False
         for fs in facility.specialties:
             if (fs.specialty.name.lower() == normalized_specialty or
@@ -116,14 +116,15 @@ with app.app_context():
                 has_specialty = True
                 break
         
-        # Prioritize general quality for facilities that have the specialty
-        # This gives a slight boost to facilities that at least have the specialty
+        # Second priority: facilities that have the specialty but no specific rating
         if has_specialty:
-            return facility.quality_score if facility.quality_score is not None else 0
+            # Use general quality score but with a small boost
+            general_score = facility.quality_score if facility.quality_score is not None else 0
+            return general_score + 5.0  # Add 5 points to position these after specific ratings
             
-        # Fallback to general quality score but with a small penalty
-        # This ensures facilities with the specialty are ranked higher
-        return (facility.quality_score - 0.1) if facility.quality_score is not None else 0
+        # Third priority (last): facilities that don't have the specialty at all
+        # Return a much lower score to push these to the end
+        return (facility.quality_score - 20.0) if facility.quality_score is not None else -20.0
     
     # Helper function to get equivalent specialties
     def equivalent_specialties(specialty_name):
