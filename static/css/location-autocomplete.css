@@ -12,7 +12,7 @@
 /* Loading indicator for the location input */
 .loading-indicator {
     position: absolute;
-    right: 130px; /* Spostato più a sinistra, lontano dall'indicatore verde */
+    right: 160px; /* Spostato ancora più a sinistra per evitare sovrapposizioni */
     top: 50%;
     transform: translateY(-50%);
     display: none;
@@ -26,7 +26,7 @@
 /* Location confirmation indicator - green check mark */
 .location-confirmation {
     position: absolute;
-    right: 100px; /* Posizionato più a sinistra, lontano dal badge del raggio */
+    right: 130px; /* Posizionato ancora più a sinistra, per evitare qualsiasi sovrapposizione */
     top: 50%;
     transform: translateY(-50%);
     display: none;
