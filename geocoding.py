@@ -429,9 +429,26 @@ def find_facilities_near_address(query_text, facilities, max_distance=10.0, max_
     # Use city-to-region mapping from location_mapping.py for comprehensive city coverage
     from location_mapping import CITY_TO_REGION_MAP
     
-    # Special handling for city-only searches (like "Parma", "Milano", or "Avellino")
+    # Special handling for city searches (including multi-word cities like "Finale Ligure")
     query_lower = query_text.strip().lower()
-    if ' ' not in query_lower and query_lower in CITY_TO_REGION_MAP:
+    
+    # Check both direct matches and multi-word cities
+    is_known_city = query_lower in CITY_TO_REGION_MAP
+    
+    # If not a direct match, try a more thorough check for multi-word cities
+    if not is_known_city:
+        # Check for partial matches in the city map (both exact and within multi-word keys)
+        for city_key in CITY_TO_REGION_MAP.keys():
+            # Check if city_key contains the query or query contains city_key
+            if (query_lower in city_key or city_key in query_lower):
+                is_known_city = True
+                # Override query with the known city name from our mapping
+                query_lower = city_key
+                logger.info(f"Matched multi-word city: '{query_text}' -> '{city_key}'")
+                break
+    
+    # For any city in our mapping (single or multi-word)
+    if is_known_city:
         logger.info(f"Direct city search for: {query_text}")
         # Build a query directly for this city
         search_query = f"{query_text.strip()}, {DEFAULT_COUNTRY}"
@@ -502,9 +519,9 @@ def find_facilities_near_address(query_text, facilities, max_distance=10.0, max_
     
     logger.info(f"Successfully geocoded address: {address_text} -> {search_display}")
     
-    # Check for city-only search to match facilities exactly by city
-    city_name = query_text.strip().lower()
-    is_city_search = ' ' not in city_name and city_name in CITY_TO_REGION_MAP
+    # Check for city search to match facilities exactly by city
+    city_name = query_lower  # Use the normalized version from earlier
+    is_city_search = is_known_city  # Use the result of our comprehensive city check from earlier
     
     # Calculate distances for each facility that has coordinates
     facilities_with_distance = []

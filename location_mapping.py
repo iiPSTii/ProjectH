@@ -20,6 +20,15 @@ CITY_TO_REGION_MAP = {
     'pavia': 'Lombardia',
     'sondrio': 'Lombardia',
     'varese': 'Lombardia',
+    'busto arsizio': 'Lombardia',
+    'cinisello balsamo': 'Lombardia',
+    'legnano': 'Lombardia',
+    'rho': 'Lombardia',
+    'cologno monzese': 'Lombardia',
+    'paderno dugnano': 'Lombardia',
+    'seregno': 'Lombardia',
+    'cesano maderno': 'Lombardia',
+    'segrate': 'Lombardia',
     
     # Lazio
     'roma': 'Lazio',
@@ -27,6 +36,15 @@ CITY_TO_REGION_MAP = {
     'latina': 'Lazio',
     'rieti': 'Lazio',
     'viterbo': 'Lazio',
+    'guidonia': 'Lazio',
+    'fiumicino': 'Lazio',
+    'civitavecchia': 'Lazio',
+    'velletri': 'Lazio',
+    'anzio': 'Lazio',
+    'nettuno': 'Lazio',
+    'formia': 'Lazio',
+    'ostia': 'Lazio',
+    'cerveteri': 'Lazio',
     
     # Campania
     'napoli': 'Campania',
@@ -117,6 +135,7 @@ CITY_TO_REGION_MAP = {
     'imperia': 'Liguria',
     'la spezia': 'Liguria',
     'savona': 'Liguria',
+    'finale ligure': 'Liguria',
     
     # Marche
     'ancona': 'Marche',
