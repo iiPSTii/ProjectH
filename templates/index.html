@@ -143,33 +143,6 @@
                             </div>
                         </div>
                         
-                        <!-- Alternative search section -->
-                        <div class="col-12">
-                            <div class="card bg-dark border-0 shadow-sm mb-3">
-                                <div class="card-header bg-dark">
-                                    <a class="text-decoration-none text-light d-block" data-bs-toggle="collapse" href="#specificSearch" role="button" aria-expanded="false">
-                                        <i class="fas fa-search-plus me-2"></i> Cerchi qualcosa di specifico? <i class="fas fa-chevron-down float-end"></i>
-                                    </a>
-                                </div>
-                                <div class="collapse" id="specificSearch">
-                                    <div class="card-body">
-                                        <label for="specific_query" class="form-label">Cerca per nome, condizione medica o altro</label>
-                                        <div class="input-group mb-3">
-                                            <span class="input-group-text"><i class="fas fa-search"></i></span>
-                                            <input type="text" class="form-control" id="specific_query" 
-                                                   placeholder="Es: ospedale, cardiologia, mal di schiena, artrosi..." aria-label="Cerca specifico">
-                                        </div>
-                                        <small class="form-text text-muted d-block mb-3">
-                                            Puoi cercare strutture per nome, condizione medica o specialità
-                                        </small>
-                                        <button type="button" class="btn btn-outline-secondary" onclick="useSpecificQuery()">
-                                            <i class="fas fa-search me-2"></i> Applica ricerca specifica
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
                         <div class="col-12 mt-2 text-center">
                             <button type="submit" class="btn btn-primary btn-lg px-5" id="searchButton">
                                 <i class="fas fa-search me-2"></i> Cerca Strutture
@@ -177,6 +150,35 @@
                         </div>
                     </div>
                 </form>
+            </div>
+        </div>
+        
+        <!-- Alternative search section - SEPARATE FROM MAIN SEARCH -->
+        <div class="card bg-dark shadow-lg border-0 rounded-lg mb-5">
+            <div class="card-header bg-dark">
+                <h5 class="mb-0">
+                    <a class="text-decoration-none text-light d-block" data-bs-toggle="collapse" href="#specificSearch" role="button" aria-expanded="false">
+                        <i class="fas fa-search-plus me-2"></i> Cerchi qualcosa di specifico? <i class="fas fa-chevron-down float-end"></i>
+                    </a>
+                </h5>
+            </div>
+            <div class="collapse" id="specificSearch">
+                <div class="card-body">
+                    <form action="/search" method="get">
+                        <label for="specific_query" class="form-label">Cerca per nome, condizione medica o altro</label>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                            <input type="text" class="form-control" name="query_text" id="specific_query" 
+                                   placeholder="Es: ospedale, cardiologia, mal di schiena, artrosi..." aria-label="Cerca specifico">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="fas fa-search me-2"></i> Cerca
+                            </button>
+                        </div>
+                        <div class="form-text text-muted mb-3">
+                            Puoi cercare strutture per nome, condizione medica o specialità
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
         
