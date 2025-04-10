@@ -18,84 +18,131 @@
                 
                 <form action="/search" method="get" id="searchForm">
                     <div class="row g-3">
-                        <div class="col-12 mb-2">
-                            <label for="query_text" class="form-label">Cerca per nome, condizione medica o località</label>
+                        <!-- New address search field (prioritized) -->
+                        <div class="col-12 mb-3">
+                            <label for="query_text" class="form-label fw-bold">Cerca strutture sanitarie vicino a te</label>
                             <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
                                 <input type="text" class="form-control form-control-lg" id="query_text" name="query_text" 
-                                       placeholder="Es: ospedale, cardiologia, mal di schiena, artrosi, Roma..." aria-label="Cerca">
+                                       placeholder="Inserisci un indirizzo (es: Via Roma 1, Milano)" aria-label="Cerca per indirizzo">
+                                <button type="submit" class="btn btn-primary px-4" id="addressSearchButton">
+                                    <i class="fas fa-search me-2"></i> Cerca
+                                </button>
                             </div>
                             <small class="form-text text-muted">
-                                Cerca strutture per nome, condizione medica, specialità o indirizzo
+                                Trova le strutture più vicine alla tua posizione (entro 30km)
                             </small>
                         </div>
                         
-                        <div class="col-md-6">
-                            <label for="specialty" class="form-label">Specialità Medica</label>
-                            <select class="form-select" id="specialty" name="specialty">
-                                <option value="">Tutte le specialità</option>
-                                <!-- All specialty options in alphabetical order -->
-                                <option value="Allergologia">Allergologia</option>
-                                <option value="Cardiologia">Cardiologia</option>
-                                <option value="Chirurgia">Chirurgia</option>
-                                <option value="Dermatologia">Dermatologia</option>
-                                <option value="Diagnostica">Diagnostica per Immagini</option>
-                                <option value="Ematologia">Ematologia</option>
-                                <option value="Endocrinologia">Endocrinologia</option>
-                                <option value="Fertilità">Fertilità e Riproduzione</option>
-                                <option value="Gastroenterologia">Gastroenterologia</option>
-                                <option value="Ginecologia">Ginecologia</option>
-                                <option value="Malattie Infettive">Malattie Infettive</option>
-                                <option value="Medicina Interna">Medicina Interna</option>
-                                <option value="Medicina d'Urgenza">Medicina d'Urgenza</option>
-                                <option value="Medicina dello Sport">Medicina dello Sport</option>
-                                <option value="Medicina Generale">Medicina Generale</option>
-                                <option value="Neurologia">Neurologia</option>
-                                <option value="Oculistica">Oculistica</option>
-                                <option value="Oncologia">Oncologia</option>
-                                <option value="Ortopedia">Ortopedia</option>
-                                <option value="Otorinolaringoiatria">Otorinolaringoiatria</option>
-                                <option value="Pediatria">Pediatria</option>
-                                <option value="Pneumologia">Pneumologia</option>
-                                <option value="Psichiatria">Psichiatria</option>
-                                <option value="Radiologia">Radiologia</option>
-                                <option value="Reumatologia">Reumatologia</option>
-                                <option value="Riabilitazione">Riabilitazione</option>
-                                <option value="Urologia">Urologia</option>
-                            </select>
-                        </div>
-                        
-                        <div class="col-md-6">
-                            <label for="region" class="form-label">Regione</label>
-                            <select class="form-select" id="region" name="region">
-                                <option value="">Tutte le regioni</option>
-                                {% for region in regions %}
-                                <option value="{{ region.name }}">{{ region.name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        
-                        <div class="col-md-6">
-                            <label for="min_quality" class="form-label">Qualità Minima</label>
-                            <div class="input-group">
-                                <input type="range" class="form-range" id="min_quality" name="min_quality" min="0" max="5" step="0.5" value="0" oninput="updateQualityValue(this.value)">
-                                <span class="input-group-text ms-2" id="qualityValue">Qualsiasi</span>
+                        <!-- Filters section -->
+                        <div class="col-12">
+                            <div class="card bg-dark border-0 shadow-sm mb-3">
+                                <div class="card-header bg-dark">
+                                    <a class="text-decoration-none text-light d-block" data-bs-toggle="collapse" href="#filterOptions" role="button" aria-expanded="false">
+                                        <i class="fas fa-sliders-h me-2"></i> Filtra la tua ricerca <i class="fas fa-chevron-down float-end"></i>
+                                    </a>
+                                </div>
+                                <div class="collapse" id="filterOptions">
+                                    <div class="card-body">
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label for="specialty" class="form-label">Specialità Medica</label>
+                                                <select class="form-select" id="specialty" name="specialty">
+                                                    <option value="">Tutte le specialità</option>
+                                                    <!-- All specialty options in alphabetical order -->
+                                                    <option value="Allergologia">Allergologia</option>
+                                                    <option value="Cardiologia">Cardiologia</option>
+                                                    <option value="Chirurgia">Chirurgia</option>
+                                                    <option value="Dermatologia">Dermatologia</option>
+                                                    <option value="Diagnostica">Diagnostica per Immagini</option>
+                                                    <option value="Ematologia">Ematologia</option>
+                                                    <option value="Endocrinologia">Endocrinologia</option>
+                                                    <option value="Fertilità">Fertilità e Riproduzione</option>
+                                                    <option value="Gastroenterologia">Gastroenterologia</option>
+                                                    <option value="Ginecologia">Ginecologia</option>
+                                                    <option value="Malattie Infettive">Malattie Infettive</option>
+                                                    <option value="Medicina Interna">Medicina Interna</option>
+                                                    <option value="Medicina d'Urgenza">Medicina d'Urgenza</option>
+                                                    <option value="Medicina dello Sport">Medicina dello Sport</option>
+                                                    <option value="Medicina Generale">Medicina Generale</option>
+                                                    <option value="Neurologia">Neurologia</option>
+                                                    <option value="Oculistica">Oculistica</option>
+                                                    <option value="Oncologia">Oncologia</option>
+                                                    <option value="Ortopedia">Ortopedia</option>
+                                                    <option value="Otorinolaringoiatria">Otorinolaringoiatria</option>
+                                                    <option value="Pediatria">Pediatria</option>
+                                                    <option value="Pneumologia">Pneumologia</option>
+                                                    <option value="Psichiatria">Psichiatria</option>
+                                                    <option value="Radiologia">Radiologia</option>
+                                                    <option value="Reumatologia">Reumatologia</option>
+                                                    <option value="Riabilitazione">Riabilitazione</option>
+                                                    <option value="Urologia">Urologia</option>
+                                                </select>
+                                            </div>
+                                            
+                                            <div class="col-md-6">
+                                                <label for="region" class="form-label">Regione</label>
+                                                <select class="form-select" id="region" name="region">
+                                                    <option value="">Tutte le regioni</option>
+                                                    {% for region in regions %}
+                                                    <option value="{{ region.name }}">{{ region.name }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            
+                                            <div class="col-md-6">
+                                                <label for="min_quality" class="form-label">Qualità Minima</label>
+                                                <div class="input-group">
+                                                    <input type="range" class="form-range" id="min_quality" name="min_quality" min="0" max="5" step="0.5" value="0" oninput="updateQualityValue(this.value)">
+                                                    <span class="input-group-text ms-2" id="qualityValue">Qualsiasi</span>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="col-md-6">
+                                                <label for="sort_by" class="form-label">Ordina Risultati Per</label>
+                                                <select class="form-select" id="sort_by" name="sort_by">
+                                                    <option value="quality_desc" selected>Qualità (Migliore prima)</option>
+                                                    <option value="quality_asc">Qualità (Peggiore prima)</option>
+                                                    <option value="name_asc">Nome (A-Z)</option>
+                                                    <option value="name_desc">Nome (Z-A)</option>
+                                                    <option value="city_asc">Città (A-Z)</option>
+                                                    <option value="city_desc">Città (Z-A)</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         
-                        <div class="col-md-6">
-                            <label for="sort_by" class="form-label">Ordina Risultati Per</label>
-                            <select class="form-select" id="sort_by" name="sort_by">
-                                <option value="quality_desc" selected>Qualità (Migliore prima)</option>
-                                <option value="quality_asc">Qualità (Peggiore prima)</option>
-                                <option value="name_asc">Nome (A-Z)</option>
-                                <option value="name_desc">Nome (Z-A)</option>
-                                <option value="city_asc">Città (A-Z)</option>
-                                <option value="city_desc">Città (Z-A)</option>
-                            </select>
+                        <!-- Alternative search section -->
+                        <div class="col-12">
+                            <div class="card bg-dark border-0 shadow-sm mb-3">
+                                <div class="card-header bg-dark">
+                                    <a class="text-decoration-none text-light d-block" data-bs-toggle="collapse" href="#specificSearch" role="button" aria-expanded="false">
+                                        <i class="fas fa-search-plus me-2"></i> Cerchi qualcosa di specifico? <i class="fas fa-chevron-down float-end"></i>
+                                    </a>
+                                </div>
+                                <div class="collapse" id="specificSearch">
+                                    <div class="card-body">
+                                        <label for="specific_query" class="form-label">Cerca per nome, condizione medica o altro</label>
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                            <input type="text" class="form-control" id="specific_query" 
+                                                   placeholder="Es: ospedale, cardiologia, mal di schiena, artrosi..." aria-label="Cerca specifico">
+                                        </div>
+                                        <small class="form-text text-muted d-block mb-3">
+                                            Puoi cercare strutture per nome, condizione medica o specialità
+                                        </small>
+                                        <button type="button" class="btn btn-outline-secondary" onclick="useSpecificQuery()">
+                                            <i class="fas fa-search me-2"></i> Applica ricerca specifica
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         
-                        <div class="col-12 mt-4 text-center">
+                        <div class="col-12 mt-2 text-center">
                             <button type="submit" class="btn btn-primary btn-lg px-5" id="searchButton">
                                 <i class="fas fa-search me-2"></i> Cerca Strutture
                             </button>
@@ -149,19 +196,19 @@
                         <div class="accordion-item bg-dark">
                             <h2 class="accordion-header">
                                 <button class="accordion-button collapsed bg-dark text-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                                    <i class="fas fa-search me-2"></i> Cerca per Nome, Condizione o Località
+                                    <i class="fas fa-map-marker-alt me-2"></i> Cerca strutture vicino a te
                                 </button>
                             </h2>
                             <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#howItWorksAccordion">
                                 <div class="accordion-body">
-                                    Puoi cercare strutture sanitarie in diversi modi:
+                                    <p>La modalità più semplice per trovare le strutture sanitarie è inserire un indirizzo:</p>
                                     <ul>
-                                        <li>Digitando il nome di una struttura (es. "Ospedale Santa Maria")</li>
-                                        <li>Cercando una condizione medica o un sintomo (es. "mal di schiena", "diabete")</li>
-                                        <li>Inserendo una specialità medica (es. "cardiologia", "ortopedia")</li>
-                                        <li>Cercando per città o indirizzo (es. "Roma", "Via Garibaldi")</li>
+                                        <li>Inserisci il tuo indirizzo completo (es. "Via Roma 1, Milano")</li>
+                                        <li>Otterrai i risultati delle strutture più vicine a te, entro un raggio di 30km</li>
+                                        <li>I risultati saranno ordinati per distanza, con le strutture più vicine in cima</li>
+                                        <li>Puoi poi riordinare i risultati in base alla qualità o altri criteri</li>
                                     </ul>
-                                    Puoi anche usare i filtri di specialità e regione per rendere la ricerca più precisa.
+                                    <p>Per ricerche più specifiche, usa le opzioni avanzate sotto "Cerchi qualcosa di specifico?"</p>
                                 </div>
                             </div>
                         </div>

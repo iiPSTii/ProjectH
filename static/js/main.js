@@ -115,3 +115,35 @@ function updateQualityValue(val) {
         }
     }
 }
+
+// Handle specific query transfer to main search field
+function useSpecificQuery() {
+    const specificQuery = document.getElementById('specific_query');
+    const mainQueryField = document.getElementById('query_text');
+    
+    if (specificQuery && mainQueryField && specificQuery.value.trim() !== '') {
+        // Transfer the specific query value to the main search field
+        mainQueryField.value = specificQuery.value;
+        
+        // Collapse the specific search section
+        const specificSearchSection = document.getElementById('specificSearch');
+        if (specificSearchSection) {
+            const bsCollapse = bootstrap.Collapse.getInstance(specificSearchSection);
+            if (bsCollapse) {
+                bsCollapse.hide();
+            }
+        }
+        
+        // Focus on the main search button
+        const searchButton = document.getElementById('searchButton');
+        if (searchButton) {
+            searchButton.focus();
+            // Optional: Add a visual indicator that the query was transferred
+            searchButton.classList.add('btn-success');
+            setTimeout(() => {
+                searchButton.classList.remove('btn-success');
+                searchButton.classList.add('btn-primary');
+            }, 1000);
+        }
+    }
+}
