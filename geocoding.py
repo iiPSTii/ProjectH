@@ -426,15 +426,12 @@ def find_facilities_near_address(query_text, facilities, max_distance=10.0, max_
     Returns:
         dict: Dictionary with facilities sorted by distance and search location details
     """
-    # Define common Italian cities for direct city-only lookup
-    common_cities = [
-        'milano', 'roma', 'napoli', 'torino', 'bologna', 'firenze', 'genova', 
-        'palermo', 'bari', 'venezia', 'verona', 'padova', 'catania', 'messina', 
-        'salerno', 'parma', 'modena', 'reggio', 'pisa', 'livorno', 'siena'
-    ]
+    # Use city-to-region mapping from location_mapping.py for comprehensive city coverage
+    from location_mapping import CITY_TO_REGION_MAP
     
-    # Special handling for city-only searches (like "Parma" or "Milano")
-    if query_text.strip().lower() in common_cities and ' ' not in query_text.strip():
+    # Special handling for city-only searches (like "Parma", "Milano", or "Avellino")
+    query_lower = query_text.strip().lower()
+    if ' ' not in query_lower and query_lower in CITY_TO_REGION_MAP:
         logger.info(f"Direct city search for: {query_text}")
         # Build a query directly for this city
         search_query = f"{query_text.strip()}, {DEFAULT_COUNTRY}"
@@ -505,8 +502,9 @@ def find_facilities_near_address(query_text, facilities, max_distance=10.0, max_
     
     logger.info(f"Successfully geocoded address: {address_text} -> {search_display}")
     
-    # Check for special case of Parma city search
-    parma_case = query_text.strip().lower() == 'parma'
+    # Check for city-only search to match facilities exactly by city
+    city_name = query_text.strip().lower()
+    is_city_search = ' ' not in city_name and city_name in CITY_TO_REGION_MAP
     
     # Calculate distances for each facility that has coordinates
     facilities_with_distance = []
@@ -517,13 +515,18 @@ def find_facilities_near_address(query_text, facilities, max_distance=10.0, max_
     
     for facility in facilities:
         try:
-            # Special case for Parma (since we know we have a facility there)
-            if parma_case and 'parma' in (facility.city or '').lower():
-                # Special handling for Parma hospital - include it regardless of distance
+            # Special case for exact city matches (Parma, Avellino, etc.)
+            # Handle variations in city name case and formatting
+            facility_city = (facility.city or '').lower()
+            if is_city_search and (city_name == facility_city or 
+                                 city_name in facility_city.split() or 
+                                 facility_city.startswith(city_name)):
+                # Add facilities that exactly match the city name, regardless of distance
+                # These are guaranteed to be relevant
                 facility.distance = 0.1  # Set a very close distance
                 facility.distance_text = f"0.1 km"
                 facilities_with_distance.append(facility)
-                logger.debug(f"Added Parma facility {facility.name} with special handling")
+                logger.debug(f"Added {city_name} facility {facility.name} with special handling")
                 continue
                 
             # Use the stored coordinates from the database
@@ -552,6 +555,29 @@ def find_facilities_near_address(query_text, facilities, max_distance=10.0, max_
     
     # Sort by distance
     facilities_with_distance.sort(key=lambda x: x.distance)
+    
+    # If this is a city search and we didn't find any facilities, try to add some from the region
+    if is_city_search and len(facilities_with_distance) == 0:
+        # Get the region for this city
+        region_name = CITY_TO_REGION_MAP.get(city_name)
+        if region_name:
+            logger.info(f"No facilities found in {city_name}, looking in {region_name} region")
+            
+            # Find facilities in the same region
+            for facility in facilities:
+                # Check if facility is in the same region (if it has a region)
+                if hasattr(facility, 'region') and facility.region and facility.region.name == region_name:
+                    facility.distance = 10.0  # Set a reasonable distance
+                    facility.distance_text = f"~10 km"
+                    facilities_with_distance.append(facility)
+                    logger.debug(f"Added region-level facility {facility.name} from {region_name}")
+            
+            # Limit to 5 facilities from the region
+            if len(facilities_with_distance) > 5:
+                facilities_with_distance = facilities_with_distance[:5]
+                
+            if facilities_with_distance:
+                logger.info(f"Added {len(facilities_with_distance)} facilities from {region_name} region")
     
     # If we have very few geocoded facilities (less than 5%), try geocoding on-the-fly for a small subset
     if geocoded_count < len(facilities) * 0.05 and len(facilities_with_distance) < 3:
