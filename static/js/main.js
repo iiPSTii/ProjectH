@@ -123,17 +123,13 @@ function updateRadiusValue(val) {
         radiusValueElement.textContent = val + ' km';
     }
     
-    // Update the search location information if already set
+    // Update location indicator instead of changing the button text
     const locationSelectedIndicator = document.getElementById('location-selected-indicator');
     if (locationSelectedIndicator && !locationSelectedIndicator.classList.contains('d-none')) {
-        // Location already selected, update the indicator
-        const searchButton = document.getElementById('searchButton');
-        if (searchButton && searchButton.innerHTML.includes('Cerca Strutture Vicino a')) {
-            // Extract the current location from button
-            const currentLocation = searchButton.querySelector('.badge').textContent;
-            // Update the button to show new radius
-            const newButtonHTML = `<i class="fas fa-map-marker-alt me-2"></i> Cerca Strutture nel raggio di <span class="badge bg-warning">${val} km</span> da <span class="badge bg-info">${currentLocation}</span>`;
-            searchButton.innerHTML = newButtonHTML;
+        // Update only the indicator text, not the button
+        const radiusIndicator = locationSelectedIndicator.querySelector('.radius-indicator');
+        if (radiusIndicator) {
+            radiusIndicator.textContent = val + ' km';
         }
     }
 }
@@ -189,14 +185,24 @@ function applyLocationSearch() {
             indicator.classList.remove('d-none');
         }
         
-        // Update the main search button
+        // Focus on the search button but keep its original text
         const searchButton = document.getElementById('searchButton');
         if (searchButton) {
             searchButton.focus();
-            // Visual feedback - change the main button to show it will perform a location search
-            searchButton.innerHTML = '<i class="fas fa-map-marker-alt me-2"></i> Cerca Strutture Vicino a ' + 
-                                    '<span class="badge bg-info">' + locationInput.value.substring(0, 15) + 
-                                    (locationInput.value.length > 15 ? '...' : '') + '</span>';
+        }
+        
+        // Update the location indicator with the selected location
+        const locationNameIndicator = indicator.querySelector('.location-name');
+        if (locationNameIndicator) {
+            locationNameIndicator.textContent = locationInput.value.substring(0, 25) + 
+                                    (locationInput.value.length > 25 ? '...' : '');
+        }
+        
+        // Update the radius indicator
+        const radiusInput = document.getElementById('radius');
+        const radiusIndicator = indicator.querySelector('.radius-indicator');
+        if (radiusInput && radiusIndicator) {
+            radiusIndicator.textContent = radiusInput.value + ' km';
         }
         
         // Scroll to the main search button for better UX

@@ -70,7 +70,7 @@
                 
                 {% if search_params.is_address_search and facilities|length > 0 %}
                 <small class="text-success d-block mt-1">
-                    <i class="fas fa-info-circle me-1"></i> Vengono mostrate le strutture entro 30 km dal punto di ricerca con le relative distanze
+                    <i class="fas fa-info-circle me-1"></i> Vengono mostrate le strutture entro {{ search_params.search_radius|default(30) }} km dal punto di ricerca con le relative distanze
                 </small>
                 {% endif %}
             </div>
