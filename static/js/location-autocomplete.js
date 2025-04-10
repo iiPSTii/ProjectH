@@ -17,9 +17,37 @@ document.addEventListener('DOMContentLoaded', function() {
     let typingTimer;
     const doneTypingInterval = 500; // Wait 500ms after user stops typing
     let lastInputValue = '';  // Track the last known input value for autofill detection
+    let autofillPollingId = null; // ID for the polling interval
     
     // Only initialize if we have the location input on this page
     if (!locationInput) return;
+    
+    // Start an aggressive polling to detect browser autofill
+    // This is necessary because some browsers don't trigger events when autofilling
+    const startAutofillPolling = () => {
+        if (autofillPollingId) {
+            clearInterval(autofillPollingId);
+        }
+        
+        console.log("Starting autofill polling");
+        autofillPollingId = setInterval(() => {
+            const currentValue = locationInput.value.trim();
+            if (currentValue !== lastInputValue && currentValue.length > 2) {
+                console.log('Autofill detected through polling:', currentValue);
+                lastInputValue = currentValue;
+                fetchSuggestions(currentValue);
+            }
+        }, 100); // Poll every 100ms for changes
+        
+        // Stop polling after 5 seconds to save resources
+        setTimeout(() => {
+            if (autofillPollingId) {
+                console.log("Stopping autofill polling");
+                clearInterval(autofillPollingId);
+                autofillPollingId = null;
+            }
+        }, 5000);
+    };
     
     // Function to check for browser/phone autofill
     function checkForAutofill() {
@@ -62,12 +90,19 @@ document.addEventListener('DOMContentLoaded', function() {
     // Check on focus events (browsers often autofill on focus)
     locationInput.addEventListener('focus', function() {
         setTimeout(checkForAutofill, 100);
+        // Start aggressive polling when field gets focus
+        startAutofillPolling();
     });
     
     // Also check on click, which can trigger autofill on mobile
     locationInput.addEventListener('click', function() {
         setTimeout(checkForAutofill, 100);
+        // Start aggressive polling when field gets clicked
+        startAutofillPolling();
     });
+    
+    // Start polling right away for immediate detection
+    startAutofillPolling();
     
     // Function to fetch location suggestions from Nominatim
     function fetchSuggestions(query) {
