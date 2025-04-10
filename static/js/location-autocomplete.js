@@ -41,12 +41,23 @@ document.addEventListener('DOMContentLoaded', function() {
         apiUrl.searchParams.append('viewbox', '6.6272,47.0907,18.7844,35.4897'); // Bounding box for Italy
         apiUrl.searchParams.append('bounded', '1'); // Restrict to bounding box
         
-        // If query looks like a street address, set different search parameters
-        if (query.toLowerCase().includes('via') || 
-            query.toLowerCase().includes('piazza') || 
-            query.toLowerCase().includes('corso')) {
+        // Optimize search for Italian addresses
+        const isStreetAddress = query.toLowerCase().includes('via') || 
+                               query.toLowerCase().includes('piazza') || 
+                               query.toLowerCase().includes('corso') ||
+                               query.toLowerCase().includes('viale') || 
+                               query.toLowerCase().includes('strada') ||
+                               query.toLowerCase().includes('largo');
+
+        if (isStreetAddress) {
+            // For street addresses, use more specialized parameters
             apiUrl.searchParams.set('street', query);
             apiUrl.searchParams.delete('q'); // Remove the generic query
+            
+            // Filter by place type to prioritize addresses over administrative regions
+            apiUrl.searchParams.append('featuretype', 'building');
+            apiUrl.searchParams.append('featuretype', 'highway');
+            apiUrl.searchParams.append('featuretype', 'amenity');
         }
         
         fetch(apiUrl.toString(), {
@@ -68,18 +79,55 @@ document.addEventListener('DOMContentLoaded', function() {
                 const item = document.createElement('div');
                 item.className = 'location-suggestion-item';
                 
-                // Format location display: use name and important parts of address
-                let displayName = location.display_name;
-                if (displayName.length > 80) {
+                // Enhanced formatting for display names to be more user-friendly
+                let displayName = '';
+                
+                // Check if we have address details to use for better formatting
+                if (location.address) {
+                    // For street addresses, create a clear format
+                    if (location.address.road || location.address.pedestrian) {
+                        const street = location.address.road || location.address.pedestrian;
+                        const houseNumber = location.address.house_number || '';
+                        const city = location.address.city || location.address.town || location.address.village || location.address.municipality || '';
+                        const province = location.address.state || location.address.county || '';
+                        
+                        // Format: "Via Roma 10, Milano, Lombardia, Italia"
+                        let formattedParts = [];
+                        if (street) {
+                            let streetPart = street;
+                            if (houseNumber) streetPart += ' ' + houseNumber;
+                            formattedParts.push(streetPart);
+                        }
+                        if (city) formattedParts.push(city);
+                        if (province) formattedParts.push(province);
+                        formattedParts.push('Italia');
+                        
+                        displayName = formattedParts.join(', ');
+                    }
+                    // For cities and towns, create a simple format
+                    else if (location.address.city || location.address.town || location.address.village) {
+                        const city = location.address.city || location.address.town || location.address.village;
+                        const province = location.address.state || location.address.county || '';
+                        
+                        // Format: "Milano, Lombardia, Italia"
+                        displayName = [city, province, 'Italia'].filter(p => p).join(', ');
+                    }
+                }
+                
+                // Fallback to default name processing if address details don't yield good results
+                if (!displayName) {
+                    displayName = location.display_name;
                     // Shorten very long names
-                    const parts = displayName.split(', ');
-                    // Take first part, then skip to region/province level
-                    displayName = [
-                        parts[0], 
-                        parts.length > 2 ? parts[parts.length - 3] : '',
-                        parts.length > 1 ? parts[parts.length - 2] : '',
-                        'Italia'
-                    ].filter(p => p).join(', ');
+                    if (displayName.length > 60) {
+                        const parts = displayName.split(', ');
+                        // Take first part, then skip to region/province level
+                        displayName = [
+                            parts[0], 
+                            parts.length > 2 ? parts[parts.length - 3] : '',
+                            parts.length > 1 ? parts[parts.length - 2] : '',
+                            'Italia'
+                        ].filter(p => p).join(', ');
+                    }
                 }
                 
                 item.textContent = displayName;
