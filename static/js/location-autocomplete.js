@@ -30,9 +30,40 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('Autofill detected:', currentValue);
             lastInputValue = currentValue;
             
-            // Trigger the search for this value
-            fetchSuggestions(currentValue);
+            // For autofill, instead of showing suggestions, directly set the query value
+            // and submit the search if it appears to be a complete address
+            if (isCompleteAddress(currentValue)) {
+                console.log('Complete address detected in autofill, submitting search directly');
+                
+                // Update the query_text field with the autofilled value
+                if (document.getElementById('query_text')) {
+                    document.getElementById('query_text').value = currentValue;
+                }
+                
+                // Submit the form directly for autofilled values
+                const searchButton = document.getElementById('searchButton');
+                if (searchButton) {
+                    searchButton.click();
+                }
+            } else {
+                // For partial addresses, still try to fetch suggestions
+                fetchSuggestions(currentValue);
+            }
         }
+    }
+    
+    // Helper to check if the value looks like a complete address
+    function isCompleteAddress(text) {
+        // Check for common patterns that indicate a complete address
+        // Italian address typically has: street, house number, city, province/region
+        const hasStreet = /(via|viale|piazza|corso|strada|largo)/i.test(text);
+        const hasNumber = /\d+/.test(text);
+        const hasCity = text.split(',').length >= 2;
+        const hasMultipleParts = text.split(' ').length >= 3;
+        
+        return (hasStreet && hasNumber && hasCity) || 
+               (hasMultipleParts && hasCity) ||
+               text.length > 20; // Longer text is more likely to be a complete address
     }
     
     // Setup autofill detection
@@ -250,6 +281,16 @@ document.addEventListener('DOMContentLoaded', function() {
         // Update last known value to detect autofill
         lastInputValue = query;
         
+        // For autofilled complete addresses, submit directly for better UX
+        if (query.length > 15 && isCompleteAddress(query)) {
+            console.log('Complete address detected in input event, submitting directly');
+            // Update the query_text field
+            if (document.getElementById('query_text')) {
+                document.getElementById('query_text').value = query;
+            }
+            return; // Don't show suggestions, let the user submit
+        }
+        
         // Don't search for very short queries
         if (query.length < 3) {
             locationSuggestions.innerHTML = '';
@@ -266,6 +307,22 @@ document.addEventListener('DOMContentLoaded', function() {
     // Special case for browser autofill - add more events that might trigger it
     locationInput.addEventListener('change', function() {
         checkForAutofill();
+    });
+    
+    // Handle blur event (when the field loses focus)
+    locationInput.addEventListener('blur', function() {
+        // After a short delay to allow for click events on suggestions
+        setTimeout(() => {
+            const currentValue = locationInput.value.trim();
+            
+            // If we have a complete address, make sure the query_text is updated
+            if (currentValue.length > 15 && isCompleteAddress(currentValue)) {
+                console.log('Complete address detected on blur, ensuring query_text is updated');
+                if (document.getElementById('query_text')) {
+                    document.getElementById('query_text').value = currentValue;
+                }
+            }
+        }, 200);
     });
     
     // Listen for autocomplete events
@@ -343,6 +400,25 @@ document.addEventListener('DOMContentLoaded', function() {
     // Prevent suggestions from closing when clicking inside the suggestions div
     locationSuggestions.addEventListener('click', function(event) {
         event.stopPropagation();
+    });
+    
+    // Listen for Enter key press to submit form directly
+    locationInput.addEventListener('keydown', function(event) {
+        // Enter key pressed
+        if (event.key === 'Enter' || event.keyCode === 13) {
+            event.preventDefault();
+            
+            // Update the query_text field
+            if (document.getElementById('query_text')) {
+                document.getElementById('query_text').value = this.value.trim();
+            }
+            
+            // Click search button
+            const searchButton = document.getElementById('searchButton');
+            if (searchButton) {
+                searchButton.click();
+            }
+        }
     });
     
     // Apply some initial styling
