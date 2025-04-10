@@ -69,25 +69,366 @@ with app.app_context():
 
     @app.route('/search')
     def search():
-        # Your existing search code
-        # (removed for brevity)
-        
-        # Return the search results
-        return render_template('results.html',
-            regions=get_regions(),
-            specialties=get_specialties(),
-            region=region,
-            specialty=specialty,
-            min_quality=min_quality,
-            query_text=query_text,
-            original_query=original_query,
-            facilities=facilities,
-            mapped_specialties=mapped_specialties,
-            detected_location=detected_location,
-            db_status=db_status,
-            sort_by=sort_by,
-            is_address_search=False
-        )
+        # Get search parameters
+        specialty = request.args.get('specialty', '')
+        region = request.args.get('region', '')
+        min_quality = request.args.get('min_quality', 0, type=float)
+        query_text = request.args.get('query_text', '')
+        sort_by = request.args.get('sort_by', 'quality_desc')  # Default sort by quality descending
+
+        # Process the search query to extract location information
+        detected_location = None
+        original_query = query_text
+        is_address_search = False
+        address_search_results = None
+
+        if query_text:
+            # First check if this is an address search
+            if is_address_query(query_text):
+                logger.debug(f"Detected address search query: '{query_text}'")
+                is_address_search = True
+                
+                # Extract the address part from the query if it contains other terms
+                address_part = extract_address_part(query_text)
+                logger.debug(f"Extracted address part: '{address_part}'")
+                
+                # Get all facilities to find ones near this address
+                all_facilities = db.session.query(MedicalFacility).all()
+                
+                # Find facilities near the specified address
+                # Increased max distance to 30km to get more results
+                address_search_results = find_facilities_near_address(address_part, all_facilities, max_distance=30.0)
+                
+                if address_search_results and address_search_results.get('facilities'):
+                    logger.debug(f"Found {len(address_search_results['facilities'])} facilities near address: '{query_text}'")
+                    # Get the detected location display name
+                    search_location = address_search_results.get('search_location', {})
+                    detected_location = search_location.get('display_name', query_text)
+                else:
+                    logger.debug(f"No facilities found near address: '{query_text}'")
+                    # If no facilities found near address, fall back to regular search
+                    is_address_search = False
+            
+            # If not an address search or address search found no results, try regular search
+            if not is_address_search:
+                # Try to detect location/city references in the query
+                cleaned_query, detected_region = detect_location_in_query(query_text)
+
+                if detected_region:
+                    logger.debug(f"Detected location in query: '{query_text}' -> region: '{detected_region}'")
+                    detected_location = detected_region
+
+                    # Only update the query text if we found location
+                    if cleaned_query != query_text:
+                        if cleaned_query.strip():
+                            query_text = cleaned_query
+                        else:
+                            # If the query was fully consumed by the location detection,
+                            # set query_text to empty to avoid duplicate filtering
+                            logger.debug(f"Query was fully consumed by location detection: '{original_query}' -> '{detected_region}'")
+                            query_text = ""
+
+                    # If no region was specified in the form, use the detected one
+                    if not region:
+                        region = detected_region
+
+        logger.debug(f"Search params: specialty={specialty}, region={region}, min_quality={min_quality}, query_text={query_text}")
+
+        # Get database status
+        db_status = get_database_status()
+
+        # Build the query
+        query = db.session.query(MedicalFacility)
+
+        # Apply specialty filter if provided by form
+        if specialty:
+            # Get equivalent specialties from our mapping system
+            from specialty_mapping import get_equivalent_specialties
+            equivalent_specialties = get_equivalent_specialties(specialty)
+            
+            # If we have equivalent specialties, use them
+            if equivalent_specialties:
+                query = query.join(MedicalFacility.specialties).join(FacilitySpecialty.specialty).filter(
+                    Specialty.name.in_(equivalent_specialties)
+                )
+                logger.debug(f"Using specialty mapping for '{specialty}': {equivalent_specialties}")
+            # Otherwise fall back to the original method
+            else:
+                normalized_specialty = normalize_specialty(specialty)
+                query = query.join(MedicalFacility.specialties).join(FacilitySpecialty.specialty).filter(
+                    Specialty.name.ilike(f'%{normalized_specialty}%')
+                )
+                logger.debug(f"No specialty mapping for '{specialty}', using normalized: {normalized_specialty}")
+                
+            # Check if we'll get any results with this query
+            preliminary_count = query.count()
+            if preliminary_count == 0:
+                logger.debug(f"No results found for specialty '{specialty}', using fallback to common specialties")
+                # Reset query and join with specialties
+                query = db.session.query(MedicalFacility)
+                query = query.join(MedicalFacility.specialties).join(FacilitySpecialty.specialty)
+                
+                # If region is specified, keep that filter
+                if region:
+                    query = query.join(MedicalFacility.region, isouter=True).filter(Region.name.ilike(f'%{region}%'))
+                
+                # Filter by the most common specialties to ensure we get results
+                fallback_specialties = ['Medicina Generale', 'Medicina Interna', 'Chirurgia Generale']
+                query = query.filter(Specialty.name.in_(fallback_specialties))
+                logger.debug(f"Using fallback specialties: {fallback_specialties}")
+            
+            specialty_filter_applied = True
+        else:
+            specialty_filter_applied = False
+
+        # Apply region filter if provided
+        if region:
+            query = query.join(MedicalFacility.region, isouter=True).filter(Region.name.ilike(f'%{region}%'))
+
+        # Apply quality filter if provided
+        if min_quality is not None and min_quality > 0:
+            query = query.filter(MedicalFacility.quality_score >= min_quality)
+
+        # Apply text search if provided
+        mapped_specialties = []
+        if query_text:
+            # First, try to map the query to medical profession terms
+            profession_specialties = map_profession_to_specialties(query_text)
+
+            # If no medical profession mapping found, try medical conditions
+            if not profession_specialties:
+                condition_specialties = map_query_to_specialties(query_text)
+                mapped_specialties = condition_specialties
+            else:
+                mapped_specialties = profession_specialties
+
+            logger.debug(f"Mapped query '{query_text}' to specialties: {mapped_specialties}")
+
+            # Create a copy of the query before applying specialty filters
+            base_query = query
+            specialty_search_applied = False
+
+            # If not already filtered by specialty form field and we have mapped specialties
+            if not specialty_filter_applied and mapped_specialties:
+                specialty_search_applied = True
+                
+                # For each specialty from mapping, expand it to include equivalent specialties
+                from specialty_mapping import get_equivalent_specialties
+                expanded_specialties = []
+                for s in mapped_specialties:
+                    equiv_specs = get_equivalent_specialties(s)
+                    if equiv_specs:
+                        expanded_specialties.extend(equiv_specs)
+                    else:
+                        expanded_specialties.append(s)
+                        
+                logger.debug(f"Expanded mapped specialties: {mapped_specialties} -> {expanded_specialties}")
+                
+                query = query.join(MedicalFacility.specialties).join(FacilitySpecialty.specialty).filter(
+                    Specialty.name.in_(expanded_specialties)
+                )
+
+            # Special case for "ospedale [region]" patterns or when query is empty but region is set
+            # and original query had "ospedale"
+            if ('ospedale' in query_text.lower() and region) or (query_text == "" and region and 'ospedale' in original_query.lower()):
+                # This will find all hospitals in the specified region
+                search_term = "%ospedale%"
+                query = query.filter(db.func.lower(MedicalFacility.name).like(search_term))
+                specialty_search_applied = True
+                # For logging and user interface clarity
+                if query_text == "":
+                    logger.debug(f"Empty query_text with 'ospedale' in original query '{original_query}', showing all hospitals in '{region}'")
+                    mapped_specialties = ["Tutti gli ospedali della regione"]
+            # Special case for "[profession] [city]" patterns (e.g., "oncologo trieste")
+            elif any(p in query_text.lower() for p in PROFESSION_TO_SPECIALTY_MAP.keys()) and region:
+                # Get the profession term
+                prof_term = None
+                for term in PROFESSION_TO_SPECIALTY_MAP.keys():
+                    if term in query_text.lower():
+                        prof_term = term
+                        break
+                
+                if prof_term:
+                    # Find specialties associated with this profession
+                    specialties_to_search = PROFESSION_TO_SPECIALTY_MAP[prof_term]
+                    logger.debug(f"Found profession term '{prof_term}' mapping to: {specialties_to_search}")
+                    
+                    # Expand the specialties using our macrocategory mapping
+                    from specialty_mapping import get_equivalent_specialties
+                    expanded_specialties = []
+                    for s in specialties_to_search:
+                        equiv_specs = get_equivalent_specialties(s)
+                        if equiv_specs:
+                            expanded_specialties.extend(equiv_specs)
+                        else:
+                            expanded_specialties.append(s)
+                    
+                    logger.debug(f"Expanded profession specialties: {specialties_to_search} -> {expanded_specialties}")
+                    
+                    # Join with specialties tables
+                    query = query.join(MedicalFacility.specialties).join(FacilitySpecialty.specialty)
+                    
+                    # Filter by these specialties
+                    query = query.filter(Specialty.name.in_(expanded_specialties))
+                    specialty_search_applied = True
+            # If no medical mapping found or specialty already filtered, do regular text search
+            elif not specialty_search_applied or specialty_filter_applied:
+                # Search in facility name, address, specialties, and conditions
+                search_term = f"%{query_text.lower()}%"
+
+                # Join with specialties only if not already joined
+                if not specialty_filter_applied:
+                    query = query.outerjoin(MedicalFacility.specialties).outerjoin(FacilitySpecialty.specialty)
+
+                # Search in facility name, facility type, address, city or specialty name
+                query = query.filter(
+                    db.or_(
+                        db.func.lower(MedicalFacility.name).like(search_term),
+                        db.func.lower(MedicalFacility.facility_type).like(search_term),
+                        db.func.lower(MedicalFacility.address).like(search_term),
+                        db.func.lower(MedicalFacility.city).like(search_term),
+                        db.func.lower(Specialty.name).like(search_term)
+                    )
+                )
+
+            # Execute query to see if we found any results
+            facilities = query.all()
+
+            # If no facilities found and we've tried specialty mapping, fall back to general search
+            if len(facilities) == 0 and specialty_search_applied:
+                logger.debug(f"No facilities found with specialty mapping, falling back to broader search")
+
+                # We need a fresh query with original filters (region, quality) but not the specialty mapping
+                query = base_query
+
+                # Get general medical specialties to try as fallbacks
+                general_specialties = ['Medicina Generale', 'Medicina Interna', 'Ortopedia']
+
+                # Join specialties tables
+                query = query.join(MedicalFacility.specialties).join(FacilitySpecialty.specialty)
+
+                # Filter by these general specialties
+                query = query.filter(
+                    db.or_(
+                        Specialty.name.in_(general_specialties),
+                        db.func.lower(MedicalFacility.name).like(f"%{query_text.lower()}%"),
+                        db.func.lower(MedicalFacility.city).like(f"%{query_text.lower()}%")
+                    )
+                )
+
+                # Add a message to indicate we're showing broader results
+                if not mapped_specialties:
+                    # If we couldn't map the query at all, add general mapping
+                    mapped_specialties = general_specialties
+                else:
+                    # If we had some mappings but found no facilities, add these general ones
+                    mapped_specialties.extend(general_specialties)
+
+                # Re-execute query to get facilities
+                facilities = query.all()
+                logger.debug(f"Fallback search found {len(facilities)} facilities")
+            else:
+                # We already have facilities from the first query
+                logger.debug(f"Primary search found {len(facilities)} facilities")
+        else:
+            # No text search, just execute the query with existing filters
+            facilities = query.all()
+            logger.debug(f"Basic filter search found {len(facilities)} facilities")
+
+        # Check if we're using address search results
+        if is_address_search and address_search_results and address_search_results.get('facilities'):
+            # Get the facilities from our address search
+            facilities = address_search_results['facilities']
+            search_location = address_search_results['search_location']
+            
+            # Add distance information for display
+            mapped_specialties = [f"Strutture entro 30 km da {search_location.get('display_name', query_text)}"]
+            
+            # Check if user wants to sort by something other than distance
+            if sort_by != 'distance':
+                logger.debug(f"Resorting address search results by {sort_by} instead of distance")
+                
+                # Use the same sorting functions as for normal searches
+                sorting_functions = {
+                    'quality_desc': lambda x: (x.quality_score if x.quality_score is not None else -1) * -1,
+                    'quality_asc': lambda x: x.quality_score if x.quality_score is not None else float('inf'),
+                    'name_asc': lambda x: x.name.lower(),
+                    'name_desc': lambda x: x.name.lower(),
+                    'city_asc': lambda x: (x.city or '').lower(),
+                    'city_desc': lambda x: (x.city or '').lower(),
+                    'distance': lambda x: x.distance if hasattr(x, 'distance') else float('inf')  # Keep original distance sort
+                }
+                
+                reverse_sort = sort_by.endswith('_desc') and sort_by != 'quality_desc'
+                sort_function = sorting_functions.get(sort_by, sorting_functions['distance'])
+                facilities = sorted(facilities, key=sort_function, reverse=reverse_sort)
+                logger.debug(f"Re-sorted facilities by {sort_by}")
+            else:
+                logger.debug(f"Using address search results with original distance sorting")
+            
+            # Add is_address_search flag to indicate this is an address search
+            return render_template('results_stars_only.html', facilities=facilities, db_status=db_status, search_params={
+                'specialty': specialty,
+                'region': region,
+                'min_quality': min_quality,
+                'query_text': query_text,
+                'original_query': original_query,
+                'detected_location': detected_location,
+                'mapped_specialties': mapped_specialties,
+                'sort_by': sort_by,  # Pass the actual sort_by parameter instead of hardcoding 'distance'
+                'is_address_search': True,
+                'search_location': search_location
+            })
+        else:
+            # Special case for address searches that found no nearby facilities
+            # but did successfully recognize a location
+            if len(facilities) == 0 and is_address_query(query_text) and not is_address_search:
+                logger.debug(f"Address search failed to find nearby facilities, showing all in detected region: {region}")
+                
+                # If we've detected a region from the address query and have no results,
+                # show all facilities in that region without other filters
+                if region:
+                    # Clear query and create a fresh one with just the region filter
+                    query = db.session.query(MedicalFacility)
+                    query = query.join(MedicalFacility.region).filter(Region.name.ilike(f'%{region}%'))
+                    facilities = query.all()
+                    
+                    # Add message about showing all facilities in region
+                    mapped_specialties = [f"Tutte le strutture nella regione {region}"]
+                    logger.debug(f"Showing all {len(facilities)} facilities in region {region}")
+            
+            # Regular search results - sort the facilities based on the sort_by parameter
+            sorting_functions = {
+                'quality_desc': lambda x: (x.quality_score if x.quality_score is not None else -1) * -1,  # Default
+                'quality_asc': lambda x: x.quality_score if x.quality_score is not None else float('inf'),
+                'name_asc': lambda x: x.name.lower(),
+                'name_desc': lambda x: x.name.lower(),
+                'city_asc': lambda x: (x.city or '').lower(),
+                'city_desc': lambda x: (x.city or '').lower(),
+            }
+
+            reverse_sort = sort_by.endswith('_desc') and sort_by != 'quality_desc'
+
+            # If sort_by is not in our mapping, default to quality descending
+            sort_function = sorting_functions.get(sort_by, sorting_functions['quality_desc'])
+
+            # Sort the facilities
+            facilities = sorted(facilities, key=sort_function, reverse=reverse_sort)
+
+            logger.debug(f"Sorted facilities by {sort_by}")
+
+            # Return results template
+            return render_template('results_stars_only.html', facilities=facilities, db_status=db_status, search_params={
+                'specialty': specialty,
+                'region': region,
+                'min_quality': min_quality,
+                'query_text': query_text,
+                'original_query': original_query if detected_location else query_text,
+                'detected_location': detected_location,
+                'mapped_specialties': mapped_specialties,
+                'sort_by': sort_by,
+                'is_address_search': False
+            })
 
     @app.route('/data-manager')
     def data_manager():
@@ -212,6 +553,26 @@ with app.app_context():
 
         # Redirect to the data manager page with admin key
         return redirect(f'/data-manager?admin_key={admin_key}')
+
+    @app.context_processor
+    def utility_processor():
+        """Add utility functions to template context"""
+        def format_quality(quality):
+            if quality is None:
+                return "N/A"
+            return f"{quality:.1f}/5.0"
+
+        return dict(format_quality=format_quality)
+    
+    @app.route('/methodology')
+    def methodology():
+        """Show detailed information about our rating methodology"""
+        # Get data for the form dropdowns (regions and specialties)
+        from data_loader import get_regions, get_specialties
+        regions = get_regions()
+        specialties = get_specialties()
+        
+        return render_template('methodology.html', regions=regions, specialties=specialties)
 
     @app.route('/geocode-facilities')
     @app.route('/geocode-facilities/<int:batch_size>')
@@ -451,7 +812,7 @@ Preferred-Languages: it, en
             return base_data
             
         return dict(get_structured_data=get_structured_data)
-    
+        
     # SEO landing pages for common specialties and cities
     @app.route('/cardiologia')
     def cardiology_landing():
