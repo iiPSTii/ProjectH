@@ -138,8 +138,8 @@
                             {% if facility.region %}
                             <br><i class="fas fa-map me-2"></i>{{ facility.region.name }}
                             {% endif %}
-                            {% if search_params.is_address_search and facility.distance %}
-                            <br><i class="fas fa-route me-2 text-success"></i><span class="text-success">Distanza: {{ facility.distance_text }}</span>
+                            {% if search_params.is_address_search and facility.distance is defined %}
+                            <br><i class="fas fa-route me-2 text-success"></i><span class="text-success">Distanza: {{ '%.1f'|format(facility.distance) }} km</span>
                             {% endif %}
                         </p>
                         
@@ -340,8 +340,8 @@
                                 {% if facility.region %}
                                 <span class="ms-2"><i class="fas fa-map me-1"></i>{{ facility.region.name }}</span>
                                 {% endif %}
-                                {% if search_params.is_address_search and facility.distance %}
-                                <br><i class="fas fa-route me-1 text-success"></i><span class="text-success">Distanza: {{ facility.distance_text }}</span>
+                                {% if search_params.is_address_search and facility.distance is defined %}
+                                <br><i class="fas fa-route me-1 text-success"></i><span class="text-success">Distanza: {{ '%.1f'|format(facility.distance) }} km</span>
                                 {% endif %}
                             </p>
                             

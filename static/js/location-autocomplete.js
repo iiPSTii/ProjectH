@@ -38,6 +38,16 @@ document.addEventListener('DOMContentLoaded', function() {
         apiUrl.searchParams.append('countrycodes', 'it'); // Italy only
         apiUrl.searchParams.append('limit', '5'); // Limit to 5 results
         apiUrl.searchParams.append('addressdetails', '1'); // Get address details
+        apiUrl.searchParams.append('viewbox', '6.6272,47.0907,18.7844,35.4897'); // Bounding box for Italy
+        apiUrl.searchParams.append('bounded', '1'); // Restrict to bounding box
+        
+        // If query looks like a street address, set different search parameters
+        if (query.toLowerCase().includes('via') || 
+            query.toLowerCase().includes('piazza') || 
+            query.toLowerCase().includes('corso')) {
+            apiUrl.searchParams.set('street', query);
+            apiUrl.searchParams.delete('q'); // Remove the generic query
+        }
         
         fetch(apiUrl.toString(), {
             headers: {
