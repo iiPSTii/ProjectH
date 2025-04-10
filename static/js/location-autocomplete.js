@@ -58,8 +58,8 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('Autofill detected:', currentValue);
             lastInputValue = currentValue;
             
-            // For autofill, always show dropdown suggestions instead of auto-submitting
-            // This gives the user the chance to select the correct address with coordinates
+            // For autofill, directly show dropdown suggestions with proper coordinates
+            // This is what makes the autofill work - we immediately activate suggestions
             fetchSuggestions(currentValue);
             
             // Update the query_text field with the autofilled value as a fallback
@@ -446,26 +446,8 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(checkForAutofill, 500);
     });
     
-    // Manual button to show suggestions for when autofill doesn't trigger events correctly
-    const showSuggestionsBtn = document.getElementById('show-suggestions-btn');
-    if (showSuggestionsBtn) {
-        showSuggestionsBtn.addEventListener('click', function() {
-            const currentValue = locationInput.value.trim();
-            console.log('Manual suggestion request for:', currentValue);
-            
-            if (currentValue.length > 2) {
-                // Force suggestions to appear
-                fetchSuggestions(currentValue);
-                
-                // Also update query_text as fallback
-                if (document.getElementById('query_text')) {
-                    document.getElementById('query_text').value = currentValue;
-                }
-            } else {
-                alert('Inserisci almeno 3 caratteri per cercare suggerimenti.');
-            }
-        });
-    }
+    // Removed manual suggestions button - now using automatic detection with polling
+    // This works much better with browser/mobile autofill
     
     // Close suggestions when clicking outside
     document.addEventListener('click', function(event) {
