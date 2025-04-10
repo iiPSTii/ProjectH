@@ -9,6 +9,14 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Let Bootstrap handle modals by itself
 
+    // Reset the search button state when the page loads
+    // This fixes the issue when a user navigates back using browser history
+    const searchButton = document.getElementById('searchButton');
+    if (searchButton) {
+        searchButton.disabled = false;
+        searchButton.innerHTML = '<i class="fas fa-search me-2"></i> Cerca Strutture';
+    }
+
     // Handle quality slider on the search form
     const qualitySlider = document.getElementById('min_quality');
     if (qualitySlider) {
@@ -96,6 +104,16 @@ document.addEventListener('DOMContentLoaded', function() {
             viewGridBtn.classList.remove('active');
         });
     }
+    
+    // Also listen for navigation events (browser back/forward buttons)
+    window.addEventListener('popstate', function() {
+        // Reset search button state on browser navigation
+        const searchButton = document.getElementById('searchButton');
+        if (searchButton) {
+            searchButton.disabled = false;
+            searchButton.innerHTML = '<i class="fas fa-search me-2"></i> Cerca Strutture';
+        }
+    });
 });
 
 // Update quality slider value display
