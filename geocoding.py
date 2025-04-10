@@ -558,11 +558,12 @@ def find_facilities_near_address(query_text, facilities, max_distance=10.0, max_
                 # Only include facilities within the specified distance
                 if distance <= max_distance:
                     # Add distance to the facility object (temporary attribute)
-                    facility.distance = distance
-                    facility.distance_text = f"{distance:.1f} km"
+                    # Round to one decimal place for consistency
+                    facility.distance = round(distance, 1)
+                    facility.distance_text = f"{facility.distance:.1f} km"
                     facilities_with_distance.append(facility)
                     
-                    logger.debug(f"Added facility {facility.name} at distance {distance:.1f} km")
+                    logger.debug(f"Added facility {facility.name} at distance {facility.distance:.1f} km")
             else:
                 # Keep track of facilities without coordinates
                 facilities_without_coords.append(facility)
@@ -595,11 +596,11 @@ def find_facilities_near_address(query_text, facilities, max_distance=10.0, max_
                         
                         # Add facility with actual distance calculation (up to 100km)
                         if distance <= 100.0:
-                            facility.distance = distance
-                            facility.distance_text = f"{distance:.1f} km"
+                            facility.distance = round(distance, 1)
+                            facility.distance_text = f"{facility.distance:.1f} km"
                             facilities_with_distance.append(facility)
                             found_facilities_by_coords = True
-                            logger.debug(f"Added region facility {facility.name} with calculated distance {distance:.1f} km")
+                            logger.debug(f"Added region facility {facility.name} with calculated distance {facility.distance:.1f} km")
                 
                 # If we still didn't find any facilities with coordinates, fall back to the region-level approach
                 if not found_facilities_by_coords:
@@ -662,8 +663,8 @@ def find_facilities_near_address(query_text, facilities, max_distance=10.0, max_
                         distance = calculate_distance(search_lat, search_lon, facility_lat, facility_lon)
                         
                         if distance <= max_distance:
-                            facility.distance = distance
-                            facility.distance_text = f"{distance:.1f} km"
+                            facility.distance = round(distance, 1)
+                            facility.distance_text = f"{facility.distance:.1f} km"
                             facilities_with_distance.append(facility)
                             
                             # Store coordinates for future lookup (these are temporary and won't be saved to DB)
@@ -673,7 +674,7 @@ def find_facilities_near_address(query_text, facilities, max_distance=10.0, max_
                             facility._temp_lon = facility_lon
                             facility._temp_geocoded = True
                             
-                            logger.info(f"On-the-fly geocoding: Added facility {facility.name} at distance {distance:.1f} km")
+                            logger.info(f"On-the-fly geocoding: Added facility {facility.name} at distance {facility.distance:.1f} km")
                 except Exception as e:
                     logger.error(f"Error on-the-fly geocoding for {facility.name}: {str(e)}")
                     continue
