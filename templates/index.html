@@ -40,8 +40,22 @@
                                 <input type="hidden" id="longitude" name="longitude" class="hidden-coordinates">
                                 <input type="hidden" id="query_text" name="query_text" class="hidden-coordinates">
                             </div>
-                            <small class="form-text text-muted">
-                                <i class="fas fa-info-circle me-1 text-info"></i> Seleziona un indirizzo dal menu a discesa, quindi utilizza il pulsante <strong>"Cerca Strutture"</strong> in fondo per trovare strutture sanitarie nel raggio di 30km.
+                            <div class="row mt-2">
+                                <div class="col-md-12">
+                                    <label for="radius" class="form-label">Raggio di ricerca (km)</label>
+                                    <div class="input-group">
+                                        <input type="range" class="form-range" id="radius" name="radius" 
+                                               min="5" max="100" step="5" value="30" oninput="updateRadiusValue(this.value)">
+                                        <span class="input-group-text ms-2" id="radiusValue">30 km</span>
+                                    </div>
+                                    <small class="form-text text-muted">
+                                        Seleziona la distanza massima per trovare strutture sanitarie (da 5 a 100 km)
+                                    </small>
+                                </div>
+                            </div>
+                            
+                            <small class="form-text text-muted mt-2">
+                                <i class="fas fa-info-circle me-1 text-info"></i> Seleziona un indirizzo dal menu a discesa, quindi utilizza il pulsante <strong>"Cerca Strutture"</strong> in fondo alla pagina.
                             </small>
                             <div id="location-selected-indicator" class="mt-2 d-none">
                                 <span class="badge bg-success"><i class="fas fa-check me-1"></i> Indirizzo selezionato</span>

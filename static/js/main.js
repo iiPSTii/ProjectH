@@ -116,6 +116,28 @@ function updateQualityValue(val) {
     }
 }
 
+// Update radius slider value display
+function updateRadiusValue(val) {
+    const radiusValueElement = document.getElementById('radiusValue');
+    if (radiusValueElement) {
+        radiusValueElement.textContent = val + ' km';
+    }
+    
+    // Update the search location information if already set
+    const locationSelectedIndicator = document.getElementById('location-selected-indicator');
+    if (locationSelectedIndicator && !locationSelectedIndicator.classList.contains('d-none')) {
+        // Location already selected, update the indicator
+        const searchButton = document.getElementById('searchButton');
+        if (searchButton && searchButton.innerHTML.includes('Cerca Strutture Vicino a')) {
+            // Extract the current location from button
+            const currentLocation = searchButton.querySelector('.badge').textContent;
+            // Update the button to show new radius
+            const newButtonHTML = `<i class="fas fa-map-marker-alt me-2"></i> Cerca Strutture nel raggio di <span class="badge bg-warning">${val} km</span> da <span class="badge bg-info">${currentLocation}</span>`;
+            searchButton.innerHTML = newButtonHTML;
+        }
+    }
+}
+
 // Handle specific query transfer to main search field
 function useSpecificQuery() {
     const specificQuery = document.getElementById('specific_query');

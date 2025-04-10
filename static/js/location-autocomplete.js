@@ -167,7 +167,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Update the main search button to indicate location search
                     const searchButton = document.getElementById('searchButton');
                     if (searchButton) {
-                        searchButton.innerHTML = '<i class="fas fa-map-marker-alt me-2"></i> Cerca Strutture Vicino a ' + 
+                        // Get the current radius value
+                        const radiusElement = document.getElementById('radius');
+                        const radiusValue = radiusElement ? radiusElement.value : '30';
+                        
+                        // Update the button with location and radius information
+                        searchButton.innerHTML = '<i class="fas fa-map-marker-alt me-2"></i> Cerca Strutture nel raggio di ' +
+                                               '<span class="badge bg-warning">' + radiusValue + ' km</span> da ' +
                                                '<span class="badge bg-info">' + this.dataset.displayName.substring(0, 15) + 
                                                (this.dataset.displayName.length > 15 ? '...' : '') + '</span>';
                     }
