@@ -480,26 +480,6 @@ document.addEventListener('DOMContentLoaded', function() {
             viewGrid.classList.remove('active');
         });
     }
-    
-    // Twitter Conversion Tracking for Successful Search
-    if (typeof twq !== 'undefined') {
-        // This tracks a successful search as a conversion using Twitter's updated API
-        twq('event', 'tw-phgu0-ofgx1', {
-            // You can add additional parameters if needed
-            num_results: '{{ facilities|length }}',
-            {% if search_params.specialty %}
-            specialty: '{{ search_params.specialty }}',
-            {% endif %}
-            {% if search_params.region %}
-            region: '{{ search_params.region }}',
-            {% endif %}
-            {% if search_params.is_address_search %}
-            search_type: 'address',
-            {% else %}
-            search_type: 'general',
-            {% endif %}
-        });
-    }
 });
 </script>
 {% endblock %}

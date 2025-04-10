@@ -9,41 +9,11 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Let Bootstrap handle modals by itself
 
-    // Reset the search button state when the page loads
-    // This fixes the issue when a user navigates back using browser history
-    const searchButton = document.getElementById('searchButton');
-    if (searchButton) {
-        searchButton.disabled = false;
-        searchButton.innerHTML = '<i class="fas fa-search me-2"></i> Cerca Strutture';
-    }
-
     // Handle quality slider on the search form
     const qualitySlider = document.getElementById('min_quality');
     if (qualitySlider) {
         qualitySlider.addEventListener('input', function() {
             updateQualityValue(this.value);
-        });
-    }
-    
-    // Track phone number clicks for Twitter ad conversion tracking
-    const phoneLinks = document.querySelectorAll('a.phone-link');
-    if (phoneLinks.length > 0) {
-        phoneLinks.forEach(function(link) {
-            link.addEventListener('click', function(e) {
-                // Track the click as a conversion if Twitter pixel is available
-                if (typeof twq !== 'undefined') {
-                    // Get the facility name from closest facility-card parent
-                    const facilityCard = this.closest('.facility-card');
-                    const facilityName = facilityCard ? facilityCard.getAttribute('data-name') : 'unknown';
-                    
-                    // Track the phone call conversion with updated Twitter API
-                    twq('event', 'tw-phgu0-ofgx2', {
-                        facility_name: facilityName
-                    });
-                    
-                    console.log('Tracked phone call conversion for: ' + facilityName);
-                }
-            });
         });
     }
     
@@ -104,16 +74,6 @@ document.addEventListener('DOMContentLoaded', function() {
             viewGridBtn.classList.remove('active');
         });
     }
-    
-    // Also listen for navigation events (browser back/forward buttons)
-    window.addEventListener('popstate', function() {
-        // Reset search button state on browser navigation
-        const searchButton = document.getElementById('searchButton');
-        if (searchButton) {
-            searchButton.disabled = false;
-            searchButton.innerHTML = '<i class="fas fa-search me-2"></i> Cerca Strutture';
-        }
-    });
 });
 
 // Update quality slider value display
