@@ -10,7 +10,7 @@ import csv
 import logging
 from update_specialty_ratings import update_specialty_ratings
 from sqlalchemy.orm import Session
-from app import db
+from app import app, db
 from models import MedicalFacility, Specialty
 
 # Setup logging
@@ -59,26 +59,28 @@ def create_test_csv():
         return test_file
 
 if __name__ == "__main__":
-    # Create a test CSV file
-    test_file = create_test_csv()
-    if not test_file:
-        print("Failed to create test CSV file")
-        exit(1)
-    
-    try:
-        # Run the update process
-        print(f"Running test import from {test_file}...")
-        stats = update_specialty_ratings(test_file)
+    # Use the Flask application context
+    with app.app_context():
+        # Create a test CSV file
+        test_file = create_test_csv()
+        if not test_file:
+            print("Failed to create test CSV file")
+            exit(1)
         
-        print("\nTest import completed:")
-        print(f"  Processed: {stats['processed']} rows")
-        print(f"  Updated:   {stats['updated']} ratings")
-        print(f"  Created:   {stats['created']} new ratings")
-        print(f"  Unchanged: {stats['unchanged']} ratings")
-        print(f"  Errors:    {stats['errors']} rows")
-    
-    finally:
-        # Clean up the test file
-        if os.path.exists(test_file):
-            os.remove(test_file)
-            print(f"Cleaned up test file: {test_file}")
+        try:
+            # Run the update process
+            print(f"Running test import from {test_file}...")
+            stats = update_specialty_ratings(test_file)
+            
+            print("\nTest import completed:")
+            print(f"  Processed: {stats['processed']} rows")
+            print(f"  Updated:   {stats['updated']} ratings")
+            print(f"  Created:   {stats['created']} new ratings")
+            print(f"  Unchanged: {stats['unchanged']} ratings")
+            print(f"  Errors:    {stats['errors']} rows")
+        
+        finally:
+            # Clean up the test file
+            if os.path.exists(test_file):
+                os.remove(test_file)
+                print(f"Cleaned up test file: {test_file}")

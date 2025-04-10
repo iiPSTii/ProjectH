@@ -19,7 +19,7 @@ import csv
 import logging
 from datetime import datetime
 from sqlalchemy.orm import Session
-from app import db
+from app import app, db
 from models import MedicalFacility, Specialty, FacilitySpecialty
 from backup_database import backup_database
 
@@ -211,13 +211,15 @@ if __name__ == "__main__":
         print("Usage: python update_specialty_ratings.py path/to/ratings.csv")
         sys.exit(1)
     
-    csv_file = sys.argv[1]
-    print(f"Updating specialty ratings from {csv_file}...")
-    stats = update_specialty_ratings(csv_file)
-    
-    print("\nUpdate completed:")
-    print(f"  Processed: {stats['processed']} rows")
-    print(f"  Updated:   {stats['updated']} ratings")
-    print(f"  Created:   {stats['created']} new ratings")
-    print(f"  Unchanged: {stats['unchanged']} ratings")
-    print(f"  Errors:    {stats['errors']} rows")
+    # Use the Flask application context
+    with app.app_context():
+        csv_file = sys.argv[1]
+        print(f"Updating specialty ratings from {csv_file}...")
+        stats = update_specialty_ratings(csv_file)
+        
+        print("\nUpdate completed:")
+        print(f"  Processed: {stats['processed']} rows")
+        print(f"  Updated:   {stats['updated']} ratings")
+        print(f"  Created:   {stats['created']} new ratings")
+        print(f"  Unchanged: {stats['unchanged']} ratings")
+        print(f"  Errors:    {stats['errors']} rows")

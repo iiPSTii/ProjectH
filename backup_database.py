@@ -13,7 +13,7 @@ import datetime
 from contextlib import closing
 import logging
 from sqlalchemy.orm import Session
-from app import db
+from app import app, db
 from models import MedicalFacility, Region, Specialty, FacilitySpecialty
 
 # Setup logging
@@ -104,5 +104,6 @@ def export_table_to_csv(session, model, output_file):
         raise
 
 if __name__ == "__main__":
-    backup_file = backup_database()
-    print(f"Backup completed: {backup_file}")
+    with app.app_context():
+        backup_file = backup_database()
+        print(f"Backup completed: {backup_file}")

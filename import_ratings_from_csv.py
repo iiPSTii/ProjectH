@@ -14,6 +14,7 @@ import os
 import csv
 import logging
 from update_specialty_ratings import update_specialty_ratings
+from app import app
 
 # Setup logging
 logging.basicConfig(level=logging.INFO, 
@@ -88,19 +89,21 @@ if __name__ == "__main__":
     
     print(f"CSV file validated. Importing ratings from {csv_file}...")
     
-    try:
-        stats = update_specialty_ratings(csv_file)
+    # Use the Flask application context
+    with app.app_context():
+        try:
+            stats = update_specialty_ratings(csv_file)
+            
+            print("\nImport completed successfully:")
+            print(f"  Processed: {stats['processed']} rows")
+            print(f"  Updated:   {stats['updated']} ratings")
+            print(f"  Created:   {stats['created']} new ratings")
+            print(f"  Unchanged: {stats['unchanged']} ratings")
+            print(f"  Errors:    {stats['errors']} rows")
+            
+            print("\nDatabase has been updated with new specialty ratings.")
+            print("A backup of the previous database state has been created.")
         
-        print("\nImport completed successfully:")
-        print(f"  Processed: {stats['processed']} rows")
-        print(f"  Updated:   {stats['updated']} ratings")
-        print(f"  Created:   {stats['created']} new ratings")
-        print(f"  Unchanged: {stats['unchanged']} ratings")
-        print(f"  Errors:    {stats['errors']} rows")
-        
-        print("\nDatabase has been updated with new specialty ratings.")
-        print("A backup of the previous database state has been created.")
-    
-    except Exception as e:
-        print(f"Error importing ratings: {e}")
-        sys.exit(1)
+        except Exception as e:
+            print(f"Error importing ratings: {e}")
+            sys.exit(1)
