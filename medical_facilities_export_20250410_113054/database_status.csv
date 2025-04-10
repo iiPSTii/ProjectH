@@ -1,0 +1,11 @@
+id,status,last_updated,total_facilities,total_regions,total_specialties,initialized_by,notes
+4,initialized,2025-04-08 21:42:35.330187,200,20,43,initialize_database.py,Database initialized with 200 facilities from 20 regions in 233.2 seconds
+5,initialized,2025-04-08 23:40:09.904072,200,20,43,update_facility_ratings.py,"Updated 3 facilities with specialty ratings. (0 facilities not found, 0 errors)"
+6,initialized,2025-04-08 23:41:11.629253,200,20,43,update_facility_ratings.py,"Updated 0 facilities with specialty ratings. (0 facilities not found, 3 errors)"
+7,initialized,2025-04-08 23:41:47.028498,200,20,43,update_facility_ratings.py,"Updated 3 facilities with specialty ratings. (0 facilities not found, 0 errors)"
+8,initialized,2025-04-08 23:46:37.377844,200,20,43,restore_quality_scores.py,Restored original quality scores for 3 facilities. (0 errors)
+9,initialized,2025-04-08 23:47:10.745265,200,20,43,update_facility_ratings.py,"Updated 3 facilities with specialty ratings. (0 facilities not found, 0 errors)"
+10,initialized,2025-04-09 00:01:11.547313,200,20,43,update_facility_ratings.py,"Updated 3 facilities with specialty ratings. (0 facilities not found, 0 errors)"
+11,initialized,2025-04-09 00:22:58.461505,200,20,43,update_full_ratings.py,"Updated 0 facilities with specialty ratings from the full dataset. Not found: 50, Errors: 0"
+12,initialized,2025-04-09 00:38:16.753419,0,0,0,update_from_json.py,Updated 88 facilities with specialty ratings from JSON file. 143 facilities not found. 0 errors.
+13,updated,2025-04-09 12:03:46.409680,206,0,0,update_from_json.py,Added missing facilities from Calabria region and Ospedale Ruggi D'Aragona in Salerno
