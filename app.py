@@ -437,9 +437,9 @@ with app.app_context():
         # In production, this would be replaced with proper authentication
         admin_key = request.args.get('admin_key')
         if admin_key != os.environ.get('ADMIN_KEY', 'Cq9K7pLmN3rT5vX8zBdAeYgF'):
-            # If no valid admin key, redirect to home page with 403 status
+            # If no valid admin key, redirect to home page
             flash("Accesso non autorizzato all'area di amministrazione.", "danger")
-            return redirect(url_for('index')), 403
+            return redirect(url_for('index'))
         
         # Get statistics about current data
         regions = get_regions()
