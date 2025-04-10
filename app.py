@@ -432,7 +432,15 @@ with app.app_context():
 
     @app.route('/data-manager')
     def data_manager():
-        """Data loading management dashboard"""
+        """Data loading management dashboard - PROTECTED ADMIN AREA"""
+        # Check for admin access: use a secret query parameter as a simple protection method
+        # In production, this would be replaced with proper authentication
+        admin_key = request.args.get('admin_key')
+        if admin_key != os.environ.get('ADMIN_KEY', 'Cq9K7pLmN3rT5vX8zBdAeYgF'):
+            # If no valid admin key, redirect to home page with 403 status
+            flash("Accesso non autorizzato all'area di amministrazione.", "danger")
+            return redirect(url_for('index')), 403
+        
         # Get statistics about current data
         regions = get_regions()
         specialties = get_specialties()
@@ -502,6 +510,12 @@ with app.app_context():
     @app.route('/load-data')
     @app.route('/load-data/<int:batch>')
     def load_data_route(batch=0):
+        # PROTECTED ADMIN ROUTE
+        admin_key = request.args.get('admin_key')
+        if admin_key != os.environ.get('ADMIN_KEY', 'Cq9K7pLmN3rT5vX8zBdAeYgF'):
+            flash("Accesso non autorizzato all'area di amministrazione.", "danger")
+            return redirect(url_for('index')), 403
+            
         try:
             # We now support batch loading to avoid timeouts
             logger.info(f"Loading data batch {batch}")
@@ -525,8 +539,8 @@ with app.app_context():
                 next_batch = batch + 1
                 flash(f"Batch {batch} loaded successfully! Added {stats['total']} facilities from {stats['regions']} regions. " +
                       f"Continue loading with batch {next_batch}.", "success")
-                # Add a link to the next batch
-                next_batch_url = f"/load-data/{next_batch}"
+                # Add a link to the next batch that includes the admin key
+                next_batch_url = f"/load-data/{next_batch}?admin_key={admin_key}"
                 flash(f"<a href='{next_batch_url}' class='btn btn-primary'>Load Next Batch</a>", "info")
             else:
                 flash(f"Final batch loaded successfully! Added {stats['total']} facilities from {stats['regions']} regions. " +
@@ -537,8 +551,8 @@ with app.app_context():
             db.session.rollback()
             flash(f"Error loading data batch {batch}: {str(e)}", "danger")
 
-        # Redirect to the data manager page instead of index
-        return redirect('/data-manager')
+        # Redirect to the data manager page with admin key
+        return redirect(f'/data-manager?admin_key={admin_key}')
 
     @app.context_processor
     def utility_processor():
@@ -564,6 +578,12 @@ with app.app_context():
     @app.route('/geocode-facilities/<int:batch_size>')
     def geocode_facilities_route(batch_size=10):
         """Geocode facilities and store their coordinates in the database"""
+        # PROTECTED ADMIN ROUTE
+        admin_key = request.args.get('admin_key')
+        if admin_key != os.environ.get('ADMIN_KEY', 'Cq9K7pLmN3rT5vX8zBdAeYgF'):
+            flash("Accesso non autorizzato all'area di amministrazione.", "danger")
+            return redirect(url_for('index')), 403
+            
         try:
             # For large batches, start a background process to avoid timeouts
             if batch_size > 10:
@@ -625,12 +645,18 @@ with app.app_context():
             logger.exception(e)
             flash(f"Error geocoding facilities: {str(e)}", "danger")
         
-        # Redirect to the data manager page
-        return redirect('/data-manager')
+        # Redirect to the data manager page with admin key preserved
+        return redirect(f'/data-manager?admin_key={admin_key}')
     
     @app.route('/download-db')
     def download_database():
         """Download the PostgreSQL database as CSV files in a ZIP archive"""
+        # PROTECTED ADMIN ROUTE
+        admin_key = request.args.get('admin_key')
+        if admin_key != os.environ.get('ADMIN_KEY', 'Cq9K7pLmN3rT5vX8zBdAeYgF'):
+            flash("Accesso non autorizzato all'area di amministrazione.", "danger")
+            return redirect(url_for('index')), 403
+            
         import os
         import tempfile
         from flask import send_file
