@@ -67,6 +67,54 @@ with app.app_context():
         db_status = get_database_status()
         return render_template('index.html', regions=regions, specialties=specialties, db_status=db_status)
 
+    # Helper function to get specialty-specific score for a facility
+    def get_specialty_score(facility, specialty_name):
+        """
+        Get the specialty-specific score for a facility.
+        If the facility has the specific specialty, returns its score.
+        Otherwise, returns the general quality score.
+        
+        Args:
+            facility: The MedicalFacility object
+            specialty_name: The name of the specialty to look for
+        
+        Returns:
+            float: The score (higher is better)
+        """
+        if not specialty_name:
+            # If no specialty specified, use general quality score
+            return facility.quality_score if facility.quality_score is not None else 0
+            
+        # Check if the facility has the specific specialty
+        for fs in facility.specialties:
+            # Use the specialty mapping to check for equivalent specialties
+            if (fs.specialty.name.lower() == specialty_name.lower() or
+                (fs.specialty.name in equivalent_specialties(specialty_name))):
+                # Return the specialty-specific rating if available
+                if fs.rating is not None:
+                    return fs.rating  # This is the specialty-specific score
+        
+        # Fallback to general quality score if specialty not found or no rating
+        return facility.quality_score if facility.quality_score is not None else 0
+    
+    # Helper function to get equivalent specialties
+    def equivalent_specialties(specialty_name):
+        """
+        Get equivalent specialties for the given specialty name.
+        
+        Args:
+            specialty_name: The name of the specialty
+        
+        Returns:
+            list: List of equivalent specialty names
+        """
+        if not specialty_name:
+            return []
+            
+        from specialty_mapping import get_equivalent_specialties
+        specialties = get_equivalent_specialties(specialty_name)
+        return specialties if specialties else []
+
     @app.route('/search')
     def search():
         # Get search parameters
@@ -398,10 +446,10 @@ with app.app_context():
             if sort_by != 'distance':
                 logger.debug(f"Resorting address search results by {sort_by} instead of distance")
                 
-                # Use the same sorting functions as for normal searches
+                # Use a more sophisticated sorting that prioritizes the selected specialty if available
                 sorting_functions = {
-                    'quality_desc': lambda x: (x.quality_score if x.quality_score is not None else -1) * -1,
-                    'quality_asc': lambda x: x.quality_score if x.quality_score is not None else float('inf'),
+                    'quality_desc': lambda x: get_specialty_score(x, specialty) * -1,  # Higher scores first
+                    'quality_asc': lambda x: get_specialty_score(x, specialty),        # Lower scores first
                     'name_asc': lambda x: x.name.lower(),
                     'name_desc': lambda x: x.name.lower(),
                     'city_asc': lambda x: (x.city or '').lower(),
@@ -450,8 +498,8 @@ with app.app_context():
             
             # Regular search results - sort the facilities based on the sort_by parameter
             sorting_functions = {
-                'quality_desc': lambda x: (x.quality_score if x.quality_score is not None else -1) * -1,  # Default
-                'quality_asc': lambda x: x.quality_score if x.quality_score is not None else float('inf'),
+                'quality_desc': lambda x: get_specialty_score(x, specialty) * -1,  # Higher scores first
+                'quality_asc': lambda x: get_specialty_score(x, specialty),        # Lower scores first
                 'name_asc': lambda x: x.name.lower(),
                 'name_desc': lambda x: x.name.lower(),
                 'city_asc': lambda x: (x.city or '').lower(),
