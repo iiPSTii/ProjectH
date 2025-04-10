@@ -58,9 +58,66 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('Autofill detected:', currentValue);
             lastInputValue = currentValue;
             
-            // For autofill, directly show dropdown suggestions with proper coordinates
-            // This is what makes the autofill work - we immediately activate suggestions
-            fetchSuggestions(currentValue);
+            // Per l'autofill gestiamo il caso speciale
+            if (currentValue.length > 10 && (currentValue.includes(',') || currentValue.includes(' '))) {
+                console.log("Completing autofilled address with geocoding");
+                
+                // Use geocoding API to convert address to coordinates
+                const geocodeUrl = new URL('https://nominatim.openstreetmap.org/search');
+                geocodeUrl.searchParams.append('q', currentValue);
+                geocodeUrl.searchParams.append('format', 'json');
+                geocodeUrl.searchParams.append('limit', '1');
+                geocodeUrl.searchParams.append('countrycodes', 'it');
+                
+                fetch(geocodeUrl.toString(), {
+                    headers: {
+                        'User-Agent': 'FindMyCure-Italia/1.0'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.length > 0) {
+                        // We got coordinates, update hidden fields
+                        latitudeInput.value = data[0].lat;
+                        longitudeInput.value = data[0].lon;
+                        
+                        // Update query_text
+                        if (document.getElementById('query_text')) {
+                            document.getElementById('query_text').value = currentValue;
+                        }
+                        
+                        // Update selected location indicator
+                        const indicator = document.getElementById('location-selected-indicator');
+                        if (indicator) {
+                            indicator.classList.remove('d-none');
+                            
+                            const locationNameIndicator = indicator.querySelector('.location-name');
+                            if (locationNameIndicator) {
+                                locationNameIndicator.textContent = currentValue.substring(0, 25) + 
+                                    (currentValue.length > 25 ? '...' : '');
+                            }
+                            
+                            const radiusElement = document.getElementById('radius');
+                            const radiusValue = radiusElement ? radiusElement.value : '30';
+                            const radiusIndicator = indicator.querySelector('.radius-indicator');
+                            if (radiusIndicator) {
+                                radiusIndicator.textContent = radiusValue + ' km';
+                            }
+                        }
+                    } else {
+                        // If geocoding fails, fall back to suggestions
+                        fetchSuggestions(currentValue);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error geocoding autofilled address:", error);
+                    // Fall back to suggestions
+                    fetchSuggestions(currentValue);
+                });
+            } else {
+                // For shorter autofilled values, fetch suggestions as normal
+                fetchSuggestions(currentValue);
+            }
             
             // Update the query_text field with the autofilled value as a fallback
             if (document.getElementById('query_text')) {
@@ -119,90 +176,7 @@ document.addEventListener('DOMContentLoaded', function() {
         locationInput.classList.add('loading');
         console.log("Added loading class to input");
         
-        // SOLUZIONE SEMPLICE: Mostra sempre i suggerimenti per qualsiasi query
-        // Questo risolve tutti i problemi di autofill e digitazione manuale
-        {
-            console.log("Showing suggestions for:", query);
-            locationSuggestions.innerHTML = '';
-            
-            // Create test items basati sull'indirizzo inserito
-            const testAddresses = [
-                {
-                    display_name: query,
-                    lat: "45.4636", // Coordinate di default
-                    lon: "9.1602"
-                },
-                {
-                    display_name: query + " (Centro)",
-                    lat: "45.4635",
-                    lon: "9.1600"
-                }
-            ];
-            
-            testAddresses.forEach(location => {
-                const item = document.createElement('div');
-                item.className = 'location-suggestion-item';
-                item.textContent = location.display_name;
-                
-                // Store location data
-                item.dataset.lat = location.lat;
-                item.dataset.lon = location.lon;
-                item.dataset.displayName = location.display_name;
-                
-                item.addEventListener('click', function() {
-                    console.log("Test suggestion clicked:", this.dataset.displayName);
-                    // Set the input value to the selected location name
-                    locationInput.value = this.dataset.displayName;
-                    
-                    // Store coordinates in hidden inputs
-                    latitudeInput.value = this.dataset.lat;
-                    longitudeInput.value = this.dataset.lon;
-                    
-                    // Also update the query_text hidden field
-                    if (document.getElementById('query_text')) {
-                        document.getElementById('query_text').value = this.dataset.displayName;
-                    }
-                    
-                    // Store selected location
-                    selectedLocation = {
-                        lat: this.dataset.lat,
-                        lon: this.dataset.lon,
-                        displayName: this.dataset.displayName
-                    };
-                    
-                    // Update the location indicator
-                    const indicator = document.getElementById('location-selected-indicator');
-                    if (indicator) {
-                        indicator.classList.remove('d-none');
-                        
-                        const locationNameIndicator = indicator.querySelector('.location-name');
-                        if (locationNameIndicator) {
-                            locationNameIndicator.textContent = this.dataset.displayName.substring(0, 25) + 
-                                (this.dataset.displayName.length > 25 ? '...' : '');
-                        }
-                        
-                        const radiusElement = document.getElementById('radius');
-                        const radiusValue = radiusElement ? radiusElement.value : '30';
-                        const radiusIndicator = indicator.querySelector('.radius-indicator');
-                        if (radiusIndicator) {
-                            radiusIndicator.textContent = radiusValue + ' km';
-                        }
-                    }
-                    
-                    // Hide suggestions
-                    locationSuggestions.style.display = 'none';
-                });
-                
-                locationSuggestions.appendChild(item);
-            });
-            
-            // Show the suggestions dropdown
-            console.log("DEBUG: Setting display: block for suggestions dropdown");
-            locationSuggestions.style.display = 'block';
-            locationInput.classList.remove('loading');
-            
-            return; // Skip the normal API call
-        }
+        // Utilizzare l'API Nominatim per ottenere suggerimenti reali
         
         // Build API URL with parameters
         const apiUrl = new URL('https://nominatim.openstreetmap.org/search');
