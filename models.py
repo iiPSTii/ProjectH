@@ -53,16 +53,6 @@ class MedicalFacility(db.Model):
     
     # Performance metrics
     quality_score = db.Column(db.Float, default=None)
-    
-    # Specialty ratings (1-5 scale)
-    cardiology_rating = db.Column(db.Float, default=None)
-    orthopedics_rating = db.Column(db.Float, default=None)
-    oncology_rating = db.Column(db.Float, default=None)
-    neurology_rating = db.Column(db.Float, default=None)
-    surgery_rating = db.Column(db.Float, default=None)
-    urology_rating = db.Column(db.Float, default=None)
-    pediatrics_rating = db.Column(db.Float, default=None)
-    gynecology_rating = db.Column(db.Float, default=None)
     strengths_summary = db.Column(db.String(500), default=None)
     
     # Geolocation coordinates
@@ -85,6 +75,70 @@ class MedicalFacility(db.Model):
     def specialties_list(self):
         """Return a list of specialty names for this facility"""
         return [fs.specialty.name for fs in self.specialties]
+    
+    @property
+    def cardiology_rating(self):
+        """Get cardiology rating from facility_specialty relation"""
+        for fs in self.specialties:
+            if fs.specialty.name.lower() == "cardiologia" and fs.quality_rating is not None:
+                return fs.quality_rating
+        return None
+    
+    @property
+    def orthopedics_rating(self):
+        """Get orthopedics rating from facility_specialty relation"""
+        for fs in self.specialties:
+            if fs.specialty.name.lower() == "ortopedia" and fs.quality_rating is not None:
+                return fs.quality_rating
+        return None
+    
+    @property
+    def oncology_rating(self):
+        """Get oncology rating from facility_specialty relation"""
+        for fs in self.specialties:
+            if fs.specialty.name.lower() == "oncologia" and fs.quality_rating is not None:
+                return fs.quality_rating
+        return None
+    
+    @property
+    def neurology_rating(self):
+        """Get neurology rating from facility_specialty relation"""
+        for fs in self.specialties:
+            if fs.specialty.name.lower() == "neurologia" and fs.quality_rating is not None:
+                return fs.quality_rating
+        return None
+    
+    @property
+    def surgery_rating(self):
+        """Get surgery rating from facility_specialty relation"""
+        for fs in self.specialties:
+            if fs.specialty.name.lower() == "chirurgia generale" and fs.quality_rating is not None:
+                return fs.quality_rating
+        return None
+    
+    @property
+    def urology_rating(self):
+        """Get urology rating from facility_specialty relation"""
+        for fs in self.specialties:
+            if fs.specialty.name.lower() == "urologia" and fs.quality_rating is not None:
+                return fs.quality_rating
+        return None
+    
+    @property
+    def pediatrics_rating(self):
+        """Get pediatrics rating from facility_specialty relation"""
+        for fs in self.specialties:
+            if fs.specialty.name.lower() == "pediatria" and fs.quality_rating is not None:
+                return fs.quality_rating
+        return None
+    
+    @property
+    def gynecology_rating(self):
+        """Get gynecology rating from facility_specialty relation"""
+        for fs in self.specialties:
+            if fs.specialty.name.lower() == "ginecologia" and fs.quality_rating is not None:
+                return fs.quality_rating
+        return None
 
 
 class DatabaseStatus(db.Model):
