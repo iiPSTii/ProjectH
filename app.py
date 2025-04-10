@@ -85,17 +85,45 @@ with app.app_context():
             # If no specialty specified, use general quality score
             return facility.quality_score if facility.quality_score is not None else 0
             
-        # Check if the facility has the specific specialty
-        for fs in facility.specialties:
-            # Use the specialty mapping to check for equivalent specialties
-            if (fs.specialty.name.lower() == specialty_name.lower() or
-                (fs.specialty.name in equivalent_specialties(specialty_name))):
-                # Return the specialty-specific rating if available
-                if fs.rating is not None:
-                    return fs.rating  # This is the specialty-specific score
+        # Map common specialty names to their attribute names in the model
+        specialty_to_attribute = {
+            'cardiologia': 'cardiology_rating',
+            'ortopedia': 'orthopedics_rating',
+            'oncologia': 'oncology_rating',
+            'neurologia': 'neurology_rating',
+            'chirurgia': 'surgery_rating',
+            'urologia': 'urology_rating',
+            'pediatria': 'pediatrics_rating',
+            'ginecologia': 'gynecology_rating'
+        }
         
-        # Fallback to general quality score if specialty not found or no rating
-        return facility.quality_score if facility.quality_score is not None else 0
+        # Normalize specialty name to lowercase for matching
+        normalized_specialty = specialty_name.lower()
+        
+        # Check direct mapping
+        for specialty_key, attribute_name in specialty_to_attribute.items():
+            if specialty_key in normalized_specialty:
+                rating = getattr(facility, attribute_name, None)
+                if rating is not None:
+                    return rating
+        
+        # If we have the specific specialty but no direct mapping,
+        # check if the facility has at least the specialty
+        has_specialty = False
+        for fs in facility.specialties:
+            if (fs.specialty.name.lower() == normalized_specialty or
+                any(specialty in fs.specialty.name.lower() for specialty in specialty_to_attribute.keys())):
+                has_specialty = True
+                break
+        
+        # Prioritize general quality for facilities that have the specialty
+        # This gives a slight boost to facilities that at least have the specialty
+        if has_specialty:
+            return facility.quality_score if facility.quality_score is not None else 0
+            
+        # Fallback to general quality score but with a small penalty
+        # This ensures facilities with the specialty are ranked higher
+        return (facility.quality_score - 0.1) if facility.quality_score is not None else 0
     
     # Helper function to get equivalent specialties
     def equivalent_specialties(specialty_name):
