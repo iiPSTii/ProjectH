@@ -18,19 +18,36 @@
                 
                 <form action="/search" method="get" id="searchForm">
                     <div class="row g-3">
-                        <!-- New address search field (prioritized) -->
+                        <!-- New location autocomplete search field -->
                         <div class="col-12 mb-3">
-                            <label for="query_text" class="form-label fw-bold">Cerca strutture sanitarie vicino a te</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
-                                <input type="text" class="form-control form-control-lg" id="query_text" name="query_text" 
-                                       placeholder="Inserisci un indirizzo o città (es: Via Roma 1, Milano o semplicemente Milano)" aria-label="Cerca per indirizzo">
-                                <button type="submit" class="btn btn-primary px-4" id="addressSearchButton">
-                                    <i class="fas fa-search me-2"></i> Cerca
-                                </button>
+                            <label for="location-input" class="form-label fw-bold">Cerca strutture sanitarie vicino a te</label>
+                            <div class="location-input-container">
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                    <input type="text" class="form-control form-control-lg" id="location-input" 
+                                           placeholder="Inizia a digitare un luogo (es: Via Roma 1, Milano o Cortina, Cervinia)" 
+                                           aria-label="Cerca per località">
+                                    <div class="loading-indicator">
+                                        <div class="spinner-border spinner-border-sm text-secondary" role="status">
+                                            <span class="visually-hidden">Caricamento...</span>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary px-4" id="search-button">
+                                        <i class="fas fa-search me-2"></i> Cerca
+                                        <span id="loading-spinner" class="spinner-border spinner-border-sm text-light ms-2" role="status" style="display: none;">
+                                            <span class="visually-hidden">Caricamento...</span>
+                                        </span>
+                                    </button>
+                                </div>
+                                <div id="location-suggestions" class="location-suggestions"></div>
+                                
+                                <!-- Hidden fields to store coordinates -->
+                                <input type="hidden" id="latitude" name="latitude" class="hidden-coordinates">
+                                <input type="hidden" id="longitude" name="longitude" class="hidden-coordinates">
+                                <input type="hidden" id="query_text" name="query_text" class="hidden-coordinates">
                             </div>
                             <small class="form-text text-muted">
-                                Trova le strutture più vicine alla tua posizione (entro 30km). Se cerchi solo un nome di città, verranno usate le coordinate del centro città.
+                                Trova le strutture più vicine alla tua posizione (entro 30km). Scegli un indirizzo dal menu a discesa per risultati più precisi.
                             </small>
                         </div>
                         

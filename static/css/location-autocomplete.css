@@ -1,0 +1,70 @@
+/**
+ * Styling for the location autocomplete component
+ */
+
+/* Container for the location input */
+.location-input-container {
+    position: relative;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+/* Loading indicator for the location input */
+.loading-indicator {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: none;
+}
+
+/* Show loading indicator when input has .loading class */
+.location-input-container input.loading + .loading-indicator {
+    display: block;
+}
+
+/* Suggestions dropdown */
+.location-suggestions {
+    position: absolute;
+    width: 100%;
+    max-height: 300px;
+    overflow-y: auto;
+    background-color: var(--bs-dark);
+    border: 1px solid var(--bs-gray-700);
+    border-radius: 0.25rem;
+    z-index: 1000;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 2px;
+}
+
+/* Suggestion items */
+.location-suggestion-item {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    border-bottom: 1px solid var(--bs-gray-800);
+    transition: background-color 0.2s;
+}
+
+.location-suggestion-item:last-child {
+    border-bottom: none;
+}
+
+.location-suggestion-item:hover {
+    background-color: var(--bs-gray-700);
+}
+
+/* Enhanced styling for location input */
+#location-input {
+    padding-right: 2.5rem; /* Space for the loading indicator */
+    transition: border-color 0.2s;
+}
+
+#location-input:focus {
+    border-color: var(--bs-info);
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Hidden inputs for coordinates */
+.hidden-coordinates {
+    display: none;
+}
