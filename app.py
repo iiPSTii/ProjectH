@@ -79,6 +79,14 @@ with app.app_context():
         # Get latitude and longitude if provided by the autocomplete
         latitude = request.args.get('latitude', '', type=str)
         longitude = request.args.get('longitude', '', type=str)
+        
+        # Get custom search radius if provided, default to 30km
+        try:
+            search_radius = float(request.args.get('radius', 30.0))
+            # Limit radius between 5km and 100km for safety
+            search_radius = max(5.0, min(100.0, search_radius))
+        except (ValueError, TypeError):
+            search_radius = 30.0  # Default if invalid
 
         # Process the search query to extract location information
         detected_location = None
@@ -110,7 +118,7 @@ with app.app_context():
                         float(latitude), float(longitude), 
                         facility.latitude, facility.longitude
                     )
-                    if distance <= 30.0:  # 30km radius
+                    if distance <= search_radius:  # Use custom radius from user
                         # Add distance directly to the facility object
                         facility.distance = round(distance, 1)
                         facility.distance_text = f"{facility.distance:.1f} km"
@@ -138,8 +146,8 @@ with app.app_context():
             all_facilities = db.session.query(MedicalFacility).all()
             
             # Find facilities near the specified address
-            # Increased max distance to 30km to get more results
-            address_search_results = find_facilities_near_address(address_part, all_facilities, max_distance=30.0)
+            # Use the custom search radius provided by the user
+            address_search_results = find_facilities_near_address(address_part, all_facilities, max_distance=search_radius)
             
             if address_search_results and address_search_results.get('facilities'):
                 logger.debug(f"Found {len(address_search_results['facilities'])} facilities near address: '{query_text}'")
@@ -383,8 +391,8 @@ with app.app_context():
             facilities = address_search_results['facilities']
             search_location = address_search_results['search_location']
             
-            # Add distance information for display
-            mapped_specialties = [f"Strutture entro 30 km da {search_location.get('display_name', query_text)}"]
+            # Add distance information for display with the custom radius
+            mapped_specialties = [f"Strutture entro {int(search_radius)} km da {search_location.get('display_name', query_text)}"]
             
             # Check if user wants to sort by something other than distance
             if sort_by != 'distance':
