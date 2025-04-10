@@ -466,10 +466,37 @@ with app.app_context():
             logger.debug(f"Basic filter search found {len(facilities)} facilities")
 
         # Check if we're using address search results
-        if is_address_search and address_search_results and address_search_results.get('facilities'):
-            # Get the facilities from our address search
-            facilities = address_search_results['facilities']
-            search_location = address_search_results['search_location']
+        if is_address_search and address_search_results:
+            # Even if no facilities were found exactly at that address,
+            # we still want to use the coordinates and apply them to our filtered results
+            
+            # Get the search location with coordinates
+            search_location = address_search_results.get('search_location', {})
+            
+            # If we have facilities from address search, use them directly
+            if address_search_results.get('facilities'):
+                # Get the facilities from our address search
+                facilities = address_search_results['facilities']
+            # Otherwise, we'll use the results from our regular search and add distance to them
+            elif facilities and search_location.get('lat') and search_location.get('lon'):
+                logger.debug(f"Adding distance calculations to {len(facilities)} facilities from regular search")
+                
+                # Add distance to the facilities from our regular search
+                for facility in facilities:
+                    if facility.latitude and facility.longitude:
+                        distance = calculate_distance(
+                            float(search_location['lat']), float(search_location['lon']),
+                            facility.latitude, facility.longitude
+                        )
+                        facility.distance = round(distance, 1)
+                        facility.distance_text = f"{facility.distance:.1f} km"
+                    else:
+                        # Set a large distance for facilities without coordinates
+                        facility.distance = 999.9
+                        facility.distance_text = "Distanza sconosciuta"
+                
+                # Sort by distance first, then apply other sorting
+                facilities.sort(key=lambda x: x.distance)
             
             # Add distance information for display with the custom radius
             mapped_specialties = [f"Strutture entro {int(search_radius)} km da {search_location.get('display_name', query_text)}"]
