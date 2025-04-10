@@ -18,17 +18,18 @@
                 
                 <div class="mb-5">
                     <h4 class="text-info"><i class="fas fa-chart-line me-2"></i>Analisi dei Dati e Sistema di Classificazione</h4>
-                    <p class="lead">Abbiamo sviluppato un sistema di classificazione completo e strutturato per le strutture mediche in tutta Italia analizzando un ampio dataset di ospedali e cliniche.</p>
-                    <p>Il nostro obiettivo è stato identificare i punti di forza di ciascuna struttura tra le specialità mediche chiave — cardiologia, ortopedia, oncologia, neurologia, urologia, chirurgia generale, pediatria e ginecologia — e assegnare a ciascuna un rating di prestazione da 1 a 5 per specialità.</p>
+                    <p class="lead">Per garantire confronti nazionali accurati, abbiamo sviluppato un sistema di classificazione completo per le strutture mediche in tutta Italia, analizzando un ampio dataset di ospedali e cliniche.</p>
+                    <p>Il nostro obiettivo è identificare i punti di forza di ciascuna struttura tra le specialità mediche chiave — cardiologia, ortopedia, oncologia, neurologia, urologia, chirurgia generale, pediatria e ginecologia — e assegnare a ciascuna un rating di prestazione da 1 a 5 per specialità.</p>
                 </div>
                 
                 <div class="mb-5">
-                    <h4 class="text-info"><i class="fas fa-database me-2"></i>Fonti di Dati</h4>
-                    <p>Questa valutazione si basa principalmente su <strong>dati pubblici ufficiali</strong>, come:</p>
+                    <h4 class="text-info"><i class="fas fa-database me-2"></i>Fonti di Dati e Criteri di Valutazione</h4>
+                    <p>Le nostre valutazioni integrano molteplici fonti di dati e criteri:</p>
                     <ul class="list-group list-group-flush bg-dark mb-3">
-                        <li class="list-group-item bg-dark"><i class="fas fa-check-circle text-success me-2"></i>Rapporti nazionali di outcome del Programma Nazionale Esiti (PNE) di AGENAS</li>
-                        <li class="list-group-item bg-dark"><i class="fas fa-check-circle text-success me-2"></i>Fonti esterne affidabili come Micuro, QSalute e rapporti istituzionali dove disponibili</li>
-                        <li class="list-group-item bg-dark"><i class="fas fa-check-circle text-success me-2"></i>Reputazione istituzionale, classifiche regionali e feedback verificati per integrare i dati pubblici carenti</li>
+                        <li class="list-group-item bg-dark"><i class="fas fa-check-circle text-success me-2"></i><strong>Classifiche Internazionali:</strong> Utilizziamo i risultati della classifica "World's Best Specialized Hospitals" 2024/2025 di Newsweek (indagine Statista) per identificare gli ospedali italiani con i migliori posizionamenti globali in ciascuna specialità.</li>
+                        <li class="list-group-item bg-dark"><i class="fas fa-check-circle text-success me-2"></i><strong>Performance Nazionale (Agenas PNE):</strong> Consideriamo il Programma Nazionale Esiti 2024 che valuta gli esiti in diverse aree cliniche. Solo 3 ospedali (IRCCS Humanitas Rozzano, Ospedali Riuniti Marche di Ancona e Careggi di Firenze) hanno ottenuto qualità elevata in tutte o quasi tutte le aree.</li>
+                        <li class="list-group-item bg-dark"><i class="fas fa-check-circle text-success me-2"></i><strong>Ricerca e Reputazione:</strong> Gli ospedali IRCCS e universitari noti per la produzione scientifica e la formazione specialistica ricevono punteggi più alti. La reputazione clinica (es. programmi di trapianto, centri oncologici) e forti affiliazioni accademiche aumentano i punteggi.</li>
+                        <li class="list-group-item bg-dark"><i class="fas fa-check-circle text-success me-2"></i><strong>Esiti dei Pazienti e Recensioni:</strong> Quando disponibili, consideriamo i dati sulla sopravvivenza/esiti dei pazienti e la soddisfazione online. Tuttavia, le classifiche formali e i dati sugli esiti hanno un peso maggiore rispetto alle recensioni aneddotiche per garantire obiettività.</li>
                     </ul>
                 </div>
                 
@@ -99,6 +100,125 @@
                     </div>
                     
                     <p class="mt-3">Le specialità di ogni struttura sono state identificate e una scala di valutazione è stata applicata per riflettere le sue prestazioni o il riconoscimento in quelle aree.</p>
+                </div>
+                
+                <div class="mb-5">
+                    <h4 class="text-info"><i class="fas fa-medal me-2"></i>Eccellenze per Specialità</h4>
+                    <p>Ecco alcuni dei centri di eccellenza identificati per specialità in Italia:</p>
+                    
+                    <div class="accordion" id="specialtyAccordion">
+                        <!-- Cardiologia -->
+                        <div class="accordion-item bg-dark text-white border-0 mb-2">
+                            <h2 class="accordion-header" id="headingCardiology">
+                                <button class="accordion-button bg-dark text-white collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCardiology" aria-expanded="false" aria-controls="collapseCardiology">
+                                    <strong>Cardiologia</strong>
+                                </button>
+                            </h2>
+                            <div id="collapseCardiology" class="accordion-collapse collapse" aria-labelledby="headingCardiology" data-bs-parent="#specialtyAccordion">
+                                <div class="accordion-body">
+                                    <p>Il Centro Cardiologico Monzino di Milano è classificato 11° a livello mondiale, seguito dall'Ospedale San Raffaele (Milano) al 12° posto. Altri centri d'eccellenza includono il Policlinico Sant'Orsola-Malpighi (Bologna) e il Policlinico Gemelli (Roma).</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Ortopedia -->
+                        <div class="accordion-item bg-dark text-white border-0 mb-2">
+                            <h2 class="accordion-header" id="headingOrthopedics">
+                                <button class="accordion-button bg-dark text-white collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOrthopedics" aria-expanded="false" aria-controls="collapseOrthopedics">
+                                    <strong>Ortopedia</strong>
+                                </button>
+                            </h2>
+                            <div id="collapseOrthopedics" class="accordion-collapse collapse" aria-labelledby="headingOrthopedics" data-bs-parent="#specialtyAccordion">
+                                <div class="accordion-body">
+                                    <p>L'Istituto Ortopedico Rizzoli (Bologna) è un centro ortopedico di livello mondiale (9° globalmente), specializzato in tumori ossei complessi e impianti protesici. L'Istituto Ortopedico Galeazzi di Milano è anch'esso riconosciuto internazionalmente (tra i primi 50 al mondo).</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Oncologia -->
+                        <div class="accordion-item bg-dark text-white border-0 mb-2">
+                            <h2 class="accordion-header" id="headingOncology">
+                                <button class="accordion-button bg-dark text-white collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOncology" aria-expanded="false" aria-controls="collapseOncology">
+                                    <strong>Oncologia</strong>
+                                </button>
+                            </h2>
+                            <div id="collapseOncology" class="accordion-collapse collapse" aria-labelledby="headingOncology" data-bs-parent="#specialtyAccordion">
+                                <div class="accordion-body">
+                                    <p>Milano primeggia con l'Istituto Europeo di Oncologia (IEO) e l'Istituto Nazionale Tumori (INT), entrambi nella top 10 mondiale. Il Policlinico Gemelli (Roma) è 11° al mondo e al primo posto nel centro-sud Italia. Altri centri IRCCS oncologici in diverse regioni ottengono punteggi elevati.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Neurologia -->
+                        <div class="accordion-item bg-dark text-white border-0 mb-2">
+                            <h2 class="accordion-header" id="headingNeurology">
+                                <button class="accordion-button bg-dark text-white collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseNeurology" aria-expanded="false" aria-controls="collapseNeurology">
+                                    <strong>Neurologia/Neurochirurgia</strong>
+                                </button>
+                            </h2>
+                            <div id="collapseNeurology" class="accordion-collapse collapse" aria-labelledby="headingNeurology" data-bs-parent="#specialtyAccordion">
+                                <div class="accordion-body">
+                                    <p>L'Istituto Carlo Besta (Milano) è il migliore ospedale di neuroscienze in Italia (17° al mondo in neurochirurgia), seguito dall'Ospedale Niguarda (Milano). Il dipartimento di neurologia del Niguarda e l'IRCCS Neuromed (Pozzilli) sono valutati 5 per la loro rilevanza nazionale in ictus e neurochirurgia.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Urologia -->
+                        <div class="accordion-item bg-dark text-white border-0 mb-2">
+                            <h2 class="accordion-header" id="headingUrology">
+                                <button class="accordion-button bg-dark text-white collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseUrology" aria-expanded="false" aria-controls="collapseUrology">
+                                    <strong>Urologia</strong>
+                                </button>
+                            </h2>
+                            <div id="collapseUrology" class="accordion-collapse collapse" aria-labelledby="headingUrology" data-bs-parent="#specialtyAccordion">
+                                <div class="accordion-body">
+                                    <p>L'Ospedale Universitario di Padova è il principale centro urologico italiano (34° a livello mondiale), appena davanti all'Ospedale San Raffaele (Milano, 45° a livello mondiale). Questi e pochi altri (Gemelli, Careggi) hanno ottenuto il punteggio massimo per i programmi di chirurgia robotica e trapianti ad alto volume.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Chirurgia generale -->
+                        <div class="accordion-item bg-dark text-white border-0 mb-2">
+                            <h2 class="accordion-header" id="headingSurgery">
+                                <button class="accordion-button bg-dark text-white collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSurgery" aria-expanded="false" aria-controls="collapseSurgery">
+                                    <strong>Chirurgia Generale</strong>
+                                </button>
+                            </h2>
+                            <div id="collapseSurgery" class="accordion-collapse collapse" aria-labelledby="headingSurgery" data-bs-parent="#specialtyAccordion">
+                                <div class="accordion-body">
+                                    <p>Ospedali di ricerca multispecialità come l'Humanitas Research Hospital (Rozzano) e il Policlinico Gemelli (Roma) eccellono in tutte le discipline chirurgiche. L'Humanitas è stato valutato il miglior ospedale in Italia per prestazioni complessive per 3 anni consecutivi.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Pediatria -->
+                        <div class="accordion-item bg-dark text-white border-0 mb-2">
+                            <h2 class="accordion-header" id="headingPediatrics">
+                                <button class="accordion-button bg-dark text-white collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePediatrics" aria-expanded="false" aria-controls="collapsePediatrics">
+                                    <strong>Pediatria</strong>
+                                </button>
+                            </h2>
+                            <div id="collapsePediatrics" class="accordion-collapse collapse" aria-labelledby="headingPediatrics" data-bs-parent="#specialtyAccordion">
+                                <div class="accordion-body">
+                                    <p>L'Ospedale Pediatrico Bambino Gesù di Roma (6° al mondo) e l'Istituto Gaslini (Genova, 7° al mondo) sono ospedali pediatrici leader in Europa, entrambi con punteggio 5. Il Meyer di Firenze e il Santobono di Napoli sono i principali centri pediatrici nelle loro regioni (punteggio 4).</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Ginecologia -->
+                        <div class="accordion-item bg-dark text-white border-0 mb-2">
+                            <h2 class="accordion-header" id="headingGynecology">
+                                <button class="accordion-button bg-dark text-white collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGynecology" aria-expanded="false" aria-controls="collapseGynecology">
+                                    <strong>Ginecologia e Ostetricia</strong>
+                                </button>
+                            </h2>
+                            <div id="collapseGynecology" class="accordion-collapse collapse" aria-labelledby="headingGynecology" data-bs-parent="#specialtyAccordion">
+                                <div class="accordion-body">
+                                    <p>Il Policlinico Gemelli di Roma si classifica 4° al mondo in ostetricia/ginecologia, rendendolo il chiaro leader nazionale (punteggio 5). Altri importanti ospedali ostetrici come Careggi (Firenze) e Sant'Orsola (Bologna) hanno ottenuto punteggio 5 grazie alla medicina materno-fetale avanzata e alla chirurgia oncologica.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="mb-4">
