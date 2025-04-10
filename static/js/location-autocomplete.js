@@ -106,7 +106,10 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Function to fetch location suggestions from Nominatim
     function fetchSuggestions(query) {
+        console.log("fetchSuggestions called with:", query);
+        
         if (query.length < 3) {
+            console.log("Query too short, not fetching suggestions");
             locationSuggestions.innerHTML = '';
             locationSuggestions.style.display = 'none';
             return;
@@ -114,6 +117,91 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Show loading indicator
         locationInput.classList.add('loading');
+        console.log("Added loading class to input");
+        
+        // DEBUG - For testing, show simple suggestions without API
+        if (query.includes('Domenichino')) {
+            console.log("DEBUG MODE: Creating test suggestions for", query);
+            locationSuggestions.innerHTML = '';
+            
+            // Create test items
+            const testAddresses = [
+                {
+                    display_name: "Via Domenichino 2, Milano, Lombardia, Italia",
+                    lat: "45.4636",
+                    lon: "9.1602"
+                },
+                {
+                    display_name: "Via Domenichino, Milano, Lombardia, Italia",
+                    lat: "45.4635",
+                    lon: "9.1600"
+                }
+            ];
+            
+            testAddresses.forEach(location => {
+                const item = document.createElement('div');
+                item.className = 'location-suggestion-item';
+                item.textContent = location.display_name;
+                
+                // Store location data
+                item.dataset.lat = location.lat;
+                item.dataset.lon = location.lon;
+                item.dataset.displayName = location.display_name;
+                
+                item.addEventListener('click', function() {
+                    console.log("Test suggestion clicked:", this.dataset.displayName);
+                    // Set the input value to the selected location name
+                    locationInput.value = this.dataset.displayName;
+                    
+                    // Store coordinates in hidden inputs
+                    latitudeInput.value = this.dataset.lat;
+                    longitudeInput.value = this.dataset.lon;
+                    
+                    // Also update the query_text hidden field
+                    if (document.getElementById('query_text')) {
+                        document.getElementById('query_text').value = this.dataset.displayName;
+                    }
+                    
+                    // Store selected location
+                    selectedLocation = {
+                        lat: this.dataset.lat,
+                        lon: this.dataset.lon,
+                        displayName: this.dataset.displayName
+                    };
+                    
+                    // Update the location indicator
+                    const indicator = document.getElementById('location-selected-indicator');
+                    if (indicator) {
+                        indicator.classList.remove('d-none');
+                        
+                        const locationNameIndicator = indicator.querySelector('.location-name');
+                        if (locationNameIndicator) {
+                            locationNameIndicator.textContent = this.dataset.displayName.substring(0, 25) + 
+                                (this.dataset.displayName.length > 25 ? '...' : '');
+                        }
+                        
+                        const radiusElement = document.getElementById('radius');
+                        const radiusValue = radiusElement ? radiusElement.value : '30';
+                        const radiusIndicator = indicator.querySelector('.radius-indicator');
+                        if (radiusIndicator) {
+                            radiusIndicator.textContent = radiusValue + ' km';
+                        }
+                    }
+                    
+                    // Hide suggestions
+                    locationSuggestions.style.display = 'none';
+                });
+                
+                locationSuggestions.appendChild(item);
+            });
+            
+            // Show the suggestions dropdown
+            console.log("DEBUG: Setting display: block for suggestions dropdown");
+            locationSuggestions.style.display = 'block';
+            locationInput.classList.remove('loading');
+            
+            return; // Skip the normal API call
+        }
         
         // Build API URL with parameters
         const apiUrl = new URL('https://nominatim.openstreetmap.org/search');
@@ -144,6 +232,8 @@ document.addEventListener('DOMContentLoaded', function() {
             apiUrl.searchParams.append('featuretype', 'amenity');
         }
         
+        console.log("Fetching suggestions from URL:", apiUrl.toString());
+        
         fetch(apiUrl.toString(), {
             headers: {
                 'User-Agent': 'FindMyCure-Italia/1.0'
@@ -151,9 +241,11 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => response.json())
         .then(data => {
+            console.log("Received suggestion data:", data);
             locationSuggestions.innerHTML = '';
             
             if (data.length === 0) {
+                console.log("No results found from API");
                 locationSuggestions.style.display = 'none';
                 locationInput.classList.remove('loading');
                 return;
