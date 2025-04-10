@@ -23,16 +23,24 @@
     display: block;
 }
 
-/* Location confirmation indicator */
+/* Location confirmation indicator - green check mark */
 .location-confirmation {
     position: absolute;
-    right: 10px;
+    right: 60px; /* Posizionato accanto al badge del raggio */
     top: 50%;
     transform: translateY(-50%);
     display: none;
-    color: #28a745;
+    color: #28a745; /* Verde */
     font-size: 1.25rem;
     animation: fadeIn 0.5s;
+    z-index: 10;
+    opacity: 0.85;
+    transition: all 0.3s ease;
+}
+
+.location-confirmation:hover {
+    opacity: 1;
+    transform: translateY(-50%) scale(1.1);
 }
 
 @keyframes fadeIn {
@@ -42,7 +50,13 @@
 
 /* Show location confirmation when coordinates are set */
 .location-confirmation.active {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: rgba(40, 167, 69, 0.1); /* Sfondo verde leggermente trasparente */
 }
 
 /* Styling for the show suggestions button */

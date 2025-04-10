@@ -86,10 +86,16 @@ document.addEventListener('DOMContentLoaded', function() {
                         document.getElementById('query_text').value = currentValue;
                     }
                     
-                    // Update the indicator with the found location
+                    // Attiva l'indicatore verde di conferma
+                    const confirmationIndicator = document.getElementById('location-confirmation');
+                    if (confirmationIndicator) {
+                        confirmationIndicator.classList.add('active');
+                    }
+                    
+                    // Nascondiamo l'indicatore originale
                     const indicator = document.getElementById('location-selected-indicator');
                     if (indicator) {
-                        indicator.classList.remove('d-none');
+                        // indicator.classList.remove('d-none'); // Non mostriamo più questo indicatore
                         
                         const locationNameIndicator = indicator.querySelector('.location-name');
                         if (locationNameIndicator) {
@@ -137,10 +143,16 @@ document.addEventListener('DOMContentLoaded', function() {
                             displayName: location.display_name
                         };
                         
-                        // Update location indicator
+                        // Attiva l'indicatore verde di conferma
+                        const confirmationIndicator = document.getElementById('location-confirmation');
+                        if (confirmationIndicator) {
+                            confirmationIndicator.classList.add('active');
+                        }
+                        
+                        // Nascondiamo l'indicatore originale
                         const indicator = document.getElementById('location-selected-indicator');
                         if (indicator) {
-                            indicator.classList.remove('d-none');
+                            // indicator.classList.remove('d-none'); // Non mostriamo più questo indicatore
                             
                             const locationNameIndicator = indicator.querySelector('.location-name');
                             if (locationNameIndicator) {
@@ -189,10 +201,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     displayName: currentValue
                 };
                 
-                // Update location indicator
+                // Attiva l'indicatore verde di conferma
+                const confirmationIndicator = document.getElementById('location-confirmation');
+                if (confirmationIndicator) {
+                    confirmationIndicator.classList.add('active');
+                }
+                
+                // Nascondiamo l'indicatore originale
                 const indicator = document.getElementById('location-selected-indicator');
                 if (indicator) {
-                    indicator.classList.remove('d-none');
+                    // indicator.classList.remove('d-none'); // Non mostriamo più questo indicatore
                     
                     const locationNameIndicator = indicator.querySelector('.location-name');
                     if (locationNameIndicator) {
