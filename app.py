@@ -83,31 +83,31 @@ with app.app_context():
         address_search_results = None
 
         if query_text:
-            # First check if this is an address search
-            if is_address_query(query_text):
-                logger.debug(f"Detected address search query: '{query_text}'")
-                is_address_search = True
-                
-                # Extract the address part from the query if it contains other terms
-                address_part = extract_address_part(query_text)
-                logger.debug(f"Extracted address part: '{address_part}'")
-                
-                # Get all facilities to find ones near this address
-                all_facilities = db.session.query(MedicalFacility).all()
-                
-                # Find facilities near the specified address
-                # Increased max distance to 30km to get more results
-                address_search_results = find_facilities_near_address(address_part, all_facilities, max_distance=30.0)
-                
-                if address_search_results and address_search_results.get('facilities'):
-                    logger.debug(f"Found {len(address_search_results['facilities'])} facilities near address: '{query_text}'")
-                    # Get the detected location display name
-                    search_location = address_search_results.get('search_location', {})
-                    detected_location = search_location.get('display_name', query_text)
-                else:
-                    logger.debug(f"No facilities found near address: '{query_text}'")
-                    # If no facilities found near address, fall back to regular search
-                    is_address_search = False
+            # Prioritize address/location search mode for new search interface
+            # Now we treat any query from the main search field as a potential address or city name
+            logger.debug(f"Treating query as potential address/location: '{query_text}'")
+            is_address_search = True
+            
+            # Extract the address part from the query if it contains other terms
+            address_part = extract_address_part(query_text)
+            logger.debug(f"Extracted address part: '{address_part}'")
+            
+            # Get all facilities to find ones near this address
+            all_facilities = db.session.query(MedicalFacility).all()
+            
+            # Find facilities near the specified address
+            # Increased max distance to 30km to get more results
+            address_search_results = find_facilities_near_address(address_part, all_facilities, max_distance=30.0)
+            
+            if address_search_results and address_search_results.get('facilities'):
+                logger.debug(f"Found {len(address_search_results['facilities'])} facilities near address: '{query_text}'")
+                # Get the detected location display name
+                search_location = address_search_results.get('search_location', {})
+                detected_location = search_location.get('display_name', query_text)
+            else:
+                logger.debug(f"No facilities found near address: '{query_text}'")
+                # If no facilities found near address, fall back to regular search
+                is_address_search = False
             
             # If not an address search or address search found no results, try regular search
             if not is_address_search:
