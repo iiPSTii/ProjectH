@@ -573,21 +573,57 @@ def find_facilities_near_address(query_text, facilities, max_distance=10.0, max_
     # Sort by distance
     facilities_with_distance.sort(key=lambda x: x.distance)
     
-    # If this is a city search and we didn't find any facilities, try to add some from the region
+    # If this is a city search and we didn't find any facilities, try to find nearby facilities by distance
     if is_city_search and len(facilities_with_distance) == 0:
         # Get the region for this city
         region_name = CITY_TO_REGION_MAP.get(city_name)
         if region_name:
-            logger.info(f"No facilities found in {city_name}, looking in {region_name} region")
+            logger.info(f"No facilities found in {city_name}, looking in {region_name} region using coordinates")
             
-            # Find facilities in the same region
-            for facility in facilities:
-                # Check if facility is in the same region (if it has a region)
-                if hasattr(facility, 'region') and facility.region and facility.region.name == region_name:
-                    facility.distance = 10.0  # Set a reasonable distance
-                    facility.distance_text = f"~10 km"
-                    facilities_with_distance.append(facility)
-                    logger.debug(f"Added region-level facility {facility.name} from {region_name}")
+            # Try to use the geocoded coordinates to find facilities in the region
+            if search_lat and search_lon:
+                # Find facilities with coordinates in the same region and calculate actual distances
+                found_facilities_by_coords = False
+                
+                for facility in facilities:
+                    # Check if facility is in the same region and has coordinates
+                    if (hasattr(facility, 'region') and facility.region and facility.region.name == region_name
+                        and facility.latitude is not None and facility.longitude is not None):
+                        
+                        # Calculate actual distance from search point to facility
+                        distance = calculate_distance(search_lat, search_lon, facility.latitude, facility.longitude)
+                        
+                        # Add facility with actual distance calculation (up to 100km)
+                        if distance <= 100.0:
+                            facility.distance = distance
+                            facility.distance_text = f"{distance:.1f} km"
+                            facilities_with_distance.append(facility)
+                            found_facilities_by_coords = True
+                            logger.debug(f"Added region facility {facility.name} with calculated distance {distance:.1f} km")
+                
+                # If we still didn't find any facilities with coordinates, fall back to the region-level approach
+                if not found_facilities_by_coords:
+                    logger.info(f"No facilities with coordinates found in {region_name}, using fallback method")
+                    
+                    # Find facilities in the same region without checking coordinates
+                    for facility in facilities:
+                        if hasattr(facility, 'region') and facility.region and facility.region.name == region_name:
+                            facility.distance = 25.0  # Set a generic regional distance
+                            facility.distance_text = f"~25 km"
+                            facilities_with_distance.append(facility)
+                            logger.debug(f"Added region-level facility {facility.name} from {region_name} (fallback)")
+            else:
+                # If we don't have coordinates for the search, fall back to region-level approach
+                logger.info(f"No coordinates for {city_name}, falling back to region-level approach")
+                
+                # Find facilities in the same region
+                for facility in facilities:
+                    # Check if facility is in the same region (if it has a region)
+                    if hasattr(facility, 'region') and facility.region and facility.region.name == region_name:
+                        facility.distance = 25.0  # Set a reasonable distance
+                        facility.distance_text = f"~25 km"
+                        facilities_with_distance.append(facility)
+                        logger.debug(f"Added region-level facility {facility.name} from {region_name} (no coords)")
             
             # Limit to 5 facilities from the region
             if len(facilities_with_distance) > 5:
