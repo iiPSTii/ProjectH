@@ -147,3 +147,41 @@ function useSpecificQuery() {
         }
     }
 }
+
+// Handle applying location search from address field
+function applyLocationSearch() {
+    const locationInput = document.getElementById('location-input');
+    const queryTextField = document.getElementById('query_text');
+    const searchButton = document.getElementById('searchButton');
+    
+    if (locationInput && locationInput.value.trim() !== '') {
+        // Make sure the query_text field has the location value
+        if (queryTextField) {
+            queryTextField.value = locationInput.value;
+        }
+        
+        // Add a visual indicator that the location search is active
+        const searchButton = document.getElementById('searchButton');
+        if (searchButton) {
+            searchButton.focus();
+            // Visual feedback - change the main button to show it will perform a location search
+            searchButton.innerHTML = '<i class="fas fa-map-marker-alt me-2"></i> Cerca Strutture Vicino a ' + 
+                                    '<span class="badge bg-info">' + locationInput.value.substring(0, 15) + 
+                                    (locationInput.value.length > 15 ? '...' : '') + '</span>';
+        }
+        
+        // Collapse any open filter sections
+        const filterOptions = document.getElementById('filterOptions');
+        if (filterOptions && filterOptions.classList.contains('show')) {
+            const bsCollapse = bootstrap.Collapse.getInstance(filterOptions);
+            if (bsCollapse) {
+                bsCollapse.hide();
+            }
+        }
+        
+        // Scroll to the main search button for better UX
+        if (searchButton) {
+            searchButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+}

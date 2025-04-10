@@ -207,16 +207,40 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Form submission handling
-    if (locationForm) {
-        locationForm.addEventListener('submit', function(event) {
+    // Form submission handling - Now has different behavior because search-button is no longer submit
+    const searchForm = document.getElementById('searchForm');
+    if (searchForm) {
+        searchForm.addEventListener('submit', function(event) {
+            // Make sure query_text has latest location input if user typed something but didn't click a suggestion
+            if (!selectedLocation && locationInput && locationInput.value.trim().length > 0) {
+                const queryTextInput = document.getElementById('query_text');
+                if (queryTextInput) {
+                    queryTextInput.value = locationInput.value.trim();
+                }
+            }
+            
+            // Make sure query_text has the location name if coordinates are present
+            if (latitudeInput.value && longitudeInput.value) {
+                const queryTextInput = document.getElementById('query_text');
+                if (queryTextInput && !queryTextInput.value) {
+                    queryTextInput.value = locationInput.value.trim();
+                }
+            }
+            
+            // Main search button loading spinner is handled in main.js
+        });
+    }
+    
+    // Search button click (now type="button")
+    if (searchButton) {
+        searchButton.addEventListener('click', function() {
             // Show loading spinner
-            if (searchButton && loadingSpinner) {
-                searchButton.style.display = 'none';
+            if (loadingSpinner) {
+                searchButton.innerHTML = '<i class="fas fa-map-marked-alt me-2"></i> Applica';
                 loadingSpinner.style.display = 'inline-block';
             }
             
-            // If user hasn't selected from dropdown but has text, update query_text and let backend handle geocoding
+            // If user hasn't selected from dropdown but has text, update query_text for geocoding
             if (!selectedLocation && locationInput.value.trim().length > 0) {
                 const queryTextInput = document.getElementById('query_text');
                 if (queryTextInput) {
@@ -224,13 +248,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
             
-            // If both lat/lon are present, make sure query_text contains the location name
-            if (latitudeInput.value && longitudeInput.value) {
-                const queryTextInput = document.getElementById('query_text');
-                if (queryTextInput && !queryTextInput.value) {
-                    queryTextInput.value = locationInput.value.trim();
+            // The click handler calls applyLocationSearch() instead of submitting the form
+            setTimeout(() => {
+                if (loadingSpinner) {
+                    loadingSpinner.style.display = 'none';
                 }
-            }
+            }, 500);
         });
     }
     
