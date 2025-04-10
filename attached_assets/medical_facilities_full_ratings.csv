@@ -1,0 +1,207 @@
+Name of the facility,City,Cardiologia,Ortopedia,Oncologia,Neurologia,Urologia,Chirurgia generale,Pediatria,Ginecologia
+Ospedale Niguarda,Milano,3,3,4,5,5,5,5,3
+Ospedale San Carlo Borromeo,Milano,1,2,1,3,5,3,5,3
+Policlinico San Donato,San Donato Milanese,5,5,1,1,3,1,5,1
+Ospedale San Paolo,Milano,5,4,4,1,5,5,1,1
+Policlinico Paolo Giaccone,Palermo,3,3,4,3,3,5,1,3
+Ospedale Civico Di Cristina Benfratelli,Palermo,4,5,3,2,2,2,2,4
+Ospedale Cannizzaro,Catania,1,5,3,1,3,2,5,5
+Istituto Nazionale dei Tumori,Milano,1,2,2,4,2,5,3,5
+Ospedale San Raffaele,Milano,1,2,5,2,3,1,2,5
+Ospedale Maggiore Policlinico,Milano,1,4,3,3,4,5,4,5
+Ospedale Luigi Sacco,Milano,5,4,1,4,5,5,5,3
+Ospedale Fatebenefratelli,Milano,2,3,1,3,3,5,2,2
+Spedali Civili di Brescia,Brescia,2,2,4,4,4,2,5,3
+Ospedale Papa Giovanni XXIII,Bergamo,5,5,4,5,2,3,1,2
+Ospedale di Circolo e Fondazione Macchi,Varese,1,4,2,5,4,5,2,3
+Ospedale San Matteo,Pavia,3,2,3,3,3,4,2,3
+Ospedale Buccheri La Ferla,Palermo,5,2,4,4,2,4,2,4
+Ospedale Villa Sofia-Cervello,Palermo,2,5,3,2,5,5,1,5
+ISMETT,Palermo,4,5,1,1,5,1,3,4
+Policlinico Vittorio Emanuele,Catania,2,4,4,2,1,5,4,2
+Campus Bio-Medico,Roma,3,4,5,2,4,2,3,5
+Ospedale Garibaldi Centro,Catania,4,3,1,4,1,5,3,2
+Ospedale Papardo,Messina,4,1,1,1,3,2,1,2
+Ospedale dell'Angelo,Venezia,5,4,2,1,4,2,4,1
+Ospedale di Mestre,Venezia,5,4,3,1,1,3,1,3
+Policlinico G. Martino,Messina,5,2,5,1,5,1,5,3
+Ospedale Civile OMPA,Ragusa,2,3,2,4,1,2,3,1
+Policlinico Sant'Orsola-Malpighi,Bologna,5,4,3,2,3,4,5,5
+Ospedale Maggiore,Bologna,2,3,3,5,3,3,3,4
+Ospedale Bellaria,Bologna,1,3,4,4,3,3,5,5
+Azienda Ospedaliero-Universitaria di Parma,Parma,4,2,5,2,5,1,4,4
+Ospedale di Baggiovara,Modena,3,2,1,4,4,2,3,4
+Arcispedale Santa Maria Nuova,Reggio Emilia,1,5,1,1,5,2,4,5
+Ospedale Infermi,Rimini,5,3,1,3,4,2,3,3
+Ospedale Bufalini,Cesena,3,4,1,2,4,4,4,2
+Ospedale M. Bufalini,Cesena,1,2,5,4,4,2,5,2
+Ospedale Santa Maria delle Croci,Ravenna,5,2,3,3,3,3,5,4
+Azienda Ospedaliera San Giuseppe Moscati,Avellino,3,5,4,2,5,4,1,2
+Azienda Ospedaliera di Padova,Padova,2,5,2,3,2,4,3,1
+Ospedale San Bortolo,Vicenza,3,4,5,1,3,4,5,3
+Ospedale Civile SS. Giovanni e Paolo,Venezia,3,2,1,1,4,3,2,3
+Ospedale di Verona Borgo Trento,Verona,1,5,4,5,1,4,3,3
+Ospedale Giovanni Paolo II,Ragusa,4,3,1,4,5,5,3,2
+Istituto Ortopedico Rizzoli,Bologna,2,5,4,4,4,4,5,1
+Ospedale Morgagni,Pierantoni - Forl,3,1,2,4,2,4,1,1
+Ospedale Ca' Foncello,Treviso,2,4,3,2,4,2,3,5
+Ospedale di Dolo,Dolo,2,2,4,1,4,4,1,4
+Ospedale San Paolo,Savona,4,5,2,2,4,1,2,5
+Ospedale SS. Annunziata,Chieti,5,4,1,3,5,2,2,1
+Ospedale San Martino,Belluno,3,1,2,5,4,1,2,5
+Ospedale San Luigi Gonzaga,Orbassano,2,1,4,2,1,5,2,4
+Ospedale San Giovanni Bosco,Torino,3,4,1,1,5,5,4,5
+Ospedale Cardinal Massaia,Asti,2,3,3,2,2,5,2,5
+Ospedale di Belluno,Belluno,1,2,5,5,3,2,1,3
+Ospedale CTO,Torino,4,5,1,2,4,5,5,5
+Ospedale di Cittadella,Cittadella,5,5,1,3,4,5,5,4
+Ospedale Molinette,Torino,5,5,5,1,1,3,1,3
+Ospedale Regina Margherita,Torino,4,2,3,3,2,1,1,4
+Ospedale Sant'Anna,Torino,1,2,2,4,3,5,4,3
+Ospedale Mauriziano Umberto I,Torino,2,1,1,5,4,3,3,4
+Ospedale Maggiore della Carita,Novara,4,5,1,3,1,3,4,2
+Ospedale SS. Antonio e Biagio,Alessandria,3,5,4,5,4,5,1,5
+Ospedale Santa Croce e Carle,Cuneo,4,3,2,2,2,2,2,3
+Ospedale Maria Vittoria,Torino,4,1,4,4,4,1,2,3
+Ospedale Policlinico San Martino,Genova,3,1,5,2,5,3,4,4
+Ospedale Galliera,Genova,3,2,1,2,3,3,1,1
+Ospedale Villa Scassi,Genova,5,4,1,3,4,5,4,3
+Ospedale Gaslini,Genova,3,2,2,5,4,2,5,5
+Ospedale San Pio,Vasto,3,4,3,2,1,5,1,2
+Ospedale di Civitanova Marche,Civitanova Marche,5,1,5,2,2,3,1,1
+Ospedale San Salvatore,Pesaro,4,5,4,1,5,5,3,3
+Ospedale Madonna del Soccorso,San Benedetto del Tronto,2,5,2,1,1,3,2,2
+Ospedale Santa Maria della Misericordia,Perugia,3,2,5,4,5,2,4,1
+Ospedale Santa Maria,Terni,2,4,5,4,4,3,3,3
+Ospedale Lavagna,Lavagna,1,3,4,3,4,4,2,3
+Ospedali Riuniti di Ancona,Ancona,5,4,3,4,4,4,3,3
+Ospedale Salesi,Ancona,5,3,3,4,3,1,1,4
+INRCA Ancona,Ancona,2,5,3,5,3,5,2,5
+Ospedale Carlo Urbani,Jesi,3,5,4,1,5,4,2,1
+Ospedale di Macerata,Macerata,1,3,1,4,4,5,1,4
+Ospedale di Foligno,Foligno,3,5,4,5,1,2,2,5
+Ospedale di Spoleto,Spoleto,3,1,1,3,5,1,4,2
+Ospedale Pugliese Ciaccio,Catanzaro,5,3,2,4,5,4,4,1
+Ospedale San Francesco di Paola,Paola,3,3,3,1,2,5,3,5
+Ospedale di Crotone,Crotone,1,3,5,3,3,5,2,3
+Ospedale di Vibo Valentia,Vibo Valentia,5,4,4,1,4,4,5,2
+Ospedale San Francesco,Nuoro,5,4,5,4,1,5,1,4
+Ospedale Civile SS. Annunziata,Sassari,2,1,3,5,4,5,5,3
+Ospedale Civile G. Bernabeo,Ortona,4,4,3,2,2,5,2,1
+Ospedale Santa Croce,Fano,4,5,2,3,5,5,1,4
+Ospedale San Giovanni Battista,Orvieto,5,4,3,3,2,3,5,1
+Ospedale di Citta di Castello,Citt di Castello,3,3,1,1,2,3,4,1
+Ospedale di Gubbio,Gualdo Tadino - Gubbio,1,1,4,3,1,3,5,2
+Ospedale Media Valle del Tevere,Todi,4,2,2,2,3,1,4,3
+Ospedale di Melfi,Melfi,1,5,4,2,3,5,1,3
+Ospedale Umberto Parini,Aosta,3,2,4,2,5,4,3,5
+Ospedale Cardarelli,Campobasso,5,5,5,1,1,3,5,4
+Ospedale San Timoteo,Termoli,5,4,2,1,3,1,1,4
+Ospedale F. Veneziale,Isernia,4,2,4,5,4,1,1,5
+IRCCS Neuromed,Pozzilli,4,2,4,3,3,5,4,5
+Ospedale Binaghi,Cagliari,2,4,2,5,5,2,3,3
+Ospedale Brotzu,Cagliari,2,1,1,4,3,2,5,3
+Policlinico Duilio Casula,Monserrato,1,4,1,3,1,5,2,4
+Ospedale Marino,Cagliari,4,2,3,1,2,3,4,3
+Ospedale Santissima Trinita,Cagliari,4,2,5,2,3,4,1,5
+Ospedale San Carlo,Potenza,3,2,3,4,4,2,4,3
+Ospedale Santa Maria della Misericordia,Udine,1,3,4,3,4,2,2,1
+Ospedale Santa Maria degli Angeli,Pordenone,2,5,3,3,3,3,4,1
+Ospedale San Polo,Monfalcone,4,3,3,3,5,3,4,3
+Ospedale di Cattinara,Trieste,4,3,5,3,5,5,3,5
+Ospedale Maggiore,Trieste,4,3,3,4,1,4,3,5
+Ospedale San Daniele,San Daniele del Friuli,1,4,5,5,3,4,2,2
+Ospedale di Palmanova,Palmanova,3,1,4,3,5,5,3,1
+Ospedale di Monfalcone,Monfalcone,1,3,3,4,4,1,4,3
+Ospedale Giovanni Paolo II,Olbia,4,2,4,1,1,4,2,2
+Ospedale San Martino,Oristano,3,4,4,5,2,4,2,3
+Ospedale di Lagonegro,Lagonegro,3,5,5,3,3,5,4,4
+"Ospedale Generale Regionale ""F. Miulli""",Acquaviva delle Fonti,4,5,2,3,2,2,3,5
+"Ospedale ""Di Venere""",Bari,4,5,4,2,2,4,3,4
+Centro Medico San Giovanni,Brindisi,3,1,1,4,2,2,4,5
+Clinica Villa Bianca,Lecce,4,4,4,4,2,4,5,4
+Centro Diagnostico Puglia,Barletta,1,2,4,5,5,5,2,4
+"Istituto Tumori ""Giovanni Paolo II""",Bari,3,5,1,5,1,2,2,5
+"Ospedale ""SS. Annunziata""",Taranto,2,3,2,4,2,4,2,2
+"Ospedale ""Casa Sollievo della Sofferenza""",San Giovanni Rotondo,4,4,1,4,4,5,1,3
+Ospedale di Cavalese,Cavalese,3,4,4,3,2,4,4,5
+Centro Sanitario San Giovanni,Predazzo,5,3,3,3,5,5,3,2
+Villa Bianca,Arco,1,4,2,2,4,2,1,3
+Azienda Ospedaliero Universitaria Careggi,Firenze,2,1,5,2,3,5,5,4
+Centro Medico Fiorentino,Firenze,3,2,1,5,2,3,1,1
+Ospedale San Donato,Arezzo,5,5,4,5,1,2,4,1
+Policlinico Le Scotte,Siena,3,3,3,1,3,3,5,2
+Centro Oncologico Toscano,Prato,3,2,4,4,3,3,1,1
+"Ospedale ""San Paolo""",Bari,1,2,3,5,2,5,1,1
+"Ospedale ""Perrino""",Brindisi,2,5,3,3,3,2,1,5
+Ospedale Villa Rosa,Pergine Valsugana,5,5,2,1,1,5,5,3
+Ospedale di Cles,Cles,2,3,1,2,1,3,1,1
+Ospedale di Arco,Arco,4,2,2,5,3,1,5,1
+Ospedale San Lorenzo,Borgo Valsugana,5,5,1,1,2,1,4,1
+Ospedale San Giovanni di Dio,Firenze,2,4,1,4,3,5,5,5
+Ospedale San Giuseppe,Empoli,5,4,1,1,2,5,4,5
+IDI,Istituto Dermopatico dell'Immacolata - Roma,5,4,2,1,5,4,4,1
+Ospedale Antonio Cardarelli,Napoli,4,4,4,4,5,4,1,4
+Policlinico Federico II,Napoli,2,1,1,5,4,2,3,5
+Ospedale del Mare,Napoli,1,5,1,3,4,5,5,4
+AORN Dei Colli,Monaldi - Napoli,5,5,3,3,1,4,4,4
+Ospedale Santobono,Napoli,5,4,2,5,2,4,4,1
+Azienda Ospedaliera San Sebastiano,Caserta,4,5,3,1,1,2,4,3
+Casa di Cura Villa dei Fiori,Acerra,2,4,3,5,1,5,1,1
+Clinica Mediterranea,Napoli,3,5,4,3,5,3,3,3
+Ospedale San Salvatore,L'Aquila,2,2,1,4,5,2,1,1
+Ospedale Spirito Santo,Pescara,4,1,1,2,1,3,1,5
+Ospedale G. Mazzini,Teramo,1,2,1,4,2,1,1,1
+Ospedale San Massimo,Penne,2,5,3,1,3,3,3,4
+Ospedale Maria SS. dello Splendore,Giulianova,4,1,3,2,1,3,3,1
+Grande Ospedale Metropolitano,Reggio Calabria,1,5,4,4,1,1,5,4
+Ospedale di Policoro,Policoro,1,5,4,3,3,4,2,3
+Ospedale SS. Cosma e Damiano,Pescia,4,2,3,2,3,3,1,5
+Ospedale Santa Chiara,Trento,1,2,2,4,1,2,1,5
+Ospedale San Camillo,Trento,3,4,5,5,5,2,2,2
+Centro Medico Trentino,Trento,3,4,2,1,2,1,2,5
+Poliambulatorio Montebello,Trento,5,5,1,4,3,5,5,5
+Ospedale Santa Maria Nuova,Firenze,3,2,1,5,1,2,2,1
+Azienda Ospedaliero Universitaria Pisana,Pisa,4,4,2,3,1,5,1,4
+Ospedale Misericordia,Grosseto,5,4,2,1,5,1,3,3
+Policlinico Umberto I,Roma,1,5,2,2,4,2,4,3
+Ospedale San Giovanni Addolorata,Roma,2,2,5,5,3,1,4,1
+Ospedale San Camillo-Forlanini,Roma,4,4,4,5,2,4,1,1
+Policlinico Gemelli,Roma,5,5,1,5,5,4,3,1
+Ospedale Sant'Eugenio,Roma,4,5,4,1,1,1,5,1
+Ospedale San Filippo Neri,Roma,1,3,1,3,3,4,3,2
+Ospedale Sandro Pertini,Roma,3,3,2,4,3,2,3,2
+Ospedale Sant'Andrea,Roma,5,1,3,5,1,5,4,1
+Ospedale Pediatrico Bambino Gesu,Roma,5,5,4,5,2,1,1,3
+Ospedale Spallanzani,Roma,4,5,1,1,1,5,2,3
+Humanitas Research Hospital,Rozzano,2,4,4,5,3,5,3,4
+Ospedale Santa Corona,Pietra Ligure,2,5,1,5,3,2,2,4
+Ospedale Sant'Andrea,La Spezia,1,3,4,3,2,4,4,4
+Ospedale di Sanremo,Sanremo,2,2,1,2,1,3,4,2
+"Ospedale ""Vito Fazzi""",Lecce,4,3,3,1,1,3,3,4
+Clinica Solatrix,Rovereto,3,4,3,5,5,5,1,5
+Ospedale di Polistena,Polistena,4,1,2,3,1,2,5,1
+Ospedale di Soverato,Soverato,2,4,5,1,5,2,4,3
+Ospedale Ruggi D'Aragona,Salerno,4,1,1,2,5,5,5,1
+Ospedale Regina Apostolorum,Albano Laziale,2,5,2,1,3,5,1,2
+Policlinico di Bari,Bari,2,2,1,1,2,5,1,3
+Ospedale Pediatrico Meyer,Firenze,2,5,5,1,1,3,5,4
+Istituto Ortopedico Galeazzi,Milano,4,5,3,1,1,2,2,5
+AORN Dei Colli,Cotugno - Napoli,1,2,4,3,4,4,2,5
+Ospedale San Leonardo,Castellammare di Stabia,2,3,3,1,4,5,3,1
+Ospedale di Verona Borgo Roma,Verona,4,2,1,3,3,5,4,2
+Ospedale Renzetti,Lanciano,4,4,4,4,3,5,4,5
+Ospedale Giovanni Paolo II,Lamezia Terme,4,1,4,5,2,1,4,4
+Ospedale di Lamezia Terme,Lamezia Terme,4,4,2,2,1,5,5,1
+Ospedale Rummo,Benevento,5,5,5,4,2,3,3,2
+Azienda Ospedaliera di Cosenza,Cosenza,1,1,3,5,1,1,1,1
+Ospedale T. E. O. Marianna G.,Reggio Calabria,3,4,4,5,4,4,2,2
+Ospedale Jazzolino,Vibo Valentia,5,1,5,5,4,4,5,4
+Ospedale San Giovanni di Dio,Crotone,4,3,1,4,3,3,1,1
+Ospedale Madonna delle Grazie,Matera,4,2,3,1,1,1,4,3
+Ospedale di Villa d'Agri,Villa d'Agri,1,1,3,4,3,4,5,4
+Ospedale SS. Rosario,Venafro,1,2,3,2,3,2,5,2
+Ospedale G. Vietri,Larino,4,2,2,4,4,4,4,4
+Ospedale Beauregard,Aosta,3,2,3,1,2,4,4,2
+Clinica di Saint-Pierre,Saint-Pierre,2,4,1,5,1,5,5,5
+Ospedale San Giovanni di Dio,Gorizia,1,4,5,3,3,5,3,2
