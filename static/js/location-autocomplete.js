@@ -158,6 +158,20 @@ document.addEventListener('DOMContentLoaded', function() {
                         displayName: this.dataset.displayName
                     };
                     
+                    // Show the location selected indicator
+                    const indicator = document.getElementById('location-selected-indicator');
+                    if (indicator) {
+                        indicator.classList.remove('d-none');
+                    }
+                    
+                    // Update the main search button to indicate location search
+                    const searchButton = document.getElementById('searchButton');
+                    if (searchButton) {
+                        searchButton.innerHTML = '<i class="fas fa-map-marker-alt me-2"></i> Cerca Strutture Vicino a ' + 
+                                               '<span class="badge bg-info">' + this.dataset.displayName.substring(0, 15) + 
+                                               (this.dataset.displayName.length > 15 ? '...' : '') + '</span>';
+                    }
+                    
                     // Hide suggestions
                     locationSuggestions.style.display = 'none';
                 });

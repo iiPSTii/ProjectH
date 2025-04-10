@@ -148,11 +148,13 @@ function useSpecificQuery() {
     }
 }
 
-// Handle applying location search from address field
+// Since we've removed the separate location search button, this function is now obsolete.
+// The functionality has been integrated into the location selection process.
 function applyLocationSearch() {
+    // Update the location selected indicator
     const locationInput = document.getElementById('location-input');
     const queryTextField = document.getElementById('query_text');
-    const searchButton = document.getElementById('searchButton');
+    const indicator = document.getElementById('location-selected-indicator');
     
     if (locationInput && locationInput.value.trim() !== '') {
         // Make sure the query_text field has the location value
@@ -160,7 +162,12 @@ function applyLocationSearch() {
             queryTextField.value = locationInput.value;
         }
         
-        // Add a visual indicator that the location search is active
+        // Show the location selected indicator
+        if (indicator) {
+            indicator.classList.remove('d-none');
+        }
+        
+        // Update the main search button
         const searchButton = document.getElementById('searchButton');
         if (searchButton) {
             searchButton.focus();
@@ -168,15 +175,6 @@ function applyLocationSearch() {
             searchButton.innerHTML = '<i class="fas fa-map-marker-alt me-2"></i> Cerca Strutture Vicino a ' + 
                                     '<span class="badge bg-info">' + locationInput.value.substring(0, 15) + 
                                     (locationInput.value.length > 15 ? '...' : '') + '</span>';
-        }
-        
-        // Collapse any open filter sections
-        const filterOptions = document.getElementById('filterOptions');
-        if (filterOptions && filterOptions.classList.contains('show')) {
-            const bsCollapse = bootstrap.Collapse.getInstance(filterOptions);
-            if (bsCollapse) {
-                bsCollapse.hide();
-            }
         }
         
         // Scroll to the main search button for better UX

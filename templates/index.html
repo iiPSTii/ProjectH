@@ -32,12 +32,6 @@
                                             <span class="visually-hidden">Caricamento...</span>
                                         </div>
                                     </div>
-                                    <button type="button" class="btn btn-primary px-4" id="search-button" onclick="applyLocationSearch()">
-                                        <i class="fas fa-map-marked-alt me-2"></i> Applica
-                                        <span id="loading-spinner" class="spinner-border spinner-border-sm text-light ms-2" role="status" style="display: none;">
-                                            <span class="visually-hidden">Caricamento...</span>
-                                        </span>
-                                    </button>
                                 </div>
                                 <div id="location-suggestions" class="location-suggestions"></div>
                                 
@@ -47,8 +41,12 @@
                                 <input type="hidden" id="query_text" name="query_text" class="hidden-coordinates">
                             </div>
                             <small class="form-text text-muted">
-                                Trova le strutture più vicine alla tua posizione (entro 30km). Scegli un indirizzo dal menu a discesa per risultati più precisi.
+                                <i class="fas fa-info-circle me-1 text-info"></i> Seleziona un indirizzo dal menu a discesa, quindi utilizza il pulsante <strong>"Cerca Strutture"</strong> in fondo per trovare strutture sanitarie nel raggio di 30km.
                             </small>
+                            <div id="location-selected-indicator" class="mt-2 d-none">
+                                <span class="badge bg-success"><i class="fas fa-check me-1"></i> Indirizzo selezionato</span>
+                                <small class="text-muted ms-2">Ora puoi premere "Cerca Strutture" in fondo alla pagina</small>
+                            </div>
                         </div>
                         
                         <!-- Filters section -->
