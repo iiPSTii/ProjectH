@@ -65,17 +65,17 @@ CITY_TO_REGION_MAP = {
     'verbania': 'Piemonte',
     'vercelli': 'Piemonte',
     
-    # Emilia Romagna
-    'bologna': 'Emilia Romagna',
-    'ferrara': 'Emilia Romagna',
-    'forlì': 'Emilia Romagna',
-    'cesena': 'Emilia Romagna',
-    'modena': 'Emilia Romagna',
-    'parma': 'Emilia Romagna',
-    'piacenza': 'Emilia Romagna',
-    'ravenna': 'Emilia Romagna',
-    'reggio emilia': 'Emilia Romagna',
-    'rimini': 'Emilia Romagna',
+    # Emilia-Romagna
+    'bologna': 'Emilia-Romagna',
+    'ferrara': 'Emilia-Romagna',
+    'forlì': 'Emilia-Romagna',
+    'cesena': 'Emilia-Romagna',
+    'modena': 'Emilia-Romagna',
+    'parma': 'Emilia-Romagna',
+    'piacenza': 'Emilia-Romagna',
+    'ravenna': 'Emilia-Romagna',
+    'reggio emilia': 'Emilia-Romagna',
+    'rimini': 'Emilia-Romagna',
     
     # Puglia
     'bari': 'Puglia',
