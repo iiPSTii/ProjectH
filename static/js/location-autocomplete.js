@@ -16,9 +16,38 @@ document.addEventListener('DOMContentLoaded', function() {
     let selectedLocation = null;
     let typingTimer;
     const doneTypingInterval = 500; // Wait 500ms after user stops typing
+    let lastInputValue = '';  // Track the last known input value for autofill detection
     
     // Only initialize if we have the location input on this page
     if (!locationInput) return;
+    
+    // Function to check for browser/phone autofill
+    function checkForAutofill() {
+        const currentValue = locationInput.value.trim();
+        
+        // If value has changed without an input event, it's likely an autofill
+        if (currentValue !== lastInputValue && currentValue.length > 2) {
+            console.log('Autofill detected:', currentValue);
+            lastInputValue = currentValue;
+            
+            // Trigger the search for this value
+            fetchSuggestions(currentValue);
+        }
+    }
+    
+    // Setup autofill detection
+    // Check right after page load (for page reload with browser-saved values)
+    setTimeout(checkForAutofill, 500);
+    
+    // Check on focus events (browsers often autofill on focus)
+    locationInput.addEventListener('focus', function() {
+        setTimeout(checkForAutofill, 100);
+    });
+    
+    // Also check on click, which can trigger autofill on mobile
+    locationInput.addEventListener('click', function() {
+        setTimeout(checkForAutofill, 100);
+    });
     
     // Function to fetch location suggestions from Nominatim
     function fetchSuggestions(query) {
@@ -218,6 +247,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const query = this.value.trim();
         
+        // Update last known value to detect autofill
+        lastInputValue = query;
+        
         // Don't search for very short queries
         if (query.length < 3) {
             locationSuggestions.innerHTML = '';
@@ -229,6 +261,26 @@ document.addEventListener('DOMContentLoaded', function() {
         typingTimer = setTimeout(function() {
             fetchSuggestions(query);
         }, doneTypingInterval);
+    });
+    
+    // Special case for browser autofill - add more events that might trigger it
+    locationInput.addEventListener('change', function() {
+        checkForAutofill();
+    });
+    
+    // Listen for autocomplete events
+    locationInput.addEventListener('autocomplete', function() {
+        checkForAutofill();
+    });
+    
+    // Listen for autofill events - newer spec
+    locationInput.addEventListener('autocompleteerror', function() {
+        checkForAutofill();
+    });
+    
+    // For mobile browsers that might use a different event
+    document.addEventListener('pageshow', function() {
+        setTimeout(checkForAutofill, 500);
     });
     
     // Close suggestions when clicking outside
