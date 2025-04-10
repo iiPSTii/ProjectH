@@ -426,25 +426,82 @@ def find_facilities_near_address(query_text, facilities, max_distance=10.0, max_
     Returns:
         dict: Dictionary with facilities sorted by distance and search location details
     """
-    # If the query might contain medical terms along with an address,
-    # extract just the address part
-    address_text = extract_address_part(query_text)
+    # Define common Italian cities for direct city-only lookup
+    common_cities = [
+        'milano', 'roma', 'napoli', 'torino', 'bologna', 'firenze', 'genova', 
+        'palermo', 'bari', 'venezia', 'verona', 'padova', 'catania', 'messina', 
+        'salerno', 'parma', 'modena', 'reggio', 'pisa', 'livorno', 'siena'
+    ]
     
-    # Parse and geocode the address
-    address_components = parse_address(address_text)
-    if not address_components:
-        logger.warning(f"Could not parse address components from: {address_text}")
-        return {}
-    
-    geocoded_address = geocode_address(address_components)
-    if not geocoded_address:
-        logger.warning(f"Could not geocode address: {address_text}")
-        return {}
+    # Special handling for city-only searches (like "Parma" or "Milano")
+    if query_text.strip().lower() in common_cities and ' ' not in query_text.strip():
+        logger.info(f"Direct city search for: {query_text}")
+        # Build a query directly for this city
+        search_query = f"{query_text.strip()}, {DEFAULT_COUNTRY}"
+        
+        # Request parameters
+        params = {
+            'q': search_query,
+            'format': 'json',
+            'limit': 1,
+            'countrycodes': 'it'
+        }
+        
+        headers = {
+            'User-Agent': 'FindMyCure-Italia/1.0'
+        }
+        
+        # Make the request
+        try:
+            response = requests.get(
+                NOMINATIM_API,
+                params=params,
+                headers=headers,
+                timeout=GEOCODING_TIMEOUT
+            )
+            response.raise_for_status()
+            
+            # Parse the results
+            results = response.json()
+            if results:
+                # Get the first result
+                result = results[0]
+                geocoded_address = {
+                    'lat': float(result['lat']),
+                    'lon': float(result['lon']),
+                    'display_name': result['display_name']
+                }
+                logger.info(f"Successfully geocoded city: {query_text} -> {geocoded_address['display_name']}")
+            else:
+                logger.warning(f"No results found for city: {query_text}")
+                return {}
+        except Exception as e:
+            logger.error(f"Error geocoding city: {str(e)}")
+            return {}
+    else:
+        # Normal address processing for non-city-only searches
+        # If the query might contain medical terms along with an address,
+        # extract just the address part
+        address_text = extract_address_part(query_text)
+        
+        # Parse and geocode the address
+        address_components = parse_address(address_text)
+        if not address_components:
+            logger.warning(f"Could not parse address components from: {address_text}")
+            return {}
+        
+        geocoded_address = geocode_address(address_components)
+        if not geocoded_address:
+            logger.warning(f"Could not geocode address: {address_text}")
+            return {}
     
     # Save the search coordinates
     search_lat = geocoded_address['lat']
     search_lon = geocoded_address['lon']
     search_display = geocoded_address['display_name']
+    
+    if 'address_text' not in locals():
+        address_text = query_text  # In case of city-only search
     
     logger.info(f"Successfully geocoded address: {address_text} -> {search_display}")
     
