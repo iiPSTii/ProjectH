@@ -313,10 +313,16 @@ document.addEventListener('DOMContentLoaded', function() {
                         displayName: this.dataset.displayName
                     };
                     
-                    // Update location indicator
+                    // Mostra l'indicatore verde di conferma
+                    const confirmationIndicator = document.getElementById('location-confirmation');
+                    if (confirmationIndicator) {
+                        confirmationIndicator.classList.add('active');
+                    }
+                    
+                    // Nascondiamo l'indicatore originale
                     const indicator = document.getElementById('location-selected-indicator');
                     if (indicator) {
-                        indicator.classList.remove('d-none');
+                        // indicator.classList.remove('d-none'); // Non mostriamo più questo indicatore
                         
                         const locationNameIndicator = indicator.querySelector('.location-name');
                         if (locationNameIndicator) {
@@ -481,10 +487,16 @@ document.addEventListener('DOMContentLoaded', function() {
                         displayName: this.dataset.displayName
                     };
                     
-                    // Show the location selected indicator
+                    // Mostra l'indicatore verde di conferma
+                    const confirmationIndicator = document.getElementById('location-confirmation');
+                    if (confirmationIndicator) {
+                        confirmationIndicator.classList.add('active');
+                    }
+                    
+                    // Nascondiamo l'indicatore originale
                     const indicator = document.getElementById('location-selected-indicator');
                     if (indicator) {
-                        indicator.classList.remove('d-none');
+                        // indicator.classList.remove('d-none'); // Non mostriamo più questo indicatore
                         
                         // Update the location name in the indicator
                         const locationNameIndicator = indicator.querySelector('.location-name');
@@ -538,6 +550,12 @@ document.addEventListener('DOMContentLoaded', function() {
         selectedLocation = null;
         latitudeInput.value = '';
         longitudeInput.value = '';
+        
+        // Hide the green confirmation icon when user types
+        const confirmationIndicator = document.getElementById('location-confirmation');
+        if (confirmationIndicator) {
+            confirmationIndicator.classList.remove('active');
+        }
         
         const query = this.value.trim();
         
