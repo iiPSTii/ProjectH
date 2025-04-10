@@ -7,7 +7,7 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 from medical_mapping import map_query_to_specialties
 from medical_professionals import map_profession_to_specialties, PROFESSION_TO_SPECIALTY_MAP
 from location_mapping import detect_location_in_query
-from geocoding import is_address_query, extract_address_part, find_facilities_near_address
+from geocoding import is_address_query, extract_address_part, find_facilities_near_address, calculate_distance
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
