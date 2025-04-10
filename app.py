@@ -111,12 +111,13 @@ with app.app_context():
                         facility.latitude, facility.longitude
                     )
                     if distance <= 30.0:  # 30km radius
-                        facility_dict = facility.to_dict()
-                        facility_dict['distance'] = distance
-                        facilities_with_distance.append(facility_dict)
+                        # Add distance directly to the facility object
+                        facility.distance = round(distance, 1)
+                        facility.distance_text = f"{facility.distance:.1f} km"
+                        facilities_with_distance.append(facility)
             
             # Sort by distance
-            facilities_with_distance.sort(key=lambda x: x['distance'])
+            facilities_with_distance.sort(key=lambda x: x.distance)
             
             # Create address search results structure
             address_search_results = {
