@@ -12,15 +12,27 @@
 /* Loading indicator for the location input */
 .loading-indicator {
     position: absolute;
-    right: 10px;
+    right: 90px; /* Adjusted to account for new suggestion button */
     top: 50%;
     transform: translateY(-50%);
     display: none;
 }
 
 /* Show loading indicator when input has .loading class */
-.location-input-container input.loading + .loading-indicator {
+.location-input-container input.loading ~ .loading-indicator {
     display: block;
+}
+
+/* Styling for the show suggestions button */
+#show-suggestions-btn {
+    background-color: #495057;
+    color: #ffffff;
+    border-color: #6c757d;
+}
+
+#show-suggestions-btn:hover {
+    background-color: #6c757d;
+    border-color: #6c757d;
 }
 
 /* Suggestions dropdown */

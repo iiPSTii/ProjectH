@@ -354,6 +354,27 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(checkForAutofill, 500);
     });
     
+    // Manual button to show suggestions for when autofill doesn't trigger events correctly
+    const showSuggestionsBtn = document.getElementById('show-suggestions-btn');
+    if (showSuggestionsBtn) {
+        showSuggestionsBtn.addEventListener('click', function() {
+            const currentValue = locationInput.value.trim();
+            console.log('Manual suggestion request for:', currentValue);
+            
+            if (currentValue.length > 2) {
+                // Force suggestions to appear
+                fetchSuggestions(currentValue);
+                
+                // Also update query_text as fallback
+                if (document.getElementById('query_text')) {
+                    document.getElementById('query_text').value = currentValue;
+                }
+            } else {
+                alert('Inserisci almeno 3 caratteri per cercare suggerimenti.');
+            }
+        });
+    }
+    
     // Close suggestions when clicking outside
     document.addEventListener('click', function(event) {
         if (!locationInput.contains(event.target) && !locationSuggestions.contains(event.target)) {
