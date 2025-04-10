@@ -229,8 +229,15 @@ with app.app_context():
                 detected_location = search_location.get('display_name', query_text)
             else:
                 logger.debug(f"No facilities found near address: '{query_text}'")
-                # If no facilities found near address, fall back to regular search
-                is_address_search = False
+                
+                # Preserve the search_location even if no facilities found, so we can still use coordinates
+                if address_search_results and address_search_results.get('search_location'):
+                    search_location = address_search_results.get('search_location', {})
+                    detected_location = search_location.get('display_name', query_text)
+                    logger.debug(f"Preserved location info for: {detected_location}")
+                else:
+                    # If no facilities found near address, fall back to regular search
+                    is_address_search = False
             
             # If not an address search or address search found no results, try regular search
             if not is_address_search:
