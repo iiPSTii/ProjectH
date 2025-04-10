@@ -483,10 +483,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Twitter Conversion Tracking for Successful Search
     if (typeof twq !== 'undefined') {
-        // This tracks a successful search as a conversion
-        twq('track', 'Search', {
+        // This tracks a successful search as a conversion using Twitter's updated API
+        twq('event', 'tw-phgu0-ofgx1', {
             // You can add additional parameters if needed
-            content_type: 'medical_search',
             num_results: '{{ facilities|length }}',
             {% if search_params.specialty %}
             specialty: '{{ search_params.specialty }}',

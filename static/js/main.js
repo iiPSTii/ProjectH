@@ -28,11 +28,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     const facilityCard = this.closest('.facility-card');
                     const facilityName = facilityCard ? facilityCard.getAttribute('data-name') : 'unknown';
                     
-                    // Track the phone call conversion
-                    twq('track', 'PhoneCall', {
-                        content_name: facilityName,
-                        content_category: 'medical_facility',
-                        content_type: 'phone_number'
+                    // Track the phone call conversion with updated Twitter API
+                    twq('event', 'tw-phgu0-ofgx2', {
+                        facility_name: facilityName
                     });
                     
                     console.log('Tracked phone call conversion for: ' + facilityName);
