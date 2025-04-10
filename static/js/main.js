@@ -17,9 +17,21 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
+    // IMPORTANT: Reset search button state on page load
+    // This fixes the issue with the button staying in loading state when navigating back
+    const searchButton = document.getElementById('searchButton');
+    if (searchButton) {
+        // Reset any stored disabled state and restore original text
+        searchButton.disabled = false;
+        searchButton.innerHTML = '<i class="fas fa-search me-2"></i> Cerca Strutture';
+    }
+    
     // Add loading spinner to search form
     const searchForm = document.getElementById('searchForm');
     if (searchForm) {
+        // Store original button HTML to restore it later if needed
+        const originalButtonHTML = searchButton ? searchButton.innerHTML : '<i class="fas fa-search me-2"></i> Cerca Strutture';
+        
         searchForm.addEventListener('submit', function() {
             const searchButton = document.getElementById('searchButton');
             if (searchButton) {
@@ -28,10 +40,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Change button text and add spinner
                 searchButton.innerHTML = '<i class="fas fa-search me-2"></i> Ricerca in corso... <span class="spinner-border spinner-border-sm ms-2" role="status" aria-hidden="true"></span>';
+                
+                // Save the form submission time to localStorage
+                localStorage.setItem('lastSearchTime', Date.now());
             }
             
             // Allow the form to submit
             return true;
+        });
+        
+        // Reset the button if the browser's back button was used to return to this page
+        window.addEventListener('pageshow', function(event) {
+            // This will fire when the page is shown, including when coming back via browser back button
+            if (event.persisted || window.performance && window.performance.navigation.type === 2) {
+                // Reset the search button state
+                const searchButton = document.getElementById('searchButton');
+                if (searchButton) {
+                    searchButton.disabled = false;
+                    searchButton.innerHTML = originalButtonHTML;
+                }
+            }
         });
     }
 
