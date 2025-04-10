@@ -1,0 +1,16 @@
+facility_id,specialty_id,specialty_name,quality_rating
+1,1,Cardiologia,4.5
+1,2,Chirurgia Generale,4.2
+1,3,Neurologia,4.0
+2,1,Cardiologia,3.8
+2,4,Pediatria,4.7
+2,5,Oncologia,4.3
+3,1,Cardiologia,5.0
+3,3,Neurologia,4.8
+3,6,Ortopedia,4.6
+4,1,Cardiologia,3.5
+4,7,Ginecologia,4.4
+4,8,Urologia,4.1
+5,1,Cardiologia,4.7
+5,9,Psichiatria,3.9
+5,10,Radiologia,4.5

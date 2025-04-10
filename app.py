@@ -786,7 +786,6 @@ with app.app_context():
             flash("Accesso non autorizzato all'area di amministrazione.", "danger")
             return redirect(url_for('index'))
             
-        import os
         import tempfile
         from flask import send_file
         from export_database import export_database
