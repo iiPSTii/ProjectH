@@ -30,6 +30,7 @@ class FacilitySpecialty(db.Model):
     
     facility_id = db.Column(db.Integer, ForeignKey('medical_facilities.id'), primary_key=True)
     specialty_id = db.Column(db.Integer, ForeignKey('specialties.id'), primary_key=True)
+    quality_rating = db.Column(db.Float, default=None)
     
     facility = relationship("MedicalFacility", back_populates="specialties")
     specialty = relationship("Specialty", back_populates="facilities")

@@ -84,46 +84,42 @@ with app.app_context():
         if not specialty_name:
             # If no specialty specified, use general quality score
             return facility.quality_score if facility.quality_score is not None else 0
-            
-        # Map common specialty names to their attribute names in the model
-        specialty_to_attribute = {
-            'cardiologia': 'cardiology_rating',
-            'ortopedia': 'orthopedics_rating',
-            'oncologia': 'oncology_rating',
-            'neurologia': 'neurology_rating',
-            'chirurgia': 'surgery_rating',
-            'urologia': 'urology_rating',
-            'pediatria': 'pediatrics_rating',
-            'ginecologia': 'gynecology_rating'
-        }
         
         # Normalize specialty name to lowercase for matching
         normalized_specialty = specialty_name.lower()
         
-        # Check direct mapping - first priority: facilities with the specific rating
-        for specialty_key, attribute_name in specialty_to_attribute.items():
-            if specialty_key in normalized_specialty:
-                rating = getattr(facility, attribute_name, None)
-                if rating is not None:
-                    # Found a specialty-specific rating, return it with high priority
-                    return rating + 10.0  # Add 10 points to ensure these appear first
+        # Prima priorità: strutture con rating specifico per la specialità cercata
+        for fs in facility.specialties:
+            # Verifica una corrispondenza esatta con la specialità cercata
+            if fs.specialty.name.lower() == normalized_specialty and fs.quality_rating is not None:
+                # Trovato rating specifico per la specialità, restituiscilo con alta priorità
+                return fs.quality_rating + 10.0  # Aggiungi 10 punti per assicurarsi che appaiano per primi
         
-        # Second priority: check if the facility has the specialty even without a specific rating
+        # Seconda priorità: strutture che hanno specialità simili con rating specifici
+        # Supporto per specialità che contengono il termine cercato, o viceversa
+        for fs in facility.specialties:
+            if ((normalized_specialty in fs.specialty.name.lower() or 
+                 fs.specialty.name.lower() in normalized_specialty) and 
+                fs.quality_rating is not None):
+                # Trovata una specialità correlata con rating specifico
+                return fs.quality_rating + 7.0  # Aggiungi 7 punti (leggermente meno della prima priorità)
+        
+        # Terza priorità: strutture che hanno la specialità ma senza rating specifico
         has_specialty = False
         for fs in facility.specialties:
             if (fs.specialty.name.lower() == normalized_specialty or
-                any(specialty in fs.specialty.name.lower() for specialty in specialty_to_attribute.keys())):
+                normalized_specialty in fs.specialty.name.lower() or
+                fs.specialty.name.lower() in normalized_specialty):
                 has_specialty = True
                 break
         
-        # Second priority: facilities that have the specialty but no specific rating
         if has_specialty:
-            # Use general quality score but with a small boost
+            # Usa il punteggio di qualità generale ma con un piccolo boost
             general_score = facility.quality_score if facility.quality_score is not None else 0
-            return general_score + 5.0  # Add 5 points to position these after specific ratings
+            return general_score + 5.0  # Aggiungi 5 punti per posizionare questi dopo i rating specifici
             
-        # Third priority (last): facilities that don't have the specialty at all
-        # Return a much lower score to push these to the end
+        # Quarta priorità (ultima): strutture che non hanno affatto la specialità
+        # Restituisci un punteggio molto più basso per spingere queste alla fine
         return (facility.quality_score - 20.0) if facility.quality_score is not None else -20.0
     
     # Helper function to get equivalent specialties

@@ -140,8 +140,10 @@ def process_batch(session, batch, specialty_map, stats):
             
             if facility_specialty:
                 # Update existing relationship if the rating is different
-                if abs(facility_specialty.quality_rating - quality_rating) > 0.001:
-                    old_rating = facility_specialty.quality_rating
+                old_rating = facility_specialty.quality_rating
+                
+                # Se il vecchio rating è None o diverso dal nuovo, aggiorniamo
+                if old_rating is None or abs(old_rating - quality_rating) > 0.001:
                     facility_specialty.quality_rating = quality_rating
                     logger.debug(f"Updated rating for facility {facility_id}, specialty {specialty_id}: {old_rating} -> {quality_rating}")
                     stats['updated'] += 1
