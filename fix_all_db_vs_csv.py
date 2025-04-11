@@ -115,7 +115,8 @@ def get_facility_specialties(session, facility_id):
     Returns:
         dict: Dizionario con nome specialità -> rating e ID specialty
     """
-    # Utilizzo una query senza l'id della tabella facility_specialty
+    # Utilizzo una query senza l'id della tabella facility_specialty 
+    # poiché questa tabella usa una chiave composta (facility_id, specialty_id)
     sql_query = """
     SELECT s.id, s.name, fs.quality_rating
     FROM facility_specialty fs
@@ -128,23 +129,12 @@ def get_facility_specialties(session, facility_id):
     for row in result:
         specialty_id, specialty_name, rating = row
         
-        # Ora ottengo l'id della tabella facility_specialty con una query separata
-        fs_query = """
-        SELECT id
-        FROM facility_specialty
-        WHERE facility_id = :facility_id AND specialty_id = :specialty_id
-        """
-        fs_result = session.execute(
-            sqlalchemy.text(fs_query),
-            {"facility_id": facility_id, "specialty_id": specialty_id}
-        ).fetchone()
-        
-        fs_id = fs_result[0] if fs_result else None
-        
+        # In questo caso, non ho bisogno di recuperare un ID separato
+        # poiché uso direttamente la chiave composta per identificare la relazione
         specialties[specialty_name] = {
             'specialty_id': specialty_id,
             'rating': float(rating) if rating is not None else None,
-            'fs_id': fs_id
+            'facility_id': facility_id
         }
     
     return specialties
@@ -242,8 +232,12 @@ def fix_facility_ratings(session, facility, db_specialties, csv_ratings):
             
             # Se il rating è diverso, lo aggiorno
             if abs(db_rating - csv_rating) > 0.01:
-                # Ottengo il record facility_specialty
-                fs = session.get(FacilitySpecialty, db_info['fs_id'])
+                # Ottengo il record facility_specialty usando la chiave composta
+                fs = session.query(FacilitySpecialty).filter(
+                    FacilitySpecialty.facility_id == db_info['facility_id'],
+                    FacilitySpecialty.specialty_id == db_info['specialty_id']
+                ).first()
+                
                 if fs:
                     old_rating = fs.quality_rating
                     fs.quality_rating = csv_rating

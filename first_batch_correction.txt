@@ -1,0 +1,312 @@
+============================================
+       REPORT CORREZIONI DATABASE VS CSV      
+============================================
+
+Data correzione: 2025-04-11 14:50:18.279553
+Tempo di esecuzione: 0:00:05.425904
+
+STATISTICHE GENERALI
+--------------------
+Strutture verificate: 50
+Strutture aggiornate: 35 (70.00%)
+Specialità verificate: 400
+Specialità già corrette: 353 (88.25%)
+Specialità aggiornate: 33 (8.25%)
+Specialità aggiunte: 14 (3.50%)
+
+DETTAGLIO DEGLI AGGIORNAMENTI
+-----------------------------
+
+Struttura: Ospedale Generale Regionale "F. Miulli"
+Città: Acquaviva delle Fonti
+ID: 1822
+Chiave CSV: ('Ospedale Generale Regionale "F. Miulli"', 'Acquaviva delle Fonti')
+Aggiornamenti:
+  - Neurologia: 2.0 -> 3.0
+---------------------------
+
+Struttura: Policlinico di Bari
+Città: Bari
+ID: 1824
+Chiave CSV: ('Policlinico di Bari', 'Bari')
+Aggiornamenti:
+  - Neurologia: 2.0 -> 1.0
+---------------------------
+
+Struttura: Ospedale "San Paolo"
+Città: Bari
+ID: 1825
+Chiave CSV: ('Ospedale "San Paolo"', 'Bari')
+Aggiornamenti:
+  - Neurologia: 2.0 -> 5.0
+---------------------------
+
+Struttura: Centro Medico San Giovanni
+Città: Brindisi
+ID: 1826
+Chiave CSV: ('Centro Medico San Giovanni', 'Brindisi')
+Aggiornamenti:
+  - Neurologia: 2.0 -> 4.0
+---------------------------
+
+Struttura: Clinica Villa Bianca
+Città: Lecce
+ID: 1827
+Chiave CSV: ('Clinica Villa Bianca', 'Lecce')
+Aggiornamenti:
+  - Neurologia: 2.0 -> 4.0
+---------------------------
+
+Struttura: Centro Diagnostico Puglia
+Città: Barletta
+ID: 1829
+Chiave CSV: ('Centro Diagnostico Puglia', 'Barletta')
+Aggiornamenti:
+  - Cardiologia: Aggiunto con rating 1.0
+  - Ortopedia: Aggiunto con rating 2.0
+  - Oncologia: Aggiunto con rating 4.0
+  - Neurologia: Aggiunto con rating 5.0
+  - Chirurgia Generale: Aggiunto con rating 5.0
+  - Pediatria: Aggiunto con rating 2.0
+  - Ginecologia: Aggiunto con rating 4.0
+---------------------------
+
+Struttura: Istituto Tumori "Giovanni Paolo II"
+Città: Bari
+ID: 1830
+Chiave CSV: ('Istituto Tumori "Giovanni Paolo II"', 'Bari')
+Aggiornamenti:
+  - Neurologia: 1.0 -> 5.0
+---------------------------
+
+Struttura: Ospedale "SS. Annunziata"
+Città: Taranto
+ID: 1832
+Chiave CSV: ('Ospedale "SS. Annunziata"', 'Taranto')
+Aggiornamenti:
+  - Neurologia: 2.0 -> 4.0
+---------------------------
+
+Struttura: Ospedale Santa Chiara
+Città: Trento
+ID: 1834
+Chiave CSV: ('Ospedale Santa Chiara', 'Trento')
+Aggiornamenti:
+  - Neurologia: 1.0 -> 4.0
+---------------------------
+
+Struttura: Centro Medico Trentino
+Città: Trento
+ID: 1837
+Chiave CSV: ('Centro Medico Trentino', 'Trento')
+Aggiornamenti:
+  - Neurologia: 2.0 -> 1.0
+---------------------------
+
+Struttura: Poliambulatorio Montebello
+Città: Trento
+ID: 1839
+Chiave CSV: ('Poliambulatorio Montebello', 'Trento')
+Aggiornamenti:
+  - Neurologia: 3.0 -> 4.0
+---------------------------
+
+Struttura: Ospedale di Cavalese
+Città: Cavalese
+ID: 1840
+Chiave CSV: ('Ospedale di Cavalese', 'Cavalese')
+Aggiornamenti:
+  - Neurologia: 2.0 -> 3.0
+---------------------------
+
+Struttura: Ospedale di Cles
+Città: Cles
+ID: 1841
+Chiave CSV: ('Ospedale di Cles', 'Cles')
+Aggiornamenti:
+  - Neurologia: 1.0 -> 2.0
+---------------------------
+
+Struttura: Ospedale di Arco
+Città: Arco
+ID: 1842
+Chiave CSV: ('Ospedale di Arco', 'Arco')
+Aggiornamenti:
+  - Neurologia: 3.0 -> 5.0
+---------------------------
+
+Struttura: Centro Sanitario San Giovanni
+Città: Predazzo
+ID: 1843
+Chiave CSV: ('Centro Sanitario San Giovanni', 'Predazzo')
+Aggiornamenti:
+  - Cardiologia: Aggiunto con rating 5.0
+  - Ortopedia: Aggiunto con rating 3.0
+  - Oncologia: Aggiunto con rating 3.0
+  - Neurologia: Aggiunto con rating 3.0
+  - Chirurgia Generale: Aggiunto con rating 5.0
+  - Pediatria: Aggiunto con rating 3.0
+  - Ginecologia: Aggiunto con rating 2.0
+---------------------------
+
+Struttura: Villa Bianca
+Città: Arco
+ID: 1844
+Chiave CSV: ('Villa Bianca', 'Arco')
+Aggiornamenti:
+  - Neurologia: 4.0 -> 2.0
+---------------------------
+
+Struttura: Ospedale San Lorenzo
+Città: Borgo Valsugana
+ID: 1845
+Chiave CSV: ('Ospedale San Lorenzo', 'Borgo Valsugana')
+Aggiornamenti:
+  - Neurologia: 2.0 -> 1.0
+---------------------------
+
+Struttura: Azienda Ospedaliero Universitaria Careggi
+Città: Firenze
+ID: 1846
+Chiave CSV: ('Azienda Ospedaliero Universitaria Careggi', 'Firenze')
+Aggiornamenti:
+  - Neurologia: 3.0 -> 2.0
+---------------------------
+
+Struttura: Ospedale Santa Maria Nuova
+Città: Firenze
+ID: 1847
+Chiave CSV: ('Ospedale Santa Maria Nuova', 'Firenze')
+Aggiornamenti:
+  - Neurologia: 1.0 -> 5.0
+---------------------------
+
+Struttura: Azienda Ospedaliero Universitaria Pisana
+Città: Pisa
+ID: 1849
+Chiave CSV: ('Azienda Ospedaliero Universitaria Pisana', 'Pisa')
+Aggiornamenti:
+  - Neurologia: 1.0 -> 3.0
+---------------------------
+
+Struttura: Centro Medico Fiorentino
+Città: Firenze
+ID: 1850
+Chiave CSV: ('Centro Medico Fiorentino', 'Firenze')
+Aggiornamenti:
+  - Neurologia: 2.0 -> 5.0
+---------------------------
+
+Struttura: Ospedale Misericordia
+Città: Grosseto
+ID: 1851
+Chiave CSV: ('Ospedale Misericordia', 'Grosseto')
+Aggiornamenti:
+  - Neurologia: 5.0 -> 1.0
+---------------------------
+
+Struttura: Ospedale San Donato
+Città: Arezzo
+ID: 1852
+Chiave CSV: ('Ospedale San Donato', 'Arezzo')
+Aggiornamenti:
+  - Neurologia: 1.0 -> 5.0
+---------------------------
+
+Struttura: Policlinico Le Scotte
+Città: Siena
+ID: 1853
+Chiave CSV: ('Policlinico Le Scotte', 'Siena')
+Aggiornamenti:
+  - Neurologia: 3.0 -> 1.0
+---------------------------
+
+Struttura: Centro Oncologico Toscano
+Città: Prato
+ID: 1854
+Chiave CSV: ('Centro Oncologico Toscano', 'Prato')
+Aggiornamenti:
+  - Neurologia: 3.0 -> 4.0
+---------------------------
+
+Struttura: Ospedale San Giuseppe
+Città: Empoli
+ID: 1856
+Chiave CSV: ('Ospedale San Giuseppe', 'Empoli')
+Aggiornamenti:
+  - Neurologia: 2.0 -> 1.0
+---------------------------
+
+Struttura: Ospedale SS. Cosma e Damiano
+Città: Pescia
+ID: 1857
+Chiave CSV: ('Ospedale SS. Cosma e Damiano', 'Pescia')
+Aggiornamenti:
+  - Neurologia: 3.0 -> 2.0
+---------------------------
+
+Struttura: Policlinico Umberto I
+Città: Roma
+ID: 1858
+Chiave CSV: ('Policlinico Umberto I', 'Roma')
+Aggiornamenti:
+  - Neurologia: 4.0 -> 2.0
+---------------------------
+
+Struttura: Ospedale San Giovanni Addolorata
+Città: Roma
+ID: 1859
+Chiave CSV: ('Ospedale San Giovanni Addolorata', 'Roma')
+Aggiornamenti:
+  - Neurologia: 3.0 -> 5.0
+---------------------------
+
+Struttura: Ospedale San Camillo-Forlanini
+Città: Roma
+ID: 1860
+Chiave CSV: ('Ospedale San Camillo-Forlanini', 'Roma')
+Aggiornamenti:
+  - Neurologia: 2.0 -> 5.0
+---------------------------
+
+Struttura: Ospedale Sandro Pertini
+Città: Roma
+ID: 1864
+Chiave CSV: ('Ospedale Sandro Pertini', 'Roma')
+Aggiornamenti:
+  - Neurologia: 3.0 -> 4.0
+---------------------------
+
+Struttura: Ospedale Regina Apostolorum
+Città: Albano Laziale
+ID: 1865
+Chiave CSV: ('Ospedale Regina Apostolorum', 'Albano Laziale')
+Aggiornamenti:
+  - Neurologia: 3.0 -> 1.0
+---------------------------
+
+Struttura: Ospedale Sant'Andrea
+Città: Roma
+ID: 1866
+Chiave CSV: ("Ospedale Sant'Andrea", 'Roma')
+Aggiornamenti:
+  - Neurologia: 1.0 -> 5.0
+---------------------------
+
+Struttura: Ospedale Pediatrico Bambino Gesu
+Città: Roma
+ID: 1867
+Chiave CSV: ('Ospedale Pediatrico Bambino Gesu', 'Roma')
+Aggiornamenti:
+  - Neurologia: 2.0 -> 5.0
+---------------------------
+
+Struttura: Campus Bio-Medico
+Città: Roma
+ID: 1870
+Chiave CSV: ('Campus Bio-Medico', 'Roma')
+Aggiornamenti:
+  - Neurologia: 4.0 -> 2.0
+---------------------------
+
+============================================
