@@ -230,8 +230,8 @@ def fix_facility_ratings(session, facility, db_specialties, csv_ratings):
             db_info = db_specialties[specialty_name]
             db_rating = db_info['rating']
             
-            # Se il rating è diverso, lo aggiorno
-            if abs(db_rating - csv_rating) > 0.01:
+            # Se il rating è None o è diverso, lo aggiorno
+            if db_rating is None or abs(db_rating - csv_rating) > 0.01:
                 # Ottengo il record facility_specialty usando la chiave composta
                 fs = session.query(FacilitySpecialty).filter(
                     FacilitySpecialty.facility_id == db_info['facility_id'],

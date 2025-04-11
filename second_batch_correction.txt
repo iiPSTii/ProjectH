@@ -1,0 +1,312 @@
+============================================
+       REPORT CORREZIONI DATABASE VS CSV      
+============================================
+
+Data correzione: 2025-04-11 14:50:56.402382
+Tempo di esecuzione: 0:00:04.916551
+
+STATISTICHE GENERALI
+--------------------
+Strutture verificate: 50
+Strutture aggiornate: 35 (70.00%)
+Specialità verificate: 376
+Specialità già corrette: 335 (89.10%)
+Specialità aggiornate: 41 (10.90%)
+Specialità aggiunte: 0 (0.00%)
+
+STRUTTURE NON TROVATE NEL CSV
+------------------------------
+ID: 1908, Nome: Ospedale Morgagni - Pierantoni, Città: Forl
+ID: 1913, Nome: AORN Dei Colli - Monaldi, Città: Napoli
+ID: 1914, Nome: AORN Dei Colli - Cotugno, Città: Napoli
+
+DETTAGLIO DEGLI AGGIORNAMENTI
+-----------------------------
+
+Struttura: Istituto Nazionale dei Tumori
+Città: Milano
+ID: 1872
+Chiave CSV: ('Istituto Nazionale dei Tumori', 'Milano')
+Aggiornamenti:
+  - Neurologia: 2.0 -> 4.0
+---------------------------
+
+Struttura: Ospedale San Raffaele
+Città: Milano
+ID: 1873
+Chiave CSV: ('Ospedale San Raffaele', 'Milano')
+Aggiornamenti:
+  - Neurologia: 3.0 -> 2.0
+---------------------------
+
+Struttura: Ospedale Maggiore Policlinico
+Città: Milano
+ID: 1874
+Chiave CSV: ('Ospedale Maggiore Policlinico', 'Milano')
+Aggiornamenti:
+  - Neurologia: 4.0 -> 3.0
+---------------------------
+
+Struttura: Humanitas Research Hospital
+Città: Rozzano
+ID: 1875
+Chiave CSV: ('Humanitas Research Hospital', 'Rozzano')
+Aggiornamenti:
+  - Neurologia: 3.0 -> 5.0
+---------------------------
+
+Struttura: Ospedale San Paolo
+Città: Milano
+ID: 1876
+Chiave CSV: ('Ospedale San Paolo', 'Milano')
+Aggiornamenti:
+  - Cardiologia: 4.0 -> 5.0
+  - Ortopedia: 5.0 -> 4.0
+  - Oncologia: 2.0 -> 4.0
+  - Neurologia: 4.0 -> 1.0
+  - Chirurgia Generale: 1.0 -> 5.0
+  - Pediatria: 2.0 -> 1.0
+  - Ginecologia: 5.0 -> 1.0
+---------------------------
+
+Struttura: Policlinico San Donato
+Città: San Donato Milanese
+ID: 1879
+Chiave CSV: ('Policlinico San Donato', 'San Donato Milanese')
+Aggiornamenti:
+  - Neurologia: 3.0 -> 1.0
+---------------------------
+
+Struttura: Ospedale Luigi Sacco
+Città: Milano
+ID: 1880
+Chiave CSV: ('Ospedale Luigi Sacco', 'Milano')
+Aggiornamenti:
+  - Neurologia: 5.0 -> 4.0
+---------------------------
+
+Struttura: Ospedale Papa Giovanni XXIII
+Città: Bergamo
+ID: 1883
+Chiave CSV: ('Ospedale Papa Giovanni XXIII', 'Bergamo')
+Aggiornamenti:
+  - Neurologia: 2.0 -> 5.0
+---------------------------
+
+Struttura: Ospedale di Circolo e Fondazione Macchi
+Città: Varese
+ID: 1884
+Chiave CSV: ('Ospedale di Circolo e Fondazione Macchi', 'Varese')
+Aggiornamenti:
+  - Neurologia: 4.0 -> 5.0
+---------------------------
+
+Struttura: Ospedale Buccheri La Ferla
+Città: Palermo
+ID: 1888
+Chiave CSV: ('Ospedale Buccheri La Ferla', 'Palermo')
+Aggiornamenti:
+  - Neurologia: 2.0 -> 4.0
+---------------------------
+
+Struttura: Ospedale Villa Sofia-Cervello
+Città: Palermo
+ID: 1889
+Chiave CSV: ('Ospedale Villa Sofia-Cervello', 'Palermo')
+Aggiornamenti:
+  - Neurologia: 5.0 -> 2.0
+---------------------------
+
+Struttura: ISMETT
+Città: Palermo
+ID: 1890
+Chiave CSV: ('ISMETT', 'Palermo')
+Aggiornamenti:
+  - Neurologia: 5.0 -> 1.0
+---------------------------
+
+Struttura: Policlinico Vittorio Emanuele
+Città: Catania
+ID: 1891
+Chiave CSV: ('Policlinico Vittorio Emanuele', 'Catania')
+Aggiornamenti:
+  - Neurologia: 1.0 -> 2.0
+---------------------------
+
+Struttura: Ospedale Cannizzaro
+Città: Catania
+ID: 1892
+Chiave CSV: ('Ospedale Cannizzaro', 'Catania')
+Aggiornamenti:
+  - Neurologia: 3.0 -> 1.0
+---------------------------
+
+Struttura: Ospedale Garibaldi Centro
+Città: Catania
+ID: 1893
+Chiave CSV: ('Ospedale Garibaldi Centro', 'Catania')
+Aggiornamenti:
+  - Neurologia: 1.0 -> 4.0
+---------------------------
+
+Struttura: Ospedale Papardo
+Città: Messina
+ID: 1894
+Chiave CSV: ('Ospedale Papardo', 'Messina')
+Aggiornamenti:
+  - Neurologia: 3.0 -> 1.0
+---------------------------
+
+Struttura: Policlinico G. Martino
+Città: Messina
+ID: 1895
+Chiave CSV: ('Policlinico G. Martino', 'Messina')
+Aggiornamenti:
+  - Neurologia: 5.0 -> 1.0
+---------------------------
+
+Struttura: Ospedale Civile OMPA
+Città: Ragusa
+ID: 1896
+Chiave CSV: ('Ospedale Civile OMPA', 'Ragusa')
+Aggiornamenti:
+  - Neurologia: 1.0 -> 4.0
+---------------------------
+
+Struttura: Ospedale Giovanni Paolo II
+Città: Ragusa
+ID: 1897
+Chiave CSV: ('Ospedale Giovanni Paolo II', 'Ragusa')
+Aggiornamenti:
+  - Neurologia: 5.0 -> 4.0
+---------------------------
+
+Struttura: Policlinico Sant'Orsola-Malpighi
+Città: Bologna
+ID: 1898
+Chiave CSV: ("Policlinico Sant'Orsola-Malpighi", 'Bologna')
+Aggiornamenti:
+  - Neurologia: 3.0 -> 2.0
+---------------------------
+
+Struttura: Ospedale Maggiore
+Città: Bologna
+ID: 1899
+Chiave CSV: ('Ospedale Maggiore', 'Bologna')
+Aggiornamenti:
+  - Neurologia: 3.0 -> 5.0
+---------------------------
+
+Struttura: Ospedale Bellaria
+Città: Bologna
+ID: 1901
+Chiave CSV: ('Ospedale Bellaria', 'Bologna')
+Aggiornamenti:
+  - Neurologia: 3.0 -> 4.0
+---------------------------
+
+Struttura: Azienda Ospedaliero-Universitaria di Parma
+Città: Parma
+ID: 1902
+Chiave CSV: ('Azienda Ospedaliero-Universitaria di Parma', 'Parma')
+Aggiornamenti:
+  - Neurologia: 5.0 -> 2.0
+---------------------------
+
+Struttura: Arcispedale Santa Maria Nuova
+Città: Reggio Emilia
+ID: 1904
+Chiave CSV: ('Arcispedale Santa Maria Nuova', 'Reggio Emilia')
+Aggiornamenti:
+  - Neurologia: 5.0 -> 1.0
+---------------------------
+
+Struttura: Ospedale Infermi
+Città: Rimini
+ID: 1905
+Chiave CSV: ('Ospedale Infermi', 'Rimini')
+Aggiornamenti:
+  - Neurologia: 4.0 -> 3.0
+---------------------------
+
+Struttura: Ospedale Bufalini
+Città: Cesena
+ID: 1906
+Chiave CSV: ('Ospedale Bufalini', 'Cesena')
+Aggiornamenti:
+  - Neurologia: 4.0 -> 2.0
+---------------------------
+
+Struttura: Ospedale Antonio Cardarelli
+Città: Napoli
+ID: 1910
+Chiave CSV: ('Ospedale Antonio Cardarelli', 'Napoli')
+Aggiornamenti:
+  - Neurologia: 5.0 -> 4.0
+---------------------------
+
+Struttura: Policlinico Federico II
+Città: Napoli
+ID: 1911
+Chiave CSV: ('Policlinico Federico II', 'Napoli')
+Aggiornamenti:
+  - Neurologia: 4.0 -> 5.0
+---------------------------
+
+Struttura: Ospedale del Mare
+Città: Napoli
+ID: 1912
+Chiave CSV: ('Ospedale del Mare', 'Napoli')
+Aggiornamenti:
+  - Neurologia: 4.0 -> 3.0
+---------------------------
+
+Struttura: Ospedale Santobono
+Città: Napoli
+ID: 1915
+Chiave CSV: ('Ospedale Santobono', 'Napoli')
+Aggiornamenti:
+  - Neurologia: 2.0 -> 5.0
+---------------------------
+
+Struttura: Ospedale Rummo
+Città: Benevento
+ID: 1916
+Chiave CSV: ('Ospedale Rummo', 'Benevento')
+Aggiornamenti:
+  - Neurologia: 2.0 -> 4.0
+---------------------------
+
+Struttura: Azienda Ospedaliera San Giuseppe Moscati
+Città: Avellino
+ID: 1917
+Chiave CSV: ('Azienda Ospedaliera San Giuseppe Moscati', 'Avellino')
+Aggiornamenti:
+  - Neurologia: 5.0 -> 2.0
+---------------------------
+
+Struttura: Ospedale San Leonardo
+Città: Castellammare di Stabia
+ID: 1919
+Chiave CSV: ('Ospedale San Leonardo', 'Castellammare di Stabia')
+Aggiornamenti:
+  - Neurologia: 4.0 -> 1.0
+---------------------------
+
+Struttura: Casa di Cura Villa dei Fiori
+Città: Acerra
+ID: 1920
+Chiave CSV: ('Casa di Cura Villa dei Fiori', 'Acerra')
+Aggiornamenti:
+  - Neurologia: 1.0 -> 5.0
+---------------------------
+
+Struttura: Clinica Mediterranea
+Città: Napoli
+ID: 1921
+Chiave CSV: ('Clinica Mediterranea', 'Napoli')
+Aggiornamenti:
+  - Neurologia: 5.0 -> 3.0
+---------------------------
+
+============================================

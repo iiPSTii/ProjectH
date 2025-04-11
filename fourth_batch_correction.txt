@@ -1,0 +1,332 @@
+============================================
+       REPORT CORREZIONI DATABASE VS CSV      
+============================================
+
+Data correzione: 2025-04-11 14:51:48.633602
+Tempo di esecuzione: 0:00:05.017688
+
+STATISTICHE GENERALI
+--------------------
+Strutture verificate: 56
+Strutture aggiornate: 39 (69.64%)
+Specialità verificate: 448
+Specialità già corrette: 409 (91.29%)
+Specialità aggiornate: 39 (8.71%)
+Specialità aggiunte: 0 (0.00%)
+
+DETTAGLIO DEGLI AGGIORNAMENTI
+-----------------------------
+
+Struttura: Ospedale Santa Croce
+Città: Fano
+ID: 1972
+Chiave CSV: ('Ospedale Santa Croce', 'Fano')
+Aggiornamenti:
+  - Neurologia: 5.0 -> 3.0
+---------------------------
+
+Struttura: Ospedale Santa Maria della Misericordia
+Città: Perugia
+ID: 1973
+Chiave CSV: ('Ospedale Santa Maria della Misericordia', 'Perugia')
+Aggiornamenti:
+  - Neurologia: 5.0 -> 4.0
+---------------------------
+
+Struttura: Ospedale San Giovanni Battista
+Città: Orvieto
+ID: 1975
+Chiave CSV: ('Ospedale San Giovanni Battista', 'Orvieto')
+Aggiornamenti:
+  - Neurologia: 2.0 -> 3.0
+---------------------------
+
+Struttura: Ospedale di Citta di Castello
+Città: Citt di Castello
+ID: 1976
+Chiave CSV: ('Ospedale di Citta di Castello', 'Citt di Castello')
+Aggiornamenti:
+  - Neurologia: 2.0 -> 1.0
+---------------------------
+
+Struttura: Ospedale di Foligno
+Città: Foligno
+ID: 1978
+Chiave CSV: ('Ospedale di Foligno', 'Foligno')
+Aggiornamenti:
+  - Neurologia: 1.0 -> 5.0
+---------------------------
+
+Struttura: Ospedale di Spoleto
+Città: Spoleto
+ID: 1979
+Chiave CSV: ('Ospedale di Spoleto', 'Spoleto')
+Aggiornamenti:
+  - Neurologia: 5.0 -> 3.0
+---------------------------
+
+Struttura: Ospedale Media Valle del Tevere
+Città: Todi
+ID: 1980
+Chiave CSV: ('Ospedale Media Valle del Tevere', 'Todi')
+Aggiornamenti:
+  - Neurologia: 3.0 -> 2.0
+---------------------------
+
+Struttura: Ospedale Pugliese Ciaccio
+Città: Catanzaro
+ID: 1981
+Chiave CSV: ('Ospedale Pugliese Ciaccio', 'Catanzaro')
+Aggiornamenti:
+  - Neurologia: 5.0 -> 4.0
+---------------------------
+
+Struttura: Azienda Ospedaliera di Cosenza
+Città: Cosenza
+ID: 1982
+Chiave CSV: ('Azienda Ospedaliera di Cosenza', 'Cosenza')
+Aggiornamenti:
+  - Neurologia: 1.0 -> 5.0
+---------------------------
+
+Struttura: Grande Ospedale Metropolitano
+Città: Reggio Calabria
+ID: 1983
+Chiave CSV: ('Grande Ospedale Metropolitano', 'Reggio Calabria')
+Aggiornamenti:
+  - Neurologia: 1.0 -> 4.0
+---------------------------
+
+Struttura: Ospedale Giovanni Paolo II
+Città: Lamezia Terme
+ID: 1984
+Chiave CSV: ('Ospedale Giovanni Paolo II', 'Lamezia Terme')
+Aggiornamenti:
+  - Neurologia: 2.0 -> 5.0
+---------------------------
+
+Struttura: Ospedale San Francesco di Paola
+Città: Paola
+ID: 1985
+Chiave CSV: ('Ospedale San Francesco di Paola', 'Paola')
+Aggiornamenti:
+  - Neurologia: 2.0 -> 1.0
+---------------------------
+
+Struttura: Ospedale di Lamezia Terme
+Città: Lamezia Terme
+ID: 1986
+Chiave CSV: ('Ospedale di Lamezia Terme', 'Lamezia Terme')
+Aggiornamenti:
+  - Neurologia: 1.0 -> 2.0
+---------------------------
+
+Struttura: Ospedale di Vibo Valentia
+Città: Vibo Valentia
+ID: 1988
+Chiave CSV: ('Ospedale di Vibo Valentia', 'Vibo Valentia')
+Aggiornamenti:
+  - Neurologia: 4.0 -> 1.0
+---------------------------
+
+Struttura: Ospedale San Francesco
+Città: Nuoro
+ID: 1989
+Chiave CSV: ('Ospedale San Francesco', 'Nuoro')
+Aggiornamenti:
+  - Neurologia: 1.0 -> 4.0
+---------------------------
+
+Struttura: Ospedale Civile SS. Annunziata
+Città: Sassari
+ID: 1990
+Chiave CSV: ('Ospedale Civile SS. Annunziata', 'Sassari')
+Aggiornamenti:
+  - Neurologia: 4.0 -> 5.0
+---------------------------
+
+Struttura: Ospedale San Martino
+Città: Oristano
+ID: 1992
+Chiave CSV: ('Ospedale San Martino', 'Oristano')
+Aggiornamenti:
+  - Neurologia: 2.0 -> 5.0
+---------------------------
+
+Struttura: Ospedale Brotzu
+Città: Cagliari
+ID: 1993
+Chiave CSV: ('Ospedale Brotzu', 'Cagliari')
+Aggiornamenti:
+  - Neurologia: 3.0 -> 4.0
+---------------------------
+
+Struttura: Policlinico Duilio Casula
+Città: Monserrato
+ID: 1995
+Chiave CSV: ('Policlinico Duilio Casula', 'Monserrato')
+Aggiornamenti:
+  - Neurologia: 1.0 -> 3.0
+---------------------------
+
+Struttura: Ospedale Marino
+Città: Cagliari
+ID: 1996
+Chiave CSV: ('Ospedale Marino', 'Cagliari')
+Aggiornamenti:
+  - Neurologia: 2.0 -> 1.0
+---------------------------
+
+Struttura: Ospedale Santissima Trinita
+Città: Cagliari
+ID: 1997
+Chiave CSV: ('Ospedale Santissima Trinita', 'Cagliari')
+Aggiornamenti:
+  - Neurologia: 3.0 -> 2.0
+---------------------------
+
+Struttura: Ospedale di Villa d'Agri
+Città: Villa d'Agri
+ID: 2001
+Chiave CSV: ("Ospedale di Villa d'Agri", "Villa d'Agri")
+Aggiornamenti:
+  - Neurologia: 3.0 -> 4.0
+---------------------------
+
+Struttura: Ospedale di Melfi
+Città: Melfi
+ID: 2002
+Chiave CSV: ('Ospedale di Melfi', 'Melfi')
+Aggiornamenti:
+  - Neurologia: 3.0 -> 2.0
+---------------------------
+
+Struttura: Ospedale San Timoteo
+Città: Termoli
+ID: 2005
+Chiave CSV: ('Ospedale San Timoteo', 'Termoli')
+Aggiornamenti:
+  - Neurologia: 3.0 -> 1.0
+---------------------------
+
+Struttura: Ospedale F. Veneziale
+Città: Isernia
+ID: 2006
+Chiave CSV: ('Ospedale F. Veneziale', 'Isernia')
+Aggiornamenti:
+  - Neurologia: 4.0 -> 5.0
+---------------------------
+
+Struttura: Ospedale SS. Rosario
+Città: Venafro
+ID: 2007
+Chiave CSV: ('Ospedale SS. Rosario', 'Venafro')
+Aggiornamenti:
+  - Neurologia: 3.0 -> 2.0
+---------------------------
+
+Struttura: Ospedale Beauregard
+Città: Aosta
+ID: 2011
+Chiave CSV: ('Ospedale Beauregard', 'Aosta')
+Aggiornamenti:
+  - Neurologia: 2.0 -> 1.0
+---------------------------
+
+Struttura: Clinica di Saint-Pierre
+Città: Saint-Pierre
+ID: 2012
+Chiave CSV: ('Clinica di Saint-Pierre', 'Saint-Pierre')
+Aggiornamenti:
+  - Neurologia: 1.0 -> 5.0
+---------------------------
+
+Struttura: Ospedale Santa Maria della Misericordia
+Città: Udine
+ID: 2013
+Chiave CSV: ('Ospedale Santa Maria della Misericordia', 'Udine')
+Aggiornamenti:
+  - Neurologia: 4.0 -> 3.0
+---------------------------
+
+Struttura: Ospedale San Polo
+Città: Monfalcone
+ID: 2015
+Chiave CSV: ('Ospedale San Polo', 'Monfalcone')
+Aggiornamenti:
+  - Neurologia: 5.0 -> 3.0
+---------------------------
+
+Struttura: Ospedale di Cattinara
+Città: Trieste
+ID: 2016
+Chiave CSV: ('Ospedale di Cattinara', 'Trieste')
+Aggiornamenti:
+  - Neurologia: 5.0 -> 3.0
+---------------------------
+
+Struttura: Ospedale Maggiore
+Città: Trieste
+ID: 2017
+Chiave CSV: ('Ospedale Maggiore', 'Trieste')
+Aggiornamenti:
+  - Neurologia: 1.0 -> 4.0
+---------------------------
+
+Struttura: Ospedale San Daniele
+Città: San Daniele del Friuli
+ID: 2019
+Chiave CSV: ('Ospedale San Daniele', 'San Daniele del Friuli')
+Aggiornamenti:
+  - Neurologia: 3.0 -> 5.0
+---------------------------
+
+Struttura: Ospedale di Palmanova
+Città: Palmanova
+ID: 2020
+Chiave CSV: ('Ospedale di Palmanova', 'Palmanova')
+Aggiornamenti:
+  - Neurologia: 5.0 -> 3.0
+---------------------------
+
+Struttura: Ospedale T. E. O. Marianna G.
+Città: Reggio Calabria
+ID: 2022
+Chiave CSV: ('Ospedale T. E. O. Marianna G.', 'Reggio Calabria')
+Aggiornamenti:
+  - Neurologia: 4.0 -> 5.0
+---------------------------
+
+Struttura: Ospedale Jazzolino
+Città: Vibo Valentia
+ID: 2023
+Chiave CSV: ('Ospedale Jazzolino', 'Vibo Valentia')
+Aggiornamenti:
+  - Neurologia: 4.0 -> 5.0
+---------------------------
+
+Struttura: Ospedale di Polistena
+Città: Polistena
+ID: 2025
+Chiave CSV: ('Ospedale di Polistena', 'Polistena')
+Aggiornamenti:
+  - Neurologia: 1.0 -> 3.0
+---------------------------
+
+Struttura: Ospedale di Soverato
+Città: Soverato
+ID: 2026
+Chiave CSV: ('Ospedale di Soverato', 'Soverato')
+Aggiornamenti:
+  - Neurologia: 5.0 -> 1.0
+---------------------------
+
+Struttura: Ospedale Ruggi D'Aragona
+Città: Salerno
+ID: 2027
+Chiave CSV: ("Ospedale Ruggi D'Aragona", 'Salerno')
+Aggiornamenti:
+  - Neurologia: 5.0 -> 2.0
+---------------------------
+
+============================================

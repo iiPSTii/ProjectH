@@ -1,0 +1,354 @@
+============================================
+       REPORT CORREZIONI DATABASE VS CSV      
+============================================
+
+Data correzione: 2025-04-11 14:51:36.283587
+Tempo di esecuzione: 0:00:05.464211
+
+STATISTICHE GENERALI
+--------------------
+Strutture verificate: 50
+Strutture aggiornate: 39 (78.00%)
+Specialità verificate: 400
+Specialità già corrette: 339 (84.75%)
+Specialità aggiornate: 48 (12.00%)
+Specialità aggiunte: 13 (3.25%)
+
+DETTAGLIO DEGLI AGGIORNAMENTI
+-----------------------------
+
+Struttura: Azienda Ospedaliera di Padova
+Città: Padova
+ID: 1922
+Chiave CSV: ('Azienda Ospedaliera di Padova', 'Padova')
+Aggiornamenti:
+  - Neurologia: 2.0 -> 3.0
+---------------------------
+
+Struttura: Ospedale dell'Angelo
+Città: Venezia
+ID: 1923
+Chiave CSV: ("Ospedale dell'Angelo", 'Venezia')
+Aggiornamenti:
+  - Neurologia: 4.0 -> 1.0
+---------------------------
+
+Struttura: Ospedale San Bortolo
+Città: Vicenza
+ID: 1924
+Chiave CSV: ('Ospedale San Bortolo', 'Vicenza')
+Aggiornamenti:
+  - Neurologia: 3.0 -> 1.0
+---------------------------
+
+Struttura: Ospedale Ca' Foncello
+Città: Treviso
+ID: 1925
+Chiave CSV: ("Ospedale Ca' Foncello", 'Treviso')
+Aggiornamenti:
+  - Cardiologia: None -> 2.0
+  - Ortopedia: Aggiunto con rating 4.0
+  - Oncologia: Aggiunto con rating 3.0
+  - Neurologia: None -> 2.0
+  - Chirurgia Generale: Aggiunto con rating 2.0
+  - Pediatria: None -> 3.0
+  - Ginecologia: Aggiunto con rating 5.0
+---------------------------
+
+Struttura: Ospedale di Dolo
+Città: Dolo
+ID: 1927
+Chiave CSV: ('Ospedale di Dolo', 'Dolo')
+Aggiornamenti:
+  - Neurologia: 4.0 -> 1.0
+---------------------------
+
+Struttura: Ospedale Civile SS. Giovanni e Paolo
+Città: Venezia
+ID: 1928
+Chiave CSV: ('Ospedale Civile SS. Giovanni e Paolo', 'Venezia')
+Aggiornamenti:
+  - Neurologia: 4.0 -> 1.0
+---------------------------
+
+Struttura: Ospedale di Verona Borgo Trento
+Città: Verona
+ID: 1929
+Chiave CSV: ('Ospedale di Verona Borgo Trento', 'Verona')
+Aggiornamenti:
+  - Neurologia: 1.0 -> 5.0
+---------------------------
+
+Struttura: Ospedale di Belluno
+Città: Belluno
+ID: 1931
+Chiave CSV: ('Ospedale di Belluno', 'Belluno')
+Aggiornamenti:
+  - Neurologia: 3.0 -> 5.0
+---------------------------
+
+Struttura: Ospedale San Martino
+Città: Belluno
+ID: 1932
+Chiave CSV: ('Ospedale San Martino', 'Belluno')
+Aggiornamenti:
+  - Ortopedia: 4.0 -> 1.0
+  - Oncologia: 4.0 -> 2.0
+  - Neurologia: 2.0 -> 5.0
+  - Chirurgia Generale: 4.0 -> 1.0
+  - Ginecologia: 3.0 -> 5.0
+---------------------------
+
+Struttura: Ospedale di Cittadella
+Città: Cittadella
+ID: 1933
+Chiave CSV: ('Ospedale di Cittadella', 'Cittadella')
+Aggiornamenti:
+  - Neurologia: 4.0 -> 3.0
+---------------------------
+
+Struttura: Ospedale San Giovanni Bosco
+Città: Torino
+ID: 1935
+Chiave CSV: ('Ospedale San Giovanni Bosco', 'Torino')
+Aggiornamenti:
+  - Neurologia: 5.0 -> 1.0
+---------------------------
+
+Struttura: Ospedale CTO
+Città: Torino
+ID: 1936
+Chiave CSV: ('Ospedale CTO', 'Torino')
+Aggiornamenti:
+  - Neurologia: 4.0 -> 2.0
+---------------------------
+
+Struttura: Ospedale Regina Margherita
+Città: Torino
+ID: 1937
+Chiave CSV: ('Ospedale Regina Margherita', 'Torino')
+Aggiornamenti:
+  - Neurologia: 2.0 -> 3.0
+---------------------------
+
+Struttura: Ospedale Sant'Anna
+Città: Torino
+ID: 1938
+Chiave CSV: ("Ospedale Sant'Anna", 'Torino')
+Aggiornamenti:
+  - Neurologia: 3.0 -> 4.0
+---------------------------
+
+Struttura: Ospedale Mauriziano Umberto I
+Città: Torino
+ID: 1939
+Chiave CSV: ('Ospedale Mauriziano Umberto I', 'Torino')
+Aggiornamenti:
+  - Neurologia: 4.0 -> 5.0
+---------------------------
+
+Struttura: Ospedale Maggiore della Carita
+Città: Novara
+ID: 1940
+Chiave CSV: ('Ospedale Maggiore della Carita', 'Novara')
+Aggiornamenti:
+  - Neurologia: 1.0 -> 3.0
+---------------------------
+
+Struttura: Ospedale SS. Antonio e Biagio
+Città: Alessandria
+ID: 1941
+Chiave CSV: ('Ospedale SS. Antonio e Biagio', 'Alessandria')
+Aggiornamenti:
+  - Neurologia: 4.0 -> 5.0
+---------------------------
+
+Struttura: Ospedale San Luigi Gonzaga
+Città: Orbassano
+ID: 1943
+Chiave CSV: ('Ospedale San Luigi Gonzaga', 'Orbassano')
+Aggiornamenti:
+  - Neurologia: 1.0 -> 2.0
+---------------------------
+
+Struttura: Ospedale Policlinico San Martino
+Città: Genova
+ID: 1946
+Chiave CSV: ('Ospedale Policlinico San Martino', 'Genova')
+Aggiornamenti:
+  - Neurologia: 5.0 -> 2.0
+---------------------------
+
+Struttura: Ospedale Galliera
+Città: Genova
+ID: 1947
+Chiave CSV: ('Ospedale Galliera', 'Genova')
+Aggiornamenti:
+  - Neurologia: 3.0 -> 2.0
+---------------------------
+
+Struttura: Ospedale Villa Scassi
+Città: Genova
+ID: 1948
+Chiave CSV: ('Ospedale Villa Scassi', 'Genova')
+Aggiornamenti:
+  - Neurologia: 4.0 -> 3.0
+---------------------------
+
+Struttura: Ospedale Gaslini
+Città: Genova
+ID: 1949
+Chiave CSV: ('Ospedale Gaslini', 'Genova')
+Aggiornamenti:
+  - Neurologia: 4.0 -> 5.0
+---------------------------
+
+Struttura: Ospedale San Paolo
+Città: Savona
+ID: 1950
+Chiave CSV: ('Ospedale San Paolo', 'Savona')
+Aggiornamenti:
+  - Cardiologia: None -> 4.0
+  - Ortopedia: Aggiunto con rating 5.0
+  - Oncologia: Aggiunto con rating 2.0
+  - Neurologia: None -> 2.0
+  - Chirurgia Generale: Aggiunto con rating 1.0
+  - Pediatria: Aggiunto con rating 2.0
+  - Ginecologia: Aggiunto con rating 5.0
+---------------------------
+
+Struttura: Ospedale Santa Corona
+Città: Pietra Ligure
+ID: 1951
+Chiave CSV: ('Ospedale Santa Corona', 'Pietra Ligure')
+Aggiornamenti:
+  - Neurologia: 3.0 -> 5.0
+---------------------------
+
+Struttura: Ospedale Lavagna
+Città: Lavagna
+ID: 1952
+Chiave CSV: ('Ospedale Lavagna', 'Lavagna')
+Aggiornamenti:
+  - Neurologia: 4.0 -> 3.0
+---------------------------
+
+Struttura: Ospedale Sant'Andrea
+Città: La Spezia
+ID: 1953
+Chiave CSV: ("Ospedale Sant'Andrea", 'La Spezia')
+Aggiornamenti:
+  - Neurologia: 2.0 -> 3.0
+---------------------------
+
+Struttura: Ospedale di Sanremo
+Città: Sanremo
+ID: 1954
+Chiave CSV: ('Ospedale di Sanremo', 'Sanremo')
+Aggiornamenti:
+  - Neurologia: 1.0 -> 2.0
+---------------------------
+
+Struttura: Ospedale San Salvatore
+Città: L'Aquila
+ID: 1955
+Chiave CSV: ('Ospedale San Salvatore', "L'Aquila")
+Aggiornamenti:
+  - Neurologia: 5.0 -> 4.0
+---------------------------
+
+Struttura: Ospedale SS. Annunziata
+Città: Chieti
+ID: 1956
+Chiave CSV: ('Ospedale SS. Annunziata', 'Chieti')
+Aggiornamenti:
+  - Cardiologia: None -> 5.0
+  - Ortopedia: Aggiunto con rating 4.0
+  - Oncologia: None -> 1.0
+  - Neurologia: None -> 3.0
+  - Chirurgia Generale: Aggiunto con rating 2.0
+  - Pediatria: Aggiunto con rating 2.0
+  - Ginecologia: Aggiunto con rating 1.0
+---------------------------
+
+Struttura: Ospedale Spirito Santo
+Città: Pescara
+ID: 1957
+Chiave CSV: ('Ospedale Spirito Santo', 'Pescara')
+Aggiornamenti:
+  - Neurologia: 1.0 -> 2.0
+---------------------------
+
+Struttura: Ospedale G. Mazzini
+Città: Teramo
+ID: 1958
+Chiave CSV: ('Ospedale G. Mazzini', 'Teramo')
+Aggiornamenti:
+  - Neurologia: 2.0 -> 4.0
+---------------------------
+
+Struttura: Ospedale Renzetti
+Città: Lanciano
+ID: 1959
+Chiave CSV: ('Ospedale Renzetti', 'Lanciano')
+Aggiornamenti:
+  - Neurologia: 3.0 -> 4.0
+---------------------------
+
+Struttura: Ospedale San Pio
+Città: Vasto
+ID: 1960
+Chiave CSV: ('Ospedale San Pio', 'Vasto')
+Aggiornamenti:
+  - Neurologia: 1.0 -> 2.0
+---------------------------
+
+Struttura: Ospedale San Massimo
+Città: Penne
+ID: 1961
+Chiave CSV: ('Ospedale San Massimo', 'Penne')
+Aggiornamenti:
+  - Neurologia: 3.0 -> 1.0
+---------------------------
+
+Struttura: Ospedale Maria SS. dello Splendore
+Città: Giulianova
+ID: 1963
+Chiave CSV: ('Ospedale Maria SS. dello Splendore', 'Giulianova')
+Aggiornamenti:
+  - Neurologia: 1.0 -> 2.0
+---------------------------
+
+Struttura: Ospedale Salesi
+Città: Ancona
+ID: 1965
+Chiave CSV: ('Ospedale Salesi', 'Ancona')
+Aggiornamenti:
+  - Neurologia: 3.0 -> 4.0
+---------------------------
+
+Struttura: INRCA Ancona
+Città: Ancona
+ID: 1966
+Chiave CSV: ('INRCA Ancona', 'Ancona')
+Aggiornamenti:
+  - Neurologia: 3.0 -> 5.0
+---------------------------
+
+Struttura: Ospedale Carlo Urbani
+Città: Jesi
+ID: 1967
+Chiave CSV: ('Ospedale Carlo Urbani', 'Jesi')
+Aggiornamenti:
+  - Neurologia: 5.0 -> 1.0
+---------------------------
+
+Struttura: Ospedale San Salvatore
+Città: Pesaro
+ID: 1970
+Chiave CSV: ('Ospedale San Salvatore', 'Pesaro')
+Aggiornamenti:
+  - Neurologia: 5.0 -> 1.0
+---------------------------
+
+============================================
