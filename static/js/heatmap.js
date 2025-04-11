@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Prepara i dati per la heatmap
         const heatData = facilities.map(facility => {
             // Usa il rating come intensità (se disponibile)
-            const intensity = facility.quality_rating || 1;
+            const intensity = facility.quality_rating || 1;  // manteniamo quality_rating perché l'API ora restituisce il campo con questo nome
             return [facility.latitude, facility.longitude, intensity];
         });
         
@@ -288,7 +288,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Ricrea il layer con il nuovo raggio
                 const heatData = facilities.map(facility => {
-                    const intensity = facility.quality_rating || 1;
+                    const intensity = facility.quality_rating || 1;  // manteniamo quality_rating perché l'API ora restituisce il campo con questo nome
                     return [facility.latitude, facility.longitude, intensity];
                 });
                 

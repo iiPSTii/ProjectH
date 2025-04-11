@@ -1101,7 +1101,7 @@ Preferred-Languages: it, en
             query = query.filter(Specialty.name == specialty)
             
         if min_quality > 0:
-            query = query.filter(MedicalFacility.quality_rating >= min_quality)
+            query = query.filter(MedicalFacility.quality_score >= min_quality)
             
         # Esegui la query
         facilities = query.all()
@@ -1117,7 +1117,7 @@ Preferred-Languages: it, en
                 'longitude': float(facility.longitude),
                 'address': facility.address,
                 'city': facility.city,
-                'quality_rating': facility.quality_rating
+                'quality_rating': facility.quality_score
             }
             
             # Se è stato specificato un filtro per specialità, aggiungi anche il rating specifico
