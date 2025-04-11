@@ -9,13 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Let Bootstrap handle modals by itself
 
-    // Handle quality slider on the search form
-    const qualitySlider = document.getElementById('min_quality');
-    if (qualitySlider) {
-        qualitySlider.addEventListener('input', function() {
-            updateQualityValue(this.value);
-        });
-    }
+    // Quality slider has been removed, no need to handle it
     
     // IMPORTANT: Reset search button state on page load
     // This fixes the issue with the button staying in loading state when navigating back
@@ -104,17 +98,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Update quality slider value display
-function updateQualityValue(val) {
-    const qualityValueElement = document.getElementById('qualityValue');
-    if (qualityValueElement) {
-        if (val == 0) {
-            qualityValueElement.textContent = 'Qualsiasi';
-        } else {
-            qualityValueElement.textContent = val + '/5';
-        }
-    }
-}
+// Quality slider function has been removed as the slider is no longer used
 
 // Update radius slider value display
 function updateRadiusValue(val) {

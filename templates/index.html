@@ -124,14 +124,6 @@
                                             <input type="hidden" id="region" name="region" value="">
                                             
                                             <div class="col-md-6">
-                                                <label for="min_quality" class="form-label">Qualità Minima</label>
-                                                <div class="input-group">
-                                                    <input type="range" class="form-range" id="min_quality" name="min_quality" min="0" max="5" step="0.5" value="0" oninput="updateQualityValue(this.value)">
-                                                    <span class="input-group-text ms-2" id="qualityValue">Qualsiasi</span>
-                                                </div>
-                                            </div>
-                                            
-                                            <div class="col-md-6">
                                                 <label for="sort_by" class="form-label">Ordina Risultati Per</label>
                                                 <select class="form-select" id="sort_by" name="sort_by">
                                                     <option value="quality_desc" selected>Qualità (Migliore prima)</option>
@@ -141,7 +133,13 @@
                                                     <option value="city_asc">Città (A-Z)</option>
                                                     <option value="city_desc">Città (Z-A)</option>
                                                 </select>
+                                                <small class="form-text text-muted">
+                                                    Scegli come ordinare i risultati di ricerca
+                                                </small>
                                             </div>
+                                            
+                                            <!-- Hidden field to keep min_quality parameter -->
+                                            <input type="hidden" id="min_quality" name="min_quality" value="0">
                                         </div>
                                     </div>
                                 </div>
@@ -251,12 +249,12 @@
                         <div class="accordion-item bg-dark">
                             <h2 class="accordion-header">
                                 <button class="accordion-button collapsed bg-dark text-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                    <i class="fas fa-sliders-h me-2"></i> Filtra per Qualità
+                                    <i class="fas fa-sliders-h me-2"></i> Filtra e Ordina i Risultati
                                 </button>
                             </h2>
                             <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#howItWorksAccordion">
                                 <div class="accordion-body">
-                                    Utilizza il filtro di qualità minima per affinare la tua ricerca. Il filtro di qualità ti permette di visualizzare solo le strutture con un determinato punteggio minimo, aiutandoti a trovare le strutture con le migliori valutazioni.
+                                    Utilizza i filtri per affinare la tua ricerca. Puoi selezionare una specialità medica specifica e scegliere come ordinare i risultati (per qualità, nome o città). I risultati mostrano la qualità generale di ciascuna struttura e la valutazione specifica per le specialità pertinenti, aiutandoti a trovare le strutture con le migliori valutazioni per le tue esigenze.
                                 </div>
                             </div>
                         </div>
