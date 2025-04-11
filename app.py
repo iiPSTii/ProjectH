@@ -1,4 +1,5 @@
 import os
+import re
 import logging
 from flask import Flask, render_template, request, jsonify, flash, redirect, url_for, send_file
 from flask_sqlalchemy import SQLAlchemy
@@ -6,7 +7,6 @@ from sqlalchemy.orm import DeclarativeBase
 from werkzeug.middleware.proxy_fix import ProxyFix
 from medical_mapping import map_query_to_specialties
 from medical_professionals import map_profession_to_specialties, PROFESSION_TO_SPECIALTY_MAP
-from location_mapping import detect_location_in_query
 from geocoding import is_address_query, extract_address_part, find_facilities_near_address, calculate_distance
 
 # Configure logging
@@ -142,6 +142,9 @@ with app.app_context():
 
     @app.route('/search')
     def search():
+        # Import geocoding functions at the beginning to avoid UnboundLocalError
+        from geocoding import extract_address_part, is_address_query, find_facilities_near_address, calculate_distance, parse_address, geocode_address
+        
         # Get search parameters
         specialty = request.args.get('specialty', '')
         region = request.args.get('region', '')
@@ -279,8 +282,37 @@ with app.app_context():
             
             # If not an address search or address search found no results, try regular search
             if not is_address_search:
-                # Try to detect location/city references in the query
-                cleaned_query, detected_region = detect_location_in_query(query_text)
+                # Try to extract region from known Italian region names in the query
+                from location_mapping import CITY_TO_REGION_MAP
+                
+                # Define Italian regions
+                italian_regions = [
+                    'lombardia', 'lazio', 'toscana', 'puglia', 'veneto', 'piemonte', 'emilia romagna',
+                    'campania', 'sicilia', 'trentino', 'liguria', 'friuli venezia giulia',
+                    'sardegna', 'umbria', 'marche', 'calabria', 'abruzzo', 'basilicata', 'molise', 'valle d\'aosta'
+                ]
+                
+                # Initialize detected region
+                detected_region = None
+                cleaned_query = query_text
+                
+                # Check for region names in the query
+                query_lower = query_text.lower()
+                for region_name in italian_regions:
+                    if region_name in query_lower:
+                        detected_region = region_name.title()
+                        # Remove the region name from the query
+                        cleaned_query = re.sub(r'\b' + region_name + r'\b', '', query_lower, flags=re.IGNORECASE).strip()
+                        break
+                
+                # If region not found directly, try to extract from city names
+                if not detected_region:
+                    for city, region_name in CITY_TO_REGION_MAP.items():
+                        if city in query_lower:
+                            detected_region = region_name
+                            # Remove the city name from the query
+                            cleaned_query = re.sub(r'\b' + city + r'\b', '', query_lower, flags=re.IGNORECASE).strip()
+                            break
 
                 if detected_region:
                     logger.debug(f"Detected location in query: '{query_text}' -> region: '{detected_region}'")
