@@ -19,11 +19,13 @@ logger = logging.getLogger(__name__)
 
 # Lista di nomi delle strutture da verificare
 FACILITIES_TO_CHECK = [
+    ('Ospedale San Giovanni di Dio', 'Firenze'),
+    ('Ospedale San Giovanni di Dio', 'Crotone'),
+    ('Ospedale San Giovanni di Dio', 'Gorizia'),
     'Ospedale di Gubbio - Gualdo Tadino',
     'IDI - Istituto Dermopatico dell\'Immacolata',
     'Ospedale San Carlo Borromeo',
-    'Ospedale Umberto Parini',
-    'Ospedale San Giovanni di Dio'
+    'Ospedale Umberto Parini'
 ]
 
 # Specialità da verificare per ogni struttura
