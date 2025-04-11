@@ -404,160 +404,215 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log("Showing fallback location data");
             locationSuggestions.innerHTML = '';
             
-            // Create fallback items based on query contents
-            // Try to detect region information in the query
-            let regionName = '';
-            
-            // Map of regions to their approximate center coordinates
-            const regionCoordinates = {
-                'Sardegna': {lat: "40.0690", lon: "9.0212"},
-                'Sardinia': {lat: "40.0690", lon: "9.0212"},
-                'Sicilia': {lat: "37.5990", lon: "14.0154"},
-                'Sicily': {lat: "37.5990", lon: "14.0154"},
-                'Lombardia': {lat: "45.4785", lon: "9.2195"},
-                'Lombardy': {lat: "45.4785", lon: "9.2195"},
-                'Milano': {lat: "45.4642", lon: "9.1900"},
-                'Milan': {lat: "45.4642", lon: "9.1900"},
-                'Roma': {lat: "41.9028", lon: "12.4964"},
-                'Rome': {lat: "41.9028", lon: "12.4964"},
-                'Napoli': {lat: "40.8518", lon: "14.2681"},
-                'Naples': {lat: "40.8518", lon: "14.2681"},
-                'Lazio': {lat: "41.9028", lon: "12.4964"},
-                'Toscana': {lat: "43.7711", lon: "11.2486"},
-                'Tuscany': {lat: "43.7711", lon: "11.2486"},
-                'Campania': {lat: "40.8358", lon: "14.2487"},
-                'Piemonte': {lat: "45.0703", lon: "7.6869"},
-                'Piedmont': {lat: "45.0703", lon: "7.6869"},
-                'Puglia': {lat: "41.1187", lon: "16.8718"},
-                'Apulia': {lat: "41.1187", lon: "16.8718"},
-                'Emilia-Romagna': {lat: "44.4938", lon: "11.3426"},
-                'Calabria': {lat: "39.3087", lon: "16.3158"},
-                'Liguria': {lat: "44.4222", lon: "8.9052"},
-                'Veneto': {lat: "45.4408", lon: "12.3155"},
-                'Italia': {lat: "41.8719", lon: "12.5674"},
-                'Italy': {lat: "41.8719", lon: "12.5674"}
-            };
-            
-            // Find coordinates based on the query text
-            let coords = {lat: "41.8719", lon: "12.5674"}; // Default to Italy center
-            
-            // Check if we have a region match - checking parts to avoid false positives
-            // Split the address by commas to get components
-            const addressComponents = query.split(',').map(part => part.trim());
-            
-            // First, try to match regions in the second-to-last component (typical for Italian addresses)
-            if (addressComponents.length >= 2) {
-                const regionPart = addressComponents[addressComponents.length - 2];
-                for (const [region, coordinates] of Object.entries(regionCoordinates)) {
-                    // Check for exact match in address part (not substring)
-                    if (regionPart === region || 
-                        regionPart.endsWith(` ${region}`) || 
-                        regionPart.startsWith(`${region} `)) {
-                        coords = coordinates;
-                        console.log(`Found exact region match in part "${regionPart}": ${region} -> using coordinates:`, coords);
-                        break;
+            // First, try to get precise coordinates using direct geocoding
+            // This is better than using generic region coordinates
+            tryDirectGeocoding(query)
+                .then(exactCoords => {
+                    if (exactCoords) {
+                        console.log("Got exact coordinates from direct geocoding:", exactCoords);
+                        showLocationSuggestions([{
+                            display_name: query,
+                            lat: exactCoords.lat,
+                            lon: exactCoords.lon
+                        }]);
+                    } else {
+                        // If direct geocoding fails, fall back to region-based coordinates
+                        showRegionBasedSuggestion();
                     }
-                }
-            }
+                })
+                .catch(error => {
+                    console.error("Error with direct geocoding:", error);
+                    // Show region-based fallback if direct geocoding fails
+                    showRegionBasedSuggestion();
+                });
             
-            // If no match found yet, try more general matching but only for region names, not cities
-            // This avoids matching "Via Roma" with "Roma" region
-            if (coords.lat === "41.8719") { // If still using default Italy coords
-                const regionRegex = /\b(Sardegna|Sicilia|Lombardia|Lazio|Toscana|Campania|Piemonte|Puglia|Emilia-Romagna|Calabria|Liguria|Veneto)\b/i;
-                const match = query.match(regionRegex);
-                if (match) {
-                    const foundRegion = match[0];
-                    // Find region in our map (case-insensitive)
+            // Function to show fallback based on region detection
+            function showRegionBasedSuggestion() {
+                // Map of regions to their approximate center coordinates
+                const regionCoordinates = {
+                    'Sardegna': {lat: "40.0690", lon: "9.0212"},
+                    'Sardinia': {lat: "40.0690", lon: "9.0212"},
+                    'Sicilia': {lat: "37.5990", lon: "14.0154"},
+                    'Sicily': {lat: "37.5990", lon: "14.0154"},
+                    'Lombardia': {lat: "45.4785", lon: "9.2195"},
+                    'Lombardy': {lat: "45.4785", lon: "9.2195"},
+                    'Milano': {lat: "45.4642", lon: "9.1900"},
+                    'Milan': {lat: "45.4642", lon: "9.1900"},
+                    'Roma': {lat: "41.9028", lon: "12.4964"},
+                    'Rome': {lat: "41.9028", lon: "12.4964"},
+                    'Napoli': {lat: "40.8518", lon: "14.2681"},
+                    'Naples': {lat: "40.8518", lon: "14.2681"},
+                    'Lazio': {lat: "41.9028", lon: "12.4964"},
+                    'Toscana': {lat: "43.7711", lon: "11.2486"},
+                    'Tuscany': {lat: "43.7711", lon: "11.2486"},
+                    'Campania': {lat: "40.8358", lon: "14.2487"},
+                    'Piemonte': {lat: "45.0703", lon: "7.6869"},
+                    'Piedmont': {lat: "45.0703", lon: "7.6869"},
+                    'Puglia': {lat: "41.1187", lon: "16.8718"},
+                    'Apulia': {lat: "41.1187", lon: "16.8718"},
+                    'Emilia-Romagna': {lat: "44.4938", lon: "11.3426"},
+                    'Calabria': {lat: "39.3087", lon: "16.3158"},
+                    'Liguria': {lat: "44.4222", lon: "8.9052"},
+                    'Veneto': {lat: "45.4408", lon: "12.3155"},
+                    'Italia': {lat: "41.8719", lon: "12.5674"},
+                    'Italy': {lat: "41.8719", lon: "12.5674"}
+                };
+                
+                // Find coordinates based on the query text
+                let coords = {lat: "41.8719", lon: "12.5674"}; // Default to Italy center
+                
+                // Check if we have a region match - checking parts to avoid false positives
+                // Split the address by commas to get components
+                const addressComponents = query.split(',').map(part => part.trim());
+                
+                // First, try to match regions in the second-to-last component (typical for Italian addresses)
+                if (addressComponents.length >= 2) {
+                    const regionPart = addressComponents[addressComponents.length - 2];
                     for (const [region, coordinates] of Object.entries(regionCoordinates)) {
-                        if (region.toLowerCase() === foundRegion.toLowerCase()) {
+                        // Check for exact match in address part (not substring)
+                        if (regionPart === region || 
+                            regionPart.endsWith(` ${region}`) || 
+                            regionPart.startsWith(`${region} `)) {
                             coords = coordinates;
-                            console.log(`Found region in address: ${region} -> using coordinates:`, coords);
+                            console.log(`Found exact region match in part "${regionPart}": ${region} -> using coordinates:`, coords);
                             break;
                         }
                     }
                 }
-            }
-            
-            const fallbackAddresses = [
-                {
+                
+                // If no match found yet, try more general matching but only for region names, not cities
+                // This avoids matching "Via Roma" with "Roma" region
+                if (coords.lat === "41.8719") { // If still using default Italy coords
+                    const regionRegex = /\b(Sardegna|Sicilia|Lombardia|Lazio|Toscana|Campania|Piemonte|Puglia|Emilia-Romagna|Calabria|Liguria|Veneto)\b/i;
+                    const match = query.match(regionRegex);
+                    if (match) {
+                        const foundRegion = match[0];
+                        // Find region in our map (case-insensitive)
+                        for (const [region, coordinates] of Object.entries(regionCoordinates)) {
+                            if (region.toLowerCase() === foundRegion.toLowerCase()) {
+                                coords = coordinates;
+                                console.log(`Found region in address: ${region} -> using coordinates:`, coords);
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+                // Show the region-based suggestion
+                showLocationSuggestions([{
                     display_name: query,
-                    lat: coords.lat, // Use region-appropriate coordinates
-                    lon: coords.lon
-                },
-                {
-                    display_name: query + " (Centro)",
                     lat: coords.lat, 
                     lon: coords.lon
-                }
-            ];
+                }]);
+            }
             
-            fallbackAddresses.forEach(location => {
-                const item = document.createElement('div');
-                item.className = 'location-suggestion-item';
-                item.textContent = location.display_name;
-                
-                // Store location data
-                item.dataset.lat = location.lat;
-                item.dataset.lon = location.lon;
-                item.dataset.displayName = location.display_name;
-                
-                item.addEventListener('click', function() {
-                    console.log("Fallback suggestion clicked:", this.dataset.displayName);
-                    // Set the input value to the selected location name
-                    locationInput.value = this.dataset.displayName;
+            // Function to display suggestion items in the dropdown
+            function showLocationSuggestions(suggestions) {
+                suggestions.forEach(location => {
+                    const item = document.createElement('div');
+                    item.className = 'location-suggestion-item';
+                    item.textContent = location.display_name;
                     
-                    // Store coordinates in hidden inputs
-                    latitudeInput.value = this.dataset.lat;
-                    longitudeInput.value = this.dataset.lon;
+                    // Store location data
+                    item.dataset.lat = location.lat;
+                    item.dataset.lon = location.lon;
+                    item.dataset.displayName = location.display_name;
                     
-                    // Also update the query_text hidden field
-                    if (document.getElementById('query_text')) {
-                        document.getElementById('query_text').value = this.dataset.displayName;
-                    }
-                    
-                    // Store selected location
-                    selectedLocation = {
-                        lat: this.dataset.lat,
-                        lon: this.dataset.lon,
-                        displayName: this.dataset.displayName
-                    };
-                    
-                    // Mostra l'indicatore verde di conferma
-                    const confirmationIndicator = document.getElementById('location-confirmation');
-                    if (confirmationIndicator) {
-                        confirmationIndicator.classList.add('active');
-                    }
-                    
-                    // Nascondiamo l'indicatore originale
-                    const indicator = document.getElementById('location-selected-indicator');
-                    if (indicator) {
-                        // indicator.classList.remove('d-none'); // Non mostriamo più questo indicatore
+                    item.addEventListener('click', function() {
+                        console.log("Fallback suggestion clicked:", this.dataset.displayName);
+                        // Set the input value to the selected location name
+                        locationInput.value = this.dataset.displayName;
                         
-                        const locationNameIndicator = indicator.querySelector('.location-name');
-                        if (locationNameIndicator) {
-                            locationNameIndicator.textContent = this.dataset.displayName.substring(0, 25) + 
-                                (this.dataset.displayName.length > 25 ? '...' : '');
+                        // Store coordinates in hidden inputs
+                        latitudeInput.value = this.dataset.lat;
+                        longitudeInput.value = this.dataset.lon;
+                        
+                        // Also update the query_text hidden field
+                        if (document.getElementById('query_text')) {
+                            document.getElementById('query_text').value = this.dataset.displayName;
                         }
                         
-                        const radiusElement = document.getElementById('radius');
-                        const radiusValue = radiusElement ? radiusElement.value : '30';
-                        const radiusIndicator = indicator.querySelector('.radius-indicator');
-                        if (radiusIndicator) {
-                            radiusIndicator.textContent = radiusValue + ' km';
+                        // Store selected location
+                        selectedLocation = {
+                            lat: this.dataset.lat,
+                            lon: this.dataset.lon,
+                            displayName: this.dataset.displayName
+                        };
+                        
+                        // Mostra l'indicatore verde di conferma
+                        const confirmationIndicator = document.getElementById('location-confirmation');
+                        if (confirmationIndicator) {
+                            confirmationIndicator.classList.add('active');
                         }
-                    }
+                        
+                        // Nascondiamo l'indicatore originale
+                        const indicator = document.getElementById('location-selected-indicator');
+                        if (indicator) {
+                            // indicator.classList.remove('d-none'); // Non mostriamo più questo indicatore
+                            
+                            const locationNameIndicator = indicator.querySelector('.location-name');
+                            if (locationNameIndicator) {
+                                locationNameIndicator.textContent = this.dataset.displayName.substring(0, 25) + 
+                                    (this.dataset.displayName.length > 25 ? '...' : '');
+                            }
+                            
+                            const radiusElement = document.getElementById('radius');
+                            const radiusValue = radiusElement ? radiusElement.value : '30';
+                            const radiusIndicator = indicator.querySelector('.radius-indicator');
+                            if (radiusIndicator) {
+                                radiusIndicator.textContent = radiusValue + ' km';
+                            }
+                        }
+                        
+                        // Hide suggestions
+                        locationSuggestions.style.display = 'none';
+                    });
                     
-                    // Hide suggestions
-                    locationSuggestions.style.display = 'none';
+                    locationSuggestions.appendChild(item);
                 });
                 
-                locationSuggestions.appendChild(item);
-            });
-            
-            // Show the suggestions dropdown
-            locationSuggestions.style.display = 'block';
-            locationInput.classList.remove('loading');
-        };
+                // Show the suggestions dropdown
+                locationSuggestions.style.display = 'block';
+                locationInput.classList.remove('loading');
+            }
+        }
+        
+        // Function to directly geocode an address with high precision
+        async function tryDirectGeocoding(address) {
+            try {
+                // Create a more direct geocoding request for the full address
+                const geocodeUrl = new URL('https://nominatim.openstreetmap.org/search');
+                geocodeUrl.searchParams.append('q', address);
+                geocodeUrl.searchParams.append('format', 'json');
+                geocodeUrl.searchParams.append('limit', 1);
+                geocodeUrl.searchParams.append('addressdetails', 1);
+                geocodeUrl.searchParams.append('countrycodes', 'it');
+                
+                console.log("Trying direct geocoding with:", geocodeUrl.toString());
+                
+                const response = await fetch(geocodeUrl.toString(), {
+                    headers: {
+                        'User-Agent': 'FindMyCure-Italia/1.0'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data && data.length > 0) {
+                    console.log("Direct geocoding successful:", data[0]);
+                    return {
+                        lat: data[0].lat,
+                        lon: data[0].lon
+                    };
+                }
+                
+                return null;
+            } catch (error) {
+                console.error("Error in direct geocoding:", error);
+                return null;
+            }
+        }
+        }
         
         // Show loading indicator
         locationInput.classList.add('loading');
