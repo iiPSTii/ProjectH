@@ -1,109 +1,110 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
-{% block title %}Mappa di Densità delle Strutture Sanitarie{% endblock %}
+{% block title %}Mappa di Densità delle Strutture Sanitarie in Italia{% endblock %}
 
-{% block additional_head %}
+{% block extra_css %}
 <!-- Leaflet CSS -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
-      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" 
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
       crossorigin=""/>
-
-<!-- Aggiungiamo custom CSS per la pagina della mappa -->
 <style>
     #map-container {
-        height: 600px;
-        width: 100%;
         position: relative;
+        height: 600px;
         border-radius: 8px;
         overflow: hidden;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
+    
     #map {
-        height: 100%;
         width: 100%;
+        height: 100%;
         z-index: 1;
     }
-    .map-controls {
-        background: rgba(33, 37, 41, 0.85);
-        padding: 15px;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-        max-width: 300px;
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        z-index: 1000;
-    }
-    .map-legend {
-        background: rgba(33, 37, 41, 0.85);
-        padding: 10px;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-        position: absolute;
-        bottom: 30px;
-        right: 10px;
-        z-index: 1000;
-        min-width: 200px;
-    }
-    .gradient {
-        height: 20px;
-        background: linear-gradient(to right, rgba(0, 0, 255, 0.5), rgba(0, 255, 0, 0.5), rgba(255, 255, 0, 0.5), rgba(255, 0, 0, 0.8));
-        margin: 5px 0;
-        border-radius: 4px;
-    }
-    .gradient-labels {
-        display: flex;
-        justify-content: space-between;
-        font-size: 12px;
-        color: #fff;
-    }
-    .loading-overlay {
+    
+    #loading-overlay {
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(0, 0, 0, 0.7);
+        background-color: rgba(0, 0, 0, 0.5);
         display: flex;
         justify-content: center;
         align-items: center;
-        z-index: 1001;
+        z-index: 1000;
         color: white;
-        font-size: 24px;
+        display: none;
+    }
+    
+    .filters-card {
+        border-radius: 8px;
+        background-color: var(--bs-dark);
+        border: 1px solid var(--bs-border-color);
+    }
+    
+    .map-controls {
+        margin-bottom: 1rem;
+    }
+    
+    .map-card-stats {
+        border-left: 5px solid var(--bs-primary);
+    }
+    
+    .map-legend {
+        background-color: white;
+        padding: 10px;
+        border-radius: 4px;
+        box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+        font-size: 14px;
+        line-height: 24px;
+        opacity: 0.9;
+    }
+    
+    .legend-item {
+        margin-bottom: 5px;
+    }
+    
+    .legend-color {
+        width: 20px;
+        height: 20px;
+        display: inline-block;
+        margin-right: 5px;
+        vertical-align: middle;
+    }
+    
+    .popup-content {
+        max-width: 300px;
+    }
+    
+    .popup-content h5 {
+        margin-top: 0;
+        margin-bottom: 10px;
+        font-weight: 600;
+    }
+    
+    .popup-content p {
+        margin-bottom: 5px;
+        font-size: 14px;
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container py-4">
-    <h1 class="mb-4">Mappa di Densità delle Strutture Sanitarie in Italia</h1>
-    
-    <div class="row mb-4">
-        <div class="col-md-12">
-            <div class="card bg-dark">
-                <div class="card-body">
-                    <p class="card-text">
-                        Questa mappa di calore mostra la distribuzione geografica delle strutture sanitarie in Italia. 
-                        Le aree con una maggiore concentrazione di strutture sono evidenziate in rosso, mentre le aree 
-                        con meno strutture sono in blu. Usa i filtri per visualizzare strutture specifiche o specialità.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="container">
+    <h1 class="mb-4 text-center">Mappa di Densità delle Strutture Sanitarie</h1>
     
     <div class="row">
-        <div class="col-md-12">
-            <div id="map-container" class="mb-4">
-                <div id="map"></div>
-                
-                <!-- Controlli della mappa -->
-                <div class="map-controls">
-                    <h5 class="text-light mb-3">Filtri</h5>
+        <div class="col-md-4 map-controls">
+            <div class="card filters-card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title border-bottom pb-2 mb-3">
+                        <i class="fas fa-filter me-2"></i>Filtra la Mappa
+                    </h5>
                     
                     <div class="mb-3">
-                        <label for="region-filter" class="form-label text-light">Regione</label>
-                        <select class="form-select form-select-sm" id="region-filter">
+                        <label for="region-filter" class="form-label">Regione</label>
+                        <select class="form-select" id="region-filter">
                             <option value="">Tutte le regioni</option>
                             {% for region in regions %}
                             <option value="{{ region.name }}">{{ region.name }}</option>
@@ -112,8 +113,8 @@
                     </div>
                     
                     <div class="mb-3">
-                        <label for="specialty-filter" class="form-label text-light">Specialità</label>
-                        <select class="form-select form-select-sm" id="specialty-filter">
+                        <label for="specialty-filter" class="form-label">Specialità</label>
+                        <select class="form-select" id="specialty-filter">
                             <option value="">Tutte le specialità</option>
                             {% for specialty in specialties %}
                             <option value="{{ specialty.name }}">{{ specialty.name }}</option>
@@ -122,67 +123,71 @@
                     </div>
                     
                     <div class="mb-3">
-                        <label for="min-quality-filter" class="form-label text-light">Qualità minima</label>
-                        <select class="form-select form-select-sm" id="min-quality-filter">
+                        <label for="min-quality-filter" class="form-label">Qualità minima</label>
+                        <select class="form-select" id="min-quality-filter">
                             <option value="0">Qualsiasi</option>
-                            <option value="1">⭐ e superiore</option>
-                            <option value="2">⭐⭐ e superiore</option>
-                            <option value="3">⭐⭐⭐ e superiore</option>
-                            <option value="4">⭐⭐⭐⭐ e superiore</option>
-                            <option value="4.5">⭐⭐⭐⭐½ e superiore</option>
+                            <option value="1">1+ stelle</option>
+                            <option value="2">2+ stelle</option>
+                            <option value="3">3+ stelle</option>
+                            <option value="4">4+ stelle</option>
                         </select>
                     </div>
                     
                     <div class="d-grid gap-2">
-                        <button id="apply-filters" class="btn btn-primary btn-sm">
-                            <i class="fas fa-filter me-2"></i>Applica filtri
+                        <button id="apply-filters" class="btn btn-primary">
+                            <i class="fas fa-search me-2"></i>Applica Filtri
                         </button>
-                        <button id="reset-filters" class="btn btn-outline-secondary btn-sm">
-                            <i class="fas fa-undo me-2"></i>Reset
+                        <button id="reset-filters" class="btn btn-outline-secondary">
+                            <i class="fas fa-undo me-2"></i>Reimposta
                         </button>
-                    </div>
-                </div>
-                
-                <!-- Legenda della mappa -->
-                <div class="map-legend">
-                    <h6 class="text-light mb-2">Densità strutture</h6>
-                    <div class="gradient"></div>
-                    <div class="gradient-labels">
-                        <span>Bassa</span>
-                        <span>Alta</span>
-                    </div>
-                </div>
-                
-                <!-- Overlay di caricamento -->
-                <div class="loading-overlay" id="loading-overlay">
-                    <div class="text-center">
-                        <div class="spinner-border text-light mb-2" role="status">
-                            <span class="visually-hidden">Caricamento...</span>
-                        </div>
-                        <div>Caricamento dati...</div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-    
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card bg-dark mb-4">
+            
+            <div class="card map-card-stats">
                 <div class="card-body">
-                    <h5 class="card-title">Informazioni sulla mappa</h5>
-                    <p class="card-text">
-                        Questa visualizzazione utilizza i dati di {{ stats.total_facilities }} strutture sanitarie presenti nel nostro database,
-                        di cui {{ stats.geocoded_facilities }} ({{ stats.geocoded_percentage }}%) hanno coordinate geografiche precise.
-                    </p>
-                    <p class="card-text">
-                        La mappa mostra le concentrazioni di strutture sanitarie nelle diverse aree dell'Italia,
-                        permettendo di identificare rapidamente le zone con maggiore o minore presenza di servizi sanitari.
-                    </p>
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle me-2"></i> 
-                        Cliccando su un punto della mappa verranno mostrate le strutture sanitarie presenti in quell'area.
+                    <h5 class="card-title border-bottom pb-2 mb-3">
+                        <i class="fas fa-chart-pie me-2"></i>Statistiche
+                    </h5>
+                    
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Strutture totali
+                            <span class="badge bg-primary rounded-pill">{{ stats.total_facilities }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Strutture geocodificate
+                            <span class="badge bg-info rounded-pill">{{ stats.geocoded_facilities }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Percentuale con coordinate
+                            <span class="badge bg-success rounded-pill">{{ stats.geocoded_percentage }}%</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-8">
+            <div id="map-container">
+                <div id="map"></div>
+                <div id="loading-overlay">
+                    <div class="spinner-border text-light" role="status">
+                        <span class="visually-hidden">Caricamento...</span>
                     </div>
+                </div>
+            </div>
+            
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h5 class="card-title">Informazioni sulla Mappa</h5>
+                    <p class="text-muted">
+                        Questa mappa mostra la densità delle strutture sanitarie in Italia. Le aree con maggiore concentrazione di strutture sono visualizzate in colori più caldi (rosso/arancione), mentre le aree con meno strutture appaiono in colori più freddi (blu).
+                    </p>
+                    <p class="mb-0">
+                        <i class="fas fa-info-circle me-2 text-primary"></i>
+                        <strong>Suggerimento:</strong> Fai click sulla mappa per vedere le strutture presenti in quell'area.
+                    </p>
                 </div>
             </div>
         </div>
@@ -192,13 +197,11 @@
 
 {% block extra_js %}
 <!-- Leaflet JS -->
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" 
-        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
         crossorigin=""></script>
-
 <!-- Leaflet Heatmap Plugin -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.heat/0.2.0/leaflet-heat.js"></script>
-
-<!-- Mappa di densità JS -->
+<script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+<!-- Custom Heatmap JS -->
 <script src="{{ url_for('static', filename='js/heatmap.js') }}"></script>
 {% endblock %}
