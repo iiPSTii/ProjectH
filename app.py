@@ -161,11 +161,17 @@ with app.app_context():
         
         # Get custom search radius if provided, default to 30km
         try:
+            # Log the radius parameter for debugging
+            radius_param = request.args.get('radius')
+            logger.debug(f"Received radius parameter: {radius_param}")
+            
             search_radius = float(request.args.get('radius', 30.0))
             # Limit radius between 5km and 300km
             search_radius = max(5.0, min(300.0, search_radius))
+            logger.debug(f"Using search radius: {search_radius} km")
         except (ValueError, TypeError):
             search_radius = 30.0  # Default if invalid
+            logger.debug(f"Invalid radius value, using default: {search_radius} km")
 
         # Process the search query to extract location information
         detected_location = None
@@ -218,7 +224,8 @@ with app.app_context():
             # Create address search results structure
             address_search_results = {
                 'facilities': facilities_with_distance,
-                'search_location': search_location
+                'search_location': search_location,
+                'max_distance': search_radius  # Add search radius to preserve it for sorting
             }
         elif query_text:
             # Prioritize address/location search mode for new search interface
