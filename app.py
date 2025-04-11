@@ -592,6 +592,26 @@ with app.app_context():
                     # Add message about showing all facilities in region
                     mapped_specialties = [f"Tutte le strutture nella regione {region}"]
                     logger.debug(f"Showing all {len(facilities)} facilities in region {region}")
+                    
+                    # Add distance calculation if sort_by is distance and we have coordinates
+                    if sort_by == 'distance' and latitude and longitude:
+                        logger.debug("Adding distance calculations for region search when sorting by distance")
+                        for facility in facilities:
+                            if facility.latitude and facility.longitude:
+                                distance = calculate_distance(
+                                    float(latitude), float(longitude),
+                                    facility.latitude, facility.longitude
+                                )
+                                facility.distance = round(distance, 1)
+                                facility.distance_text = f"{facility.distance:.1f} km"
+                            else:
+                                # For facilities without coordinates, set a high distance
+                                facility.distance = float('inf')
+                                facility.distance_text = "N/A"
+                        
+                        # Pre-sort by distance before applying potential other sorts
+                        facilities.sort(key=lambda x: x.distance if hasattr(x, 'distance') else float('inf'))
+                        logger.debug(f"Pre-sorted facilities by distance for region search")
             
             # Regular search results - sort the facilities based on the sort_by parameter
             sorting_functions = {
@@ -601,6 +621,7 @@ with app.app_context():
                 'name_desc': lambda x: x.name.lower(),
                 'city_asc': lambda x: (x.city or '').lower(),
                 'city_desc': lambda x: (x.city or '').lower(),
+                'distance': lambda x: x.distance if hasattr(x, 'distance') else float('inf')  # Add distance sorting support
             }
 
             reverse_sort = sort_by.endswith('_desc') and sort_by != 'quality_desc'
