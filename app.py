@@ -563,6 +563,12 @@ with app.app_context():
             # Get the search location with coordinates
             search_location = address_search_results.get('search_location', {})
             
+            # Get the preserved search radius if available from address_search_results
+            if address_search_results.get('max_distance'):
+                preserved_radius = address_search_results.get('max_distance')
+                logger.debug(f"Using preserved search radius from address_search_results: {preserved_radius} km")
+                search_radius = preserved_radius
+                
             # If we have facilities from address search, use them directly
             if address_search_results.get('facilities'):
                 # Get the facilities from our address search
