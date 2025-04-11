@@ -81,13 +81,14 @@ def get_db_ratings(facility_name, city=None):
                 
             return facility.id, ratings
 
-def get_csv_ratings(csv_file, facility_name):
+def get_csv_ratings(csv_file, facility_name, city=None):
     """
     Ottiene i rating dal CSV per una struttura
     
     Args:
         csv_file: Percorso del file CSV
         facility_name: Nome della struttura
+        city: Città della struttura (opzionale)
         
     Returns:
         dict: Dizionario con nome specialità -> rating
@@ -95,7 +96,8 @@ def get_csv_ratings(csv_file, facility_name):
     with open(csv_file, 'r', encoding='utf-8') as f:
         reader = csv.DictReader(f)
         for row in reader:
-            if row['Name of the facility'] == facility_name:
+            # Se è specificata la città, verifica anche quella
+            if row['Name of the facility'] == facility_name and (city is None or row['City'] == city):
                 # Mappatura delle colonne CSV ai nomi delle specialità
                 specialty_mapping = {
                     'Cardiologia': 'Cardiologia',
@@ -231,7 +233,7 @@ def check_specific_facilities(csv_file, facility_names):
         facility_id, db_ratings = db_result
         
         # Ottengo i rating dal CSV
-        csv_ratings = get_csv_ratings(csv_file, facility_name)
+        csv_ratings = get_csv_ratings(csv_file, facility_name, city)
         if csv_ratings is None:
             results['not_found_in_csv'].append(facility_name)
             continue
