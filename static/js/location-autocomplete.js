@@ -258,12 +258,40 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Find coordinates based on the region in the address
                 let coords = {lat: "41.8719", lon: "12.5674"}; // Default to Italy center
                 
-                // Check if we have a region match
-                for (const [region, coordinates] of Object.entries(regionCoordinates)) {
-                    if (currentValue.includes(region)) {
-                        coords = coordinates;
-                        console.log(`Found region match: ${region} -> using coordinates:`, coords);
-                        break;
+                // Check if we have a region match - checking parts to avoid false positives
+                // Split the address by commas to get components
+                const addressComponents = currentValue.split(',').map(part => part.trim());
+                
+                // First, try to match regions in the second-to-last component (typical for Italian addresses)
+                if (addressComponents.length >= 2) {
+                    const regionPart = addressComponents[addressComponents.length - 2];
+                    for (const [region, coordinates] of Object.entries(regionCoordinates)) {
+                        // Check for exact match in address part (not substring)
+                        if (regionPart === region || 
+                            regionPart.endsWith(` ${region}`) || 
+                            regionPart.startsWith(`${region} `)) {
+                            coords = coordinates;
+                            console.log(`Found exact region match in part "${regionPart}": ${region} -> using coordinates:`, coords);
+                            break;
+                        }
+                    }
+                }
+                
+                // If no match found yet, try more general matching but only for region names, not cities
+                // This avoids matching "Via Roma" with "Roma" region
+                if (coords.lat === "41.8719") { // If still using default Italy coords
+                    const regionRegex = /\b(Sardegna|Sicilia|Lombardia|Lazio|Toscana|Campania|Piemonte|Puglia|Emilia-Romagna|Calabria|Liguria|Veneto)\b/i;
+                    const match = currentValue.match(regionRegex);
+                    if (match) {
+                        const foundRegion = match[0];
+                        // Find region in our map (case-insensitive)
+                        for (const [region, coordinates] of Object.entries(regionCoordinates)) {
+                            if (region.toLowerCase() === foundRegion.toLowerCase()) {
+                                coords = coordinates;
+                                console.log(`Found region in address: ${region} -> using coordinates:`, coords);
+                                break;
+                            }
+                        }
                     }
                 }
                 
@@ -413,12 +441,40 @@ document.addEventListener('DOMContentLoaded', function() {
             // Find coordinates based on the query text
             let coords = {lat: "41.8719", lon: "12.5674"}; // Default to Italy center
             
-            // Check if we have a region match
-            for (const [region, coordinates] of Object.entries(regionCoordinates)) {
-                if (query.includes(region)) {
-                    coords = coordinates;
-                    console.log(`Found region match in query: ${region} -> using coordinates:`, coords);
-                    break;
+            // Check if we have a region match - checking parts to avoid false positives
+            // Split the address by commas to get components
+            const addressComponents = query.split(',').map(part => part.trim());
+            
+            // First, try to match regions in the second-to-last component (typical for Italian addresses)
+            if (addressComponents.length >= 2) {
+                const regionPart = addressComponents[addressComponents.length - 2];
+                for (const [region, coordinates] of Object.entries(regionCoordinates)) {
+                    // Check for exact match in address part (not substring)
+                    if (regionPart === region || 
+                        regionPart.endsWith(` ${region}`) || 
+                        regionPart.startsWith(`${region} `)) {
+                        coords = coordinates;
+                        console.log(`Found exact region match in part "${regionPart}": ${region} -> using coordinates:`, coords);
+                        break;
+                    }
+                }
+            }
+            
+            // If no match found yet, try more general matching but only for region names, not cities
+            // This avoids matching "Via Roma" with "Roma" region
+            if (coords.lat === "41.8719") { // If still using default Italy coords
+                const regionRegex = /\b(Sardegna|Sicilia|Lombardia|Lazio|Toscana|Campania|Piemonte|Puglia|Emilia-Romagna|Calabria|Liguria|Veneto)\b/i;
+                const match = query.match(regionRegex);
+                if (match) {
+                    const foundRegion = match[0];
+                    // Find region in our map (case-insensitive)
+                    for (const [region, coordinates] of Object.entries(regionCoordinates)) {
+                        if (region.toLowerCase() === foundRegion.toLowerCase()) {
+                            coords = coordinates;
+                            console.log(`Found region in address: ${region} -> using coordinates:`, coords);
+                            break;
+                        }
+                    }
                 }
             }
             
