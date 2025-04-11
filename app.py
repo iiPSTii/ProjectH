@@ -1060,6 +1060,20 @@ Preferred-Languages: it, en
         # Redirect to the search page with the same parameters
         return redirect(url_for('search', region=region, specialty=specialty))
     
+    @app.route('/findmycure')
+    def findmycure_landing():
+        """Landing page for FindMyCure brand with SEO optimizations"""
+        # Get data for the form dropdowns (regions and specialties)
+        from data_loader import get_regions, get_specialties
+        regions = get_regions()
+        specialties = get_specialties()
+        db_status = get_database_status()
+        
+        return render_template('findmycure_landing.html', 
+                              regions=regions, 
+                              specialties=specialties, 
+                              db_status=db_status)
+    
     # Add dynamic structured data (JSON-LD) to all pages
     @app.context_processor
     def inject_json_ld():
@@ -1120,39 +1134,73 @@ Preferred-Languages: it, en
                 }
             
             # Enhanced structured data for landing pages
-            elif current_path in ['/cardiologia', '/oncologia', '/milano-strutture-sanitarie']:
+            elif current_path in ['/cardiologia', '/oncologia', '/milano-strutture-sanitarie', '/findmycure']:
                 page_info = {
                     '/cardiologia': {
                         "name": "Strutture di Cardiologia in Italia",
-                        "specialty": "Cardiologia"
+                        "specialty": "Cardiologia",
+                        "type": "MedicalWebPage"
                     },
                     '/oncologia': {
                         "name": "Strutture di Oncologia in Italia",
-                        "specialty": "Oncologia"
+                        "specialty": "Oncologia",
+                        "type": "MedicalWebPage"
                     },
                     '/milano-strutture-sanitarie': {
                         "name": "Strutture Sanitarie a Milano",
-                        "city": "Milano"
+                        "city": "Milano",
+                        "type": "MedicalWebPage"
+                    },
+                    '/findmycure': {
+                        "name": "FindMyCure Italia - La Piattaforma per Trovare Strutture Sanitarie",
+                        "description": "FindMyCure ti aiuta a trovare la struttura sanitaria più adatta alle tue esigenze in Italia, con valutazioni basate su dati ufficiali.",
+                        "type": "WebPage"
                     }
                 }
                 
                 info = page_info[current_path]
                 
-                base_data = {
-                    "@context": "https://schema.org",
-                    "@type": "MedicalWebPage",
-                    "headline": info["name"],
-                    "specialty": info.get("specialty", ""),
-                    "about": {
-                        "@type": "MedicalOrganization",
-                        "name": "Strutture mediche italiane",
-                        "address": {
-                            "@type": "PostalAddress",
-                            "addressCountry": "IT",
-                            "addressRegion": info.get("city", "Italia")
+                # Utilizza il tipo di pagina corretto in base alle informazioni
+                page_type = info.get("type", "MedicalWebPage")
+                
+                # Base JSON-LD differenziato per pagina standard o per pagina FindMyCure
+                if current_path == '/findmycure':
+                    base_data = {
+                        "@context": "https://schema.org",
+                        "@type": page_type,
+                        "headline": info["name"],
+                        "description": info.get("description", ""),
+                        "publisher": {
+                            "@type": "Organization",
+                            "name": "FindMyCure Italia",
+                            "url": "https://findmycure.it/",
+                            "logo": {
+                                "@type": "ImageObject",
+                                "url": "https://findmycure.it/static/images/logo.png"
+                            }
+                        },
+                        "keywords": "findmycure, find my cure, trovare strutture sanitarie, ospedali italia, confronto cliniche, valutazioni ospedali",
+                        "mainEntityOfPage": {
+                            "@type": "WebPage",
+                            "@id": "https://findmycure.it/findmycure"
                         }
                     }
-                }
+                else:
+                    base_data = {
+                        "@context": "https://schema.org",
+                        "@type": page_type,
+                        "headline": info["name"],
+                        "specialty": info.get("specialty", ""),
+                        "about": {
+                            "@type": "MedicalOrganization",
+                            "name": "Strutture mediche italiane",
+                            "address": {
+                                "@type": "PostalAddress",
+                                "addressCountry": "IT",
+                                "addressRegion": info.get("city", "Italia")
+                            }
+                        }
+                    }
                 
             return base_data
             

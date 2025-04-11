@@ -7,7 +7,15 @@
   <!-- Homepage -->
   <url>
     <loc>https://findmycure.it/</loc>
-    <lastmod>2025-04-09</lastmod>
+    <lastmod>2025-04-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- About FindMyCure Page (principale per SEO) -->
+  <url>
+    <loc>https://findmycure.it/findmycure</loc>
+    <lastmod>2025-04-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
@@ -15,7 +23,7 @@
   <!-- Methodology Page -->
   <url>
     <loc>https://findmycure.it/methodology</loc>
-    <lastmod>2025-04-09</lastmod>
+    <lastmod>2025-04-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -23,19 +31,19 @@
   <!-- Landing Pages -->
   <url>
     <loc>https://findmycure.it/cardiologia</loc>
-    <lastmod>2025-04-09</lastmod>
+    <lastmod>2025-04-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://findmycure.it/oncologia</loc>
-    <lastmod>2025-04-09</lastmod>
+    <lastmod>2025-04-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://findmycure.it/milano-strutture-sanitarie</loc>
-    <lastmod>2025-04-09</lastmod>
+    <lastmod>2025-04-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>

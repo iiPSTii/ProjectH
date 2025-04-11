@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block title %}FindMyCure - La Piattaforma per Confrontare Strutture Sanitarie Italiane{% endblock %}
+
+{% block og_title %}FindMyCure Italia - La Piattaforma per Confrontare Strutture Sanitarie Italiane{% endblock %}
+{% block og_description %}FindMyCure ti aiuta a trovare la struttura sanitaria più adatta alle tue esigenze in Italia. Confronta ospedali e cliniche in base a qualità, specialità e posizione.{% endblock %}
+
+{% block twitter_title %}FindMyCure - Trova e Confronta Strutture Sanitarie in Italia{% endblock %}
+{% block twitter_description %}FindMyCure Italia: la piattaforma che ti aiuta a trovare la struttura sanitaria più adatta alle tue esigenze. Confronta ospedali e cliniche.{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">FindMyCure</li>
+            </ol>
+        </nav>
+        
+        <div class="mb-5">
+            <div class="text-center mb-5">
+                <h1 class="display-4 fw-bold mb-4">FindMyCure Italia</h1>
+                <h2 class="h3 mb-4">La piattaforma per trovare e confrontare strutture sanitarie in Italia</h2>
+                <p class="lead mb-4">FindMyCure ti aiuta a trovare la struttura sanitaria più adatta alle tue esigenze in Italia. Confronta ospedali e cliniche in base a qualità, specialità e posizione.</p>
+                
+                <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mb-5">
+                    <a href="/" class="btn btn-primary btn-lg px-4 gap-3">
+                        <i class="fas fa-search me-2"></i> Inizia la Ricerca
+                    </a>
+                </div>
+            </div>
+            
+            <div class="card bg-dark border-0 shadow-sm mb-5">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-7">
+                            <h2 class="mb-4">Cos'è FindMyCure Italia?</h2>
+                            <p class="mb-3">FindMyCure Italia è un <strong>motore di ricerca specializzato</strong> che ti permette di confrontare strutture sanitarie italiane utilizzando dati ufficiali e valutazioni verificate.</p>
+                            
+                            <p class="mb-3">Grazie a FindMyCure puoi:</p>
+                            <ul class="mb-4">
+                                <li>Confrontare strutture sanitarie in base a <strong>valutazioni qualitative ufficiali</strong></li>
+                                <li>Cercare ospedali e cliniche per <strong>specialità medica</strong></li>
+                                <li>Trovare strutture in base alla <strong>posizione geografica</strong></li>
+                                <li>Visualizzare dettagli su <strong>qualità dei servizi</strong> con valutazioni su scala 1-5</li>
+                                <li>Accedere ai <strong>contatti diretti</strong> delle strutture</li>
+                            </ul>
+                            
+                            <h3 class="h5 mb-3 mt-4">Cosa significa "FindMyCure"?</h3>
+                            <p>FindMyCure, che in italiano significa "Trova la mia cura", è una piattaforma pensata per aiutarti a trovare la struttura sanitaria più adatta alle tue esigenze di salute. Il nostro obiettivo è semplificare la ricerca e il confronto tra le diverse opzioni sanitarie disponibili in Italia.</p>
+                            
+                            <div class="mb-4 mt-4">
+                                <h3 class="h5 mb-3">Regioni e città principali:</h3>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <a href="/search?query_text=Milano" class="badge bg-secondary text-decoration-none">Milano</a>
+                                    <a href="/search?query_text=Roma" class="badge bg-secondary text-decoration-none">Roma</a>
+                                    <a href="/search?query_text=Napoli" class="badge bg-secondary text-decoration-none">Napoli</a>
+                                    <a href="/search?query_text=Firenze" class="badge bg-secondary text-decoration-none">Firenze</a>
+                                    <a href="/search?query_text=Bologna" class="badge bg-secondary text-decoration-none">Bologna</a>
+                                    <a href="/search?region=Lombardia" class="badge bg-secondary text-decoration-none">Lombardia</a>
+                                    <a href="/search?region=Lazio" class="badge bg-secondary text-decoration-none">Lazio</a>
+                                    <a href="/search?region=Toscana" class="badge bg-secondary text-decoration-none">Toscana</a>
+                                    <a href="/search?region=Puglia" class="badge bg-secondary text-decoration-none">Puglia</a>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <h3 class="h5 mb-3">Specialità mediche ricercate:</h3>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <a href="/search?specialty=Cardiologia" class="badge bg-secondary text-decoration-none">Cardiologia</a>
+                                    <a href="/search?specialty=Oncologia" class="badge bg-secondary text-decoration-none">Oncologia</a>
+                                    <a href="/search?specialty=Ortopedia" class="badge bg-secondary text-decoration-none">Ortopedia</a>
+                                    <a href="/search?specialty=Neurologia" class="badge bg-secondary text-decoration-none">Neurologia</a>
+                                    <a href="/search?specialty=Ginecologia" class="badge bg-secondary text-decoration-none">Ginecologia</a>
+                                    <a href="/search?specialty=Urologia" class="badge bg-secondary text-decoration-none">Urologia</a>
+                                    <a href="/search?specialty=Pediatria" class="badge bg-secondary text-decoration-none">Pediatria</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="card bg-dark bg-opacity-50 border-0 h-100">
+                                <div class="card-body">
+                                    <h3 class="h5 mb-4">Perché usare FindMyCure?</h3>
+                                    <ul class="list-group list-group-flush bg-transparent">
+                                        <li class="list-group-item bg-transparent border-secondary">
+                                            <i class="fas fa-check-circle text-success me-2"></i> <strong>Dati ufficiali:</strong> Utilizziamo valutazioni basate su dati del Programma Nazionale Esiti (AGENAS)
+                                        </li>
+                                        <li class="list-group-item bg-transparent border-secondary">
+                                            <i class="fas fa-check-circle text-success me-2"></i> <strong>Ricerca geografica:</strong> Trova strutture fino a 300km dalla tua posizione
+                                        </li>
+                                        <li class="list-group-item bg-transparent border-secondary">
+                                            <i class="fas fa-check-circle text-success me-2"></i> <strong>Specialità mediche:</strong> Confronta strutture in base alle loro specializzazioni
+                                        </li>
+                                        <li class="list-group-item bg-transparent border-secondary">
+                                            <i class="fas fa-check-circle text-success me-2"></i> <strong>Valutazioni oggettive:</strong> Sistema di rating basato su parametri verificabili
+                                        </li>
+                                        <li class="list-group-item bg-transparent border-secondary">
+                                            <i class="fas fa-check-circle text-success me-2"></i> <strong>Contatti diretti:</strong> Accedi facilmente ai contatti delle strutture
+                                        </li>
+                                    </ul>
+                                    
+                                    <div class="d-grid gap-2 mt-4">
+                                        <a href="/methodology" class="btn btn-outline-primary">
+                                            Scopri la nostra metodologia
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mb-5">
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <div class="card h-100 bg-dark bg-opacity-50 border-0">
+                        <div class="card-body text-center">
+                            <div class="mb-3 text-primary">
+                                <i class="fas fa-hospital fa-3x"></i>
+                            </div>
+                            <h3 class="h5 mb-3">206 Strutture</h3>
+                            <p class="mb-0">Database completo di strutture sanitarie in Italia con informazioni dettagliate e aggiornate.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <div class="card h-100 bg-dark bg-opacity-50 border-0">
+                        <div class="card-body text-center">
+                            <div class="mb-3 text-primary">
+                                <i class="fas fa-stethoscope fa-3x"></i>
+                            </div>
+                            <h3 class="h5 mb-3">43 Specialità</h3>
+                            <p class="mb-0">Ampia copertura delle specialità mediche con valutazioni specifiche per ciascuna struttura.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 bg-dark bg-opacity-50 border-0">
+                        <div class="card-body text-center">
+                            <div class="mb-3 text-primary">
+                                <i class="fas fa-map-marker-alt fa-3x"></i>
+                            </div>
+                            <h3 class="h5 mb-3">20 Regioni</h3>
+                            <p class="mb-0">Copertura completa di tutte le regioni italiane per trovare la struttura più vicina a te.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mb-5">
+                <h2 class="h4 mb-4">Inizia a cercare su FindMyCure Italia</h2>
+                <p class="mb-4">Trova la struttura sanitaria più adatta alle tue esigenze in pochi clic.</p>
+                <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                    <a href="/" class="btn btn-primary btn-lg px-4 gap-3">
+                        <i class="fas fa-search me-2"></i> Vai alla Ricerca
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
