@@ -2,118 +2,400 @@
  * Location Autocomplete with Nominatim API
  * This script implements location autocomplete using OpenStreetMap's Nominatim API
  */
+
 document.addEventListener('DOMContentLoaded', function() {
-    // Get DOM elements
+    // Elements
     const locationInput = document.getElementById('location-input');
     const locationSuggestions = document.getElementById('location-suggestions');
+    const locationForm = document.getElementById('location-form');
     const latitudeInput = document.getElementById('latitude');
     const longitudeInput = document.getElementById('longitude');
-    const searchButton = document.getElementById('searchButton');
+    const searchButton = document.getElementById('search-button');
     const loadingSpinner = document.getElementById('loading-spinner');
     
-    // Skip if not on a page with the location input
-    if (!locationInput || !locationSuggestions) return;
-    
-    // Variables for managing state
     let selectedLocation = null;
-    let typingTimer; // Timer for debounce
-    const doneTypingInterval = 500; // Wait time after user stops typing (ms)
-    let lastInputValue = ''; // Store the last value to detect browser autofill
+    let typingTimer;
+    const doneTypingInterval = 500; // Wait 500ms after user stops typing
+    let lastInputValue = '';  // Track the last known input value for autofill detection
+    let autofillPollingId = null; // ID for the polling interval
     
-    // Function to check if the input has been autofilled
+    // Only initialize if we have the location input on this page
+    if (!locationInput) return;
+    
+    // Start an aggressive polling to detect browser autofill
+    // This is necessary because some browsers don't trigger events when autofilling
+    const startAutofillPolling = () => {
+        if (autofillPollingId) {
+            clearInterval(autofillPollingId);
+        }
+        
+        console.log("Starting autofill polling");
+        autofillPollingId = setInterval(() => {
+            const currentValue = locationInput.value.trim();
+            if (currentValue !== lastInputValue && currentValue.length > 2) {
+                console.log('Autofill detected through polling:', currentValue);
+                lastInputValue = currentValue;
+                fetchSuggestions(currentValue);
+            }
+        }, 100); // Poll every 100ms for changes
+        
+        // Stop polling after 5 seconds to save resources
+        setTimeout(() => {
+            if (autofillPollingId) {
+                console.log("Stopping autofill polling");
+                clearInterval(autofillPollingId);
+                autofillPollingId = null;
+            }
+        }, 5000);
+    };
+    
+    // Function to check for browser/phone autofill
     function checkForAutofill() {
         const currentValue = locationInput.value.trim();
         
-        // If the value changed without us knowing about it, it might be an autofill
-        if (currentValue !== lastInputValue && currentValue.length > 0) {
-            console.log("Possible autofill detected:", currentValue);
+        // If value has changed without an input event, it's likely an autofill
+        if (currentValue !== lastInputValue && currentValue.length > 2) {
+            console.log('Autofill detected:', currentValue);
             lastInputValue = currentValue;
             
-            // Try direct geocoding to get coordinates for the autofilled address
-            tryDirectGeocoding(currentValue)
-                .then(coords => {
-                    if (coords) {
-                        // We have coordinates, update the hidden inputs
-                        latitudeInput.value = coords.lat;
-                        longitudeInput.value = coords.lon;
+            // Usa una soluzione ibrida per l'autofill per supportare entrambi gli scenari
+            console.log("Gestisco autofill con soluzione ibrida");
+            
+            // Usa approccio misto: geocoding per indirizzo completo, e fallback locale
+            const geocodeUrl = new URL('https://nominatim.openstreetmap.org/search');
+            geocodeUrl.searchParams.append('q', currentValue);
+            geocodeUrl.searchParams.append('format', 'json');
+            geocodeUrl.searchParams.append('limit', '1');
+            geocodeUrl.searchParams.append('countrycodes', 'it');
+            
+            fetch(geocodeUrl.toString(), {
+                headers: {
+                    'User-Agent': 'FindMyCure-Italia/1.0'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data && data.length > 0) {
+                    // We got coordinates from API, update hidden fields
+                    console.log("Trovate coordinate API:", data[0].lat, data[0].lon);
+                    latitudeInput.value = data[0].lat;
+                    longitudeInput.value = data[0].lon;
+                    
+                    // Update query_text
+                    if (document.getElementById('query_text')) {
+                        document.getElementById('query_text').value = currentValue;
+                    }
+                    
+                    // Attiva l'indicatore verde di conferma
+                    const confirmationIndicator = document.getElementById('location-confirmation');
+                    if (confirmationIndicator) {
+                        confirmationIndicator.classList.add('active');
+                    }
+                    
+                    // Nascondiamo l'indicatore originale
+                    const indicator = document.getElementById('location-selected-indicator');
+                    if (indicator) {
+                        // indicator.classList.remove('d-none'); // Non mostriamo più questo indicatore
                         
-                        // Update query_text field
+                        const locationNameIndicator = indicator.querySelector('.location-name');
+                        if (locationNameIndicator) {
+                            locationNameIndicator.textContent = currentValue.substring(0, 25) + 
+                                (currentValue.length > 25 ? '...' : '');
+                        }
+                        
+                        const radiusElement = document.getElementById('radius');
+                        const radiusValue = radiusElement ? radiusElement.value : '30';
+                        const radiusIndicator = indicator.querySelector('.radius-indicator');
+                        if (radiusIndicator) {
+                            radiusIndicator.textContent = radiusValue + ' km';
+                        }
+                    }
+                } else {
+                    // API failed, use fallback
+                    console.log("Nessun risultato API, uso fallback locale");
+                    
+                    // Crea location fallback con coordinate di default per Milano
+                    locationSuggestions.innerHTML = '';
+                    
+                    // Create fallback items with coordinates from geocoding
+                    // Try to extract regional or city information from the address
+                    const addressParts = currentValue.split(',');
+                    let regionName = '';
+                    
+                    // Try to extract region from the address (typically the second-to-last part)
+                    if (addressParts.length >= 2) {
+                        regionName = addressParts[addressParts.length - 2].trim();
+                    }
+                    
+                    // Map of regions to their approximate center coordinates
+                    const regionCoordinates = {
+                        'Sardegna': {lat: "40.0690", lon: "9.0212"},
+                        'Sardinia': {lat: "40.0690", lon: "9.0212"},
+                        'Sicilia': {lat: "37.5990", lon: "14.0154"},
+                        'Sicily': {lat: "37.5990", lon: "14.0154"},
+                        'Lombardia': {lat: "45.4785", lon: "9.2195"},
+                        'Lombardy': {lat: "45.4785", lon: "9.2195"},
+                        'Lazio': {lat: "41.9028", lon: "12.4964"},
+                        'Toscana': {lat: "43.7711", lon: "11.2486"},
+                        'Tuscany': {lat: "43.7711", lon: "11.2486"},
+                        'Campania': {lat: "40.8358", lon: "14.2487"},
+                        'Piemonte': {lat: "45.0703", lon: "7.6869"},
+                        'Piedmont': {lat: "45.0703", lon: "7.6869"},
+                        'Puglia': {lat: "41.1187", lon: "16.8718"},
+                        'Apulia': {lat: "41.1187", lon: "16.8718"},
+                        'Emilia-Romagna': {lat: "44.4938", lon: "11.3426"},
+                        'Calabria': {lat: "39.3087", lon: "16.3158"},
+                        'Liguria': {lat: "44.4222", lon: "8.9052"},
+                        'Veneto': {lat: "45.4408", lon: "12.3155"},
+                        'Italia': {lat: "41.8719", lon: "12.5674"},
+                        'Italy': {lat: "41.8719", lon: "12.5674"}
+                    };
+                    
+                    // Find coordinates based on the region in the address
+                    let coords = {lat: "41.8719", lon: "12.5674"}; // Default to Italy center
+                    
+                    // Check if we have a region match
+                    for (const [region, coordinates] of Object.entries(regionCoordinates)) {
+                        if (currentValue.includes(region)) {
+                            coords = coordinates;
+                            console.log(`Found region match: ${region} -> using coordinates:`, coords);
+                            break;
+                        }
+                    }
+                    
+                    const fallbackAddresses = [
+                        {
+                            display_name: currentValue,
+                            lat: coords.lat,  // Use region-appropriate coordinates
+                            lon: coords.lon
+                        }
+                    ];
+                    
+                    fallbackAddresses.forEach(location => {
+                        // Update hidden inputs with fallback coordinates
+                        latitudeInput.value = location.lat;
+                        longitudeInput.value = location.lon;
+                        
+                        // Also update the query_text hidden field
                         if (document.getElementById('query_text')) {
-                            document.getElementById('query_text').value = currentValue;
+                            document.getElementById('query_text').value = location.display_name;
                         }
                         
                         // Store selected location
                         selectedLocation = {
-                            lat: coords.lat,
-                            lon: coords.lon,
-                            displayName: currentValue
+                            lat: location.lat,
+                            lon: location.lon,
+                            displayName: location.display_name
                         };
                         
-                        // Show the green confirmation icon
+                        // Attiva l'indicatore verde di conferma
                         const confirmationIndicator = document.getElementById('location-confirmation');
                         if (confirmationIndicator) {
                             confirmationIndicator.classList.add('active');
                         }
                         
-                        console.log("Autofill processed with coordinates:", coords);
+                        // Nascondiamo l'indicatore originale
+                        const indicator = document.getElementById('location-selected-indicator');
+                        if (indicator) {
+                            // indicator.classList.remove('d-none'); // Non mostriamo più questo indicatore
+                            
+                            const locationNameIndicator = indicator.querySelector('.location-name');
+                            if (locationNameIndicator) {
+                                locationNameIndicator.textContent = location.display_name.substring(0, 25) + 
+                                    (location.display_name.length > 25 ? '...' : '');
+                            }
+                            
+                            const radiusElement = document.getElementById('radius');
+                            const radiusValue = radiusElement ? radiusElement.value : '30';
+                            const radiusIndicator = indicator.querySelector('.radius-indicator');
+                            if (radiusIndicator) {
+                                radiusIndicator.textContent = radiusValue + ' km';
+                            }
+                        }
+                    });
+                }
+            })
+            .catch(error => {
+                console.error("Error geocoding autofilled address:", error);
+                
+                // API failed, use fallback
+                locationSuggestions.innerHTML = '';
+                
+                // Create fallback items with coordinates from geocoding
+                // Try to extract regional or city information from the address
+                const addressParts = currentValue.split(',');
+                let regionName = '';
+                
+                // Try to extract region from the address (typically the second-to-last part)
+                if (addressParts.length >= 2) {
+                    regionName = addressParts[addressParts.length - 2].trim();
+                }
+                
+                // Map of regions to their approximate center coordinates
+                const regionCoordinates = {
+                    'Sardegna': {lat: "40.0690", lon: "9.0212"},
+                    'Sardinia': {lat: "40.0690", lon: "9.0212"},
+                    'Sicilia': {lat: "37.5990", lon: "14.0154"},
+                    'Sicily': {lat: "37.5990", lon: "14.0154"},
+                    'Lombardia': {lat: "45.4785", lon: "9.2195"},
+                    'Lombardy': {lat: "45.4785", lon: "9.2195"},
+                    'Lazio': {lat: "41.9028", lon: "12.4964"},
+                    'Toscana': {lat: "43.7711", lon: "11.2486"},
+                    'Tuscany': {lat: "43.7711", lon: "11.2486"},
+                    'Campania': {lat: "40.8358", lon: "14.2487"},
+                    'Piemonte': {lat: "45.0703", lon: "7.6869"},
+                    'Piedmont': {lat: "45.0703", lon: "7.6869"},
+                    'Puglia': {lat: "41.1187", lon: "16.8718"},
+                    'Apulia': {lat: "41.1187", lon: "16.8718"},
+                    'Emilia-Romagna': {lat: "44.4938", lon: "11.3426"},
+                    'Calabria': {lat: "39.3087", lon: "16.3158"},
+                    'Liguria': {lat: "44.4222", lon: "8.9052"},
+                    'Veneto': {lat: "45.4408", lon: "12.3155"},
+                    'Italia': {lat: "41.8719", lon: "12.5674"},
+                    'Italy': {lat: "41.8719", lon: "12.5674"}
+                };
+                
+                // Find coordinates based on the region in the address
+                let coords = {lat: "41.8719", lon: "12.5674"}; // Default to Italy center
+                
+                // Check if we have a region match - checking parts to avoid false positives
+                // Split the address by commas to get components
+                const addressComponents = currentValue.split(',').map(part => part.trim());
+                
+                // First, try to match regions in the second-to-last component (typical for Italian addresses)
+                if (addressComponents.length >= 2) {
+                    const regionPart = addressComponents[addressComponents.length - 2];
+                    for (const [region, coordinates] of Object.entries(regionCoordinates)) {
+                        // Check for exact match in address part (not substring)
+                        if (regionPart === region || 
+                            regionPart.endsWith(` ${region}`) || 
+                            regionPart.startsWith(`${region} `)) {
+                            coords = coordinates;
+                            console.log(`Found exact region match in part "${regionPart}": ${region} -> using coordinates:`, coords);
+                            break;
+                        }
                     }
-                })
-                .catch(error => {
-                    console.error("Error processing autofill:", error);
-                });
+                }
+                
+                // If no match found yet, try more general matching but only for region names, not cities
+                // This avoids matching "Via Roma" with "Roma" region
+                if (coords.lat === "41.8719") { // If still using default Italy coords
+                    const regionRegex = /\b(Sardegna|Sicilia|Lombardia|Lazio|Toscana|Campania|Piemonte|Puglia|Emilia-Romagna|Calabria|Liguria|Veneto)\b/i;
+                    const match = currentValue.match(regionRegex);
+                    if (match) {
+                        const foundRegion = match[0];
+                        // Find region in our map (case-insensitive)
+                        for (const [region, coordinates] of Object.entries(regionCoordinates)) {
+                            if (region.toLowerCase() === foundRegion.toLowerCase()) {
+                                coords = coordinates;
+                                console.log(`Found region in address: ${region} -> using coordinates:`, coords);
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+                const fallbackAddresses = [
+                    {
+                        display_name: currentValue,
+                        lat: coords.lat, // Use region-appropriate coordinates
+                        lon: coords.lon
+                    }
+                ];
+                
+                // Use fallback data
+                latitudeInput.value = fallbackAddresses[0].lat;
+                longitudeInput.value = fallbackAddresses[0].lon;
+                
+                // Also update the query_text hidden field
+                if (document.getElementById('query_text')) {
+                    document.getElementById('query_text').value = currentValue;
+                }
+                
+                // Store selected location
+                selectedLocation = {
+                    lat: fallbackAddresses[0].lat,
+                    lon: fallbackAddresses[0].lon,
+                    displayName: currentValue
+                };
+                
+                // Attiva l'indicatore verde di conferma
+                const confirmationIndicator = document.getElementById('location-confirmation');
+                if (confirmationIndicator) {
+                    confirmationIndicator.classList.add('active');
+                }
+                
+                // Nascondiamo l'indicatore originale
+                const indicator = document.getElementById('location-selected-indicator');
+                if (indicator) {
+                    // indicator.classList.remove('d-none'); // Non mostriamo più questo indicatore
+                    
+                    const locationNameIndicator = indicator.querySelector('.location-name');
+                    if (locationNameIndicator) {
+                        locationNameIndicator.textContent = currentValue.substring(0, 25) + 
+                            (currentValue.length > 25 ? '...' : '');
+                    }
+                    
+                    const radiusElement = document.getElementById('radius');
+                    const radiusValue = radiusElement ? radiusElement.value : '30';
+                    const radiusIndicator = indicator.querySelector('.radius-indicator');
+                    if (radiusIndicator) {
+                        radiusIndicator.textContent = radiusValue + ' km';
+                    }
+                }
+            });
+            
+            // Update the query_text field with the autofilled value as a fallback
+            if (document.getElementById('query_text')) {
+                document.getElementById('query_text').value = currentValue;
+            }
         }
     }
     
-    // Check if the text appears to be a complete address
+    // Helper to check if the value looks like a complete address
     function isCompleteAddress(text) {
-        // Complete address criteria:
-        // 1. Contains both a street pattern (Via, Piazza, etc.) and a number OR
-        // 2. Contains city name and postal code OR
-        // 3. Is longer than certain length and contains commas (typical address format)
+        // Check for common patterns that indicate a complete address
+        // Italian address typically has: street, house number, city, province/region
+        const hasStreet = /(via|viale|piazza|corso|strada|largo)/i.test(text);
+        const hasNumber = /\d+/.test(text);
+        const hasCity = text.split(',').length >= 2;
+        const hasMultipleParts = text.split(' ').length >= 3;
         
-        const hasStreetFormat = /\b(via|viale|corso|piazza|largo|strada)\s+[\w\s]+,?\s*\d+/i.test(text);
-        const hasCityPostalFormat = /\b\d{5}\b.*\b[A-Z][a-z]+\b|\b[A-Z][a-z]+\b.*\b\d{5}\b/.test(text);
-        const isLongWithCommas = text.length > 25 && text.includes(',') && /\b[A-Z][a-z]+\b/.test(text);
-        
-        return hasStreetFormat || hasCityPostalFormat || isLongWithCommas;
+        return (hasStreet && hasNumber && hasCity) || 
+               (hasMultipleParts && hasCity) ||
+               text.length > 20; // Longer text is more likely to be a complete address
     }
     
-    // Function to fetch location suggestions
+    // Setup autofill detection
+    // Check right after page load (for page reload with browser-saved values)
+    setTimeout(checkForAutofill, 500);
+    
+    // Check on focus events (browsers often autofill on focus)
+    locationInput.addEventListener('focus', function() {
+        setTimeout(checkForAutofill, 100);
+        // Start aggressive polling when field gets focus
+        startAutofillPolling();
+    });
+    
+    // Also check on click, which can trigger autofill on mobile
+    locationInput.addEventListener('click', function() {
+        setTimeout(checkForAutofill, 100);
+        // Start aggressive polling when field gets clicked
+        startAutofillPolling();
+    });
+    
+    // Start polling right away for immediate detection
+    startAutofillPolling();
+    
+    // Function to fetch location suggestions from Nominatim
     function fetchSuggestions(query) {
-        // Function to directly geocode an address with high precision
-        async function tryDirectGeocoding(address) {
-            try {
-                // Create a more direct geocoding request for the full address
-                const geocodeUrl = new URL('https://nominatim.openstreetmap.org/search');
-                geocodeUrl.searchParams.append('q', address);
-                geocodeUrl.searchParams.append('format', 'json');
-                geocodeUrl.searchParams.append('limit', 1);
-                geocodeUrl.searchParams.append('addressdetails', 1);
-                geocodeUrl.searchParams.append('countrycodes', 'it');
-                
-                console.log("Trying direct geocoding with:", geocodeUrl.toString());
-                
-                const response = await fetch(geocodeUrl.toString(), {
-                    headers: {
-                        'User-Agent': 'FindMyCure-Italia/1.0'
-                    }
-                });
-                
-                const data = await response.json();
-                
-                if (data && data.length > 0) {
-                    console.log("Direct geocoding successful:", data[0]);
-                    return {
-                        lat: data[0].lat,
-                        lon: data[0].lon
-                    };
-                }
-                
-                return null;
-            } catch (error) {
-                console.error("Error in direct geocoding:", error);
-                return null;
-            }
+        console.log("fetchSuggestions called with:", query);
+        
+        if (query.length < 3) {
+            console.log("Query too short, not fetching suggestions");
+            locationSuggestions.innerHTML = '';
+            locationSuggestions.style.display = 'none';
+            return;
         }
         
         // Create fallback for API to ensure suggestions always appear
@@ -293,6 +575,43 @@ document.addEventListener('DOMContentLoaded', function() {
                 locationSuggestions.style.display = 'block';
                 locationInput.classList.remove('loading');
             }
+        }
+        
+        // Function to directly geocode an address with high precision
+        async function tryDirectGeocoding(address) {
+            try {
+                // Create a more direct geocoding request for the full address
+                const geocodeUrl = new URL('https://nominatim.openstreetmap.org/search');
+                geocodeUrl.searchParams.append('q', address);
+                geocodeUrl.searchParams.append('format', 'json');
+                geocodeUrl.searchParams.append('limit', 1);
+                geocodeUrl.searchParams.append('addressdetails', 1);
+                geocodeUrl.searchParams.append('countrycodes', 'it');
+                
+                console.log("Trying direct geocoding with:", geocodeUrl.toString());
+                
+                const response = await fetch(geocodeUrl.toString(), {
+                    headers: {
+                        'User-Agent': 'FindMyCure-Italia/1.0'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data && data.length > 0) {
+                    console.log("Direct geocoding successful:", data[0]);
+                    return {
+                        lat: data[0].lat,
+                        lon: data[0].lon
+                    };
+                }
+                
+                return null;
+            } catch (error) {
+                console.error("Error in direct geocoding:", error);
+                return null;
+            }
+        }
         }
         
         // Show loading indicator
@@ -640,27 +959,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Check for autofill on page load
-    setTimeout(checkForAutofill, 800);
-    
-    // Periodically check for autofill (handles more browser cases)
-    setInterval(checkForAutofill, 2000);
-    
-    // If we already have coordinates in hidden fields, mark as selected
-    if (latitudeInput.value && longitudeInput.value) {
-        // Show the green confirmation icon
-        const confirmationIndicator = document.getElementById('location-confirmation');
-        if (confirmationIndicator) {
-            confirmationIndicator.classList.add('active');
-        }
-        
-        // Store selected location
-        selectedLocation = {
-            lat: latitudeInput.value,
-            lon: longitudeInput.value,
-            displayName: locationInput.value
-        };
-    }
-    
-    console.log('Location autocomplete initialized successfully');
+    // Apply some initial styling
+    locationSuggestions.style.display = 'none';
 });
