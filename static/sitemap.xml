@@ -12,13 +12,7 @@
     <priority>1.0</priority>
   </url>
 
-  <!-- About FindMyCure Page (principale per SEO) -->
-  <url>
-    <loc>https://findmycure.it/findmycure</loc>
-    <lastmod>2025-04-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-  </url>
+
 
   <!-- Methodology Page -->
   <url>
