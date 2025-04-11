@@ -340,7 +340,7 @@
                                 {% if facility.region %}
                                 <span class="ms-2"><i class="fas fa-map me-1"></i>{{ facility.region.name }}</span>
                                 {% endif %}
-                                {% if search_params.is_address_search and facility.distance is defined %}
+                                {% if facility.distance is defined and facility.distance != inf %}
                                 <br><i class="fas fa-route me-1 text-success"></i><span class="text-success">Distanza: {{ '%.1f'|format(facility.distance) }} km</span>
                                 {% endif %}
                             </p>
