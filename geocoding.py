@@ -178,11 +178,17 @@ def geocode_address(address_components):
             result = results[0]
             # Add a small delay to respect rate limits
             time.sleep(GEOCODING_DELAY)
+            # Extract address components
+            address_parts = result.get('address', {})
+            # Get region from the result (called 'state' in Nominatim's response)
+            region = address_parts.get('state', '')
+            
             return {
                 'lat': float(result['lat']),
                 'lon': float(result['lon']),
                 'display_name': result['display_name'],
-                'address': result.get('address', {})
+                'address': address_parts,
+                'region': region
             }
     except requests.exceptions.Timeout:
         logger.error(f"Timeout geocoding address: {search_query}")
@@ -480,10 +486,18 @@ def find_facilities_near_address(query_text, facilities, max_distance=30.0, max_
             if results:
                 # Get the first result
                 result = results[0]
+                # Extract address components from the result
+                address_parts = result.get('address', {})
+                
+                # Get region from the result (called 'state' in Nominatim's response)
+                region = address_parts.get('state', '')
+                
                 geocoded_address = {
                     'lat': float(result['lat']),
                     'lon': float(result['lon']),
-                    'display_name': result['display_name']
+                    'display_name': result['display_name'],
+                    'address': address_parts,
+                    'region': region
                 }
                 logger.info(f"Successfully geocoded city: {query_text} -> {geocoded_address['display_name']}")
             else:
