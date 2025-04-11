@@ -493,23 +493,34 @@ with app.app_context():
                     specialty_search_applied = True
             # If no medical mapping found or specialty already filtered, do regular text search
             elif not specialty_search_applied or specialty_filter_applied:
-                # Search in facility name, address, specialties, and conditions
-                search_term = f"%{query_text.lower()}%"
-
                 # Join with specialties only if not already joined
                 if not specialty_filter_applied:
                     query = query.outerjoin(MedicalFacility.specialties).outerjoin(FacilitySpecialty.specialty)
-
-                # Search in facility name, facility type, address, city or specialty name
-                query = query.filter(
-                    db.or_(
+                
+                # Dividi il testo della query in parole chiave per una ricerca più flessibile
+                keywords = query_text.lower().split()
+                logger.debug(f"Parole chiave per la ricerca: {keywords}")
+                
+                # Crea filtri per ogni parola chiave
+                filters = []
+                for keyword in keywords:
+                    # Usa % per ricerca parziale
+                    search_term = f"%{keyword}%"
+                    
+                    # Aggiungi condizioni OR per ogni campo
+                    keyword_filter = db.or_(
                         db.func.lower(MedicalFacility.name).like(search_term),
                         db.func.lower(MedicalFacility.facility_type).like(search_term),
                         db.func.lower(MedicalFacility.address).like(search_term),
                         db.func.lower(MedicalFacility.city).like(search_term),
                         db.func.lower(Specialty.name).like(search_term)
                     )
-                )
+                    filters.append(keyword_filter)
+                
+                # Applica tutti i filtri con AND tra le parole chiave
+                if filters:
+                    query = query.filter(db.and_(*filters))
+                    logger.debug(f"Applicati {len(filters)} filtri di ricerca per parole chiave")
 
             # Execute query to see if we found any results
             facilities = query.all()
@@ -527,14 +538,21 @@ with app.app_context():
                 # Join specialties tables
                 query = query.join(MedicalFacility.specialties).join(FacilitySpecialty.specialty)
 
-                # Filter by these general specialties
-                query = query.filter(
-                    db.or_(
-                        Specialty.name.in_(general_specialties),
-                        db.func.lower(MedicalFacility.name).like(f"%{query_text.lower()}%"),
-                        db.func.lower(MedicalFacility.city).like(f"%{query_text.lower()}%")
-                    )
-                )
+                # Dividi anche qui il testo della query in parole chiave per la ricerca fallback
+                keywords = query_text.lower().split()
+                logger.debug(f"Parole chiave per la ricerca fallback: {keywords}")
+                
+                # Prepara le condizioni di base includendo sempre le specialità generali
+                base_conditions = [Specialty.name.in_(general_specialties)]
+                
+                # Aggiungi condizioni per ogni parola chiave nella ricerca per nome e città
+                for keyword in keywords:
+                    search_term = f"%{keyword}%"
+                    base_conditions.append(db.func.lower(MedicalFacility.name).like(search_term))
+                    base_conditions.append(db.func.lower(MedicalFacility.city).like(search_term))
+                
+                # Applica le condizioni con OR tra tutte
+                query = query.filter(db.or_(*base_conditions))
 
                 # Add a message to indicate we're showing broader results
                 if not mapped_specialties:
