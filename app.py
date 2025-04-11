@@ -156,6 +156,9 @@ with app.app_context():
         latitude = request.args.get('latitude', '', type=str)
         longitude = request.args.get('longitude', '', type=str)
         
+        # Get the is_address_search parameter from the form if it exists
+        is_address_search = request.args.get('is_address_search', 'false').lower() == 'true'
+        
         # Get custom search radius if provided, default to 30km
         try:
             search_radius = float(request.args.get('radius', 30.0))
@@ -167,7 +170,16 @@ with app.app_context():
         # Process the search query to extract location information
         detected_location = None
         original_query = query_text
-        is_address_search = False
+        
+        # If sort_by is distance, force is_address_search to True
+        if sort_by == 'distance':
+            is_address_search = True
+            
+        # If we have coordinates, ensure is_address_search is True
+        if latitude and longitude:
+            is_address_search = True
+            logger.debug(f"Using provided coordinates: lat={latitude}, lon={longitude}")
+            logger.debug(f"Setting is_address_search to True based on coordinates")
         address_search_results = None
 
         # Check if we have coordinates from the location autocomplete
