@@ -261,7 +261,8 @@ with app.app_context():
                 # Create address search results structure
                 address_search_results = {
                     'facilities': facilities_with_distance,
-                    'search_location': search_location
+                    'search_location': search_location,
+                    'max_distance': search_radius  # Preserva anche il raggio di ricerca per l'ordinamento
                 }
             else:
                 # Extract the address part from the query if it contains other terms
