@@ -507,14 +507,8 @@ with app.app_context():
                     # Usa % per ricerca parziale
                     search_term = f"%{keyword}%"
                     
-                    # Aggiungi condizioni OR per ogni campo
-                    keyword_filter = db.or_(
-                        db.func.lower(MedicalFacility.name).like(search_term),
-                        db.func.lower(MedicalFacility.facility_type).like(search_term),
-                        db.func.lower(MedicalFacility.address).like(search_term),
-                        db.func.lower(MedicalFacility.city).like(search_term),
-                        db.func.lower(Specialty.name).like(search_term)
-                    )
+                    # Cerca solo nei nomi delle strutture (modificato come richiesto)
+                    keyword_filter = db.func.lower(MedicalFacility.name).like(search_term)
                     filters.append(keyword_filter)
                 
                 # Applica tutti i filtri con AND tra le parole chiave
@@ -545,11 +539,10 @@ with app.app_context():
                 # Prepara le condizioni di base includendo sempre le specialità generali
                 base_conditions = [Specialty.name.in_(general_specialties)]
                 
-                # Aggiungi condizioni per ogni parola chiave nella ricerca per nome e città
+                # Aggiungi condizioni per ogni parola chiave nella ricerca per nome (solo nomi delle strutture)
                 for keyword in keywords:
                     search_term = f"%{keyword}%"
                     base_conditions.append(db.func.lower(MedicalFacility.name).like(search_term))
-                    base_conditions.append(db.func.lower(MedicalFacility.city).like(search_term))
                 
                 # Applica le condizioni con OR tra tutte
                 query = query.filter(db.or_(*base_conditions))
