@@ -579,19 +579,43 @@ with app.app_context():
             # Special case for address searches that found no nearby facilities
             # but did successfully recognize a location
             if len(facilities) == 0 and is_address_query(query_text) and not is_address_search:
-                logger.debug(f"Address search failed to find nearby facilities, showing all in detected region: {region}")
+                # Try to extract region from geocoded data if possible
+                detected_region = None
+                
+                # Geocode the address to get coordinates and region information
+                from geocoding import extract_address_part, parse_address, geocode_address
+                
+                address_part = extract_address_part(query_text)
+                address_components = parse_address(address_part)
+                geocoded_data = None
+                
+                if address_components:
+                    geocoded_data = geocode_address(address_components)
+                
+                # If geocoding successful, extract region from the result
+                if geocoded_data and 'region' in geocoded_data:
+                    detected_region = geocoded_data['region']
+                    logger.debug(f"Extracted region from address: {detected_region}")
+                
+                # Use detected region if available, otherwise fall back to region parameter
+                region_to_use = detected_region or region
+                
+                logger.debug(f"Address search failed to find nearby facilities, showing all in detected region: {region_to_use}")
                 
                 # If we've detected a region from the address query and have no results,
                 # show all facilities in that region without other filters
-                if region:
+                if region_to_use:
                     # Clear query and create a fresh one with just the region filter
                     query = db.session.query(MedicalFacility)
-                    query = query.join(MedicalFacility.region).filter(Region.name.ilike(f'%{region}%'))
+                    query = query.join(MedicalFacility.region).filter(Region.name.ilike(f'%{region_to_use}%'))
                     facilities = query.all()
                     
                     # Add message about showing all facilities in region
-                    mapped_specialties = [f"Tutte le strutture nella regione {region}"]
-                    logger.debug(f"Showing all {len(facilities)} facilities in region {region}")
+                    mapped_specialties = [f"Tutte le strutture nella regione {region_to_use}"]
+                    logger.debug(f"Showing all {len(facilities)} facilities in region {region_to_use}")
+                    
+                    # Update region parameter with detected region
+                    region = region_to_use
                     
                     # Add distance calculation if sort_by is distance and we have coordinates
                     if sort_by == 'distance' and latitude and longitude:
@@ -614,6 +638,24 @@ with app.app_context():
                         logger.debug(f"Pre-sorted facilities by distance for region search")
             
             # Regular search results - sort the facilities based on the sort_by parameter
+            
+            # If sort_by is distance but we don't have distance attributes, calculate them if possible
+            if sort_by == 'distance' and latitude and longitude:
+                # Calculate distances for all facilities
+                logger.debug(f"Calculating distances for all facilities for distance sorting")
+                for facility in facilities:
+                    if facility.latitude and facility.longitude:
+                        distance = calculate_distance(
+                            float(latitude), float(longitude),
+                            facility.latitude, facility.longitude
+                        )
+                        facility.distance = round(distance, 1)
+                        facility.distance_text = f"{facility.distance:.1f} km"
+                    else:
+                        # For facilities without coordinates, set a high distance
+                        facility.distance = float('inf')
+                        facility.distance_text = "N/A"
+            
             sorting_functions = {
                 'quality_desc': lambda x: get_specialty_score(x, specialty) * -1,  # Higher scores first
                 'quality_asc': lambda x: get_specialty_score(x, specialty),        # Lower scores first
