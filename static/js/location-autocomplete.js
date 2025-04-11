@@ -117,12 +117,57 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Crea location fallback con coordinate di default per Milano
                     locationSuggestions.innerHTML = '';
                     
-                    // Create fallback items
+                    // Create fallback items with coordinates from geocoding
+                    // Try to extract regional or city information from the address
+                    const addressParts = currentValue.split(',');
+                    let regionName = '';
+                    
+                    // Try to extract region from the address (typically the second-to-last part)
+                    if (addressParts.length >= 2) {
+                        regionName = addressParts[addressParts.length - 2].trim();
+                    }
+                    
+                    // Map of regions to their approximate center coordinates
+                    const regionCoordinates = {
+                        'Sardegna': {lat: "40.0690", lon: "9.0212"},
+                        'Sardinia': {lat: "40.0690", lon: "9.0212"},
+                        'Sicilia': {lat: "37.5990", lon: "14.0154"},
+                        'Sicily': {lat: "37.5990", lon: "14.0154"},
+                        'Lombardia': {lat: "45.4785", lon: "9.2195"},
+                        'Lombardy': {lat: "45.4785", lon: "9.2195"},
+                        'Lazio': {lat: "41.9028", lon: "12.4964"},
+                        'Toscana': {lat: "43.7711", lon: "11.2486"},
+                        'Tuscany': {lat: "43.7711", lon: "11.2486"},
+                        'Campania': {lat: "40.8358", lon: "14.2487"},
+                        'Piemonte': {lat: "45.0703", lon: "7.6869"},
+                        'Piedmont': {lat: "45.0703", lon: "7.6869"},
+                        'Puglia': {lat: "41.1187", lon: "16.8718"},
+                        'Apulia': {lat: "41.1187", lon: "16.8718"},
+                        'Emilia-Romagna': {lat: "44.4938", lon: "11.3426"},
+                        'Calabria': {lat: "39.3087", lon: "16.3158"},
+                        'Liguria': {lat: "44.4222", lon: "8.9052"},
+                        'Veneto': {lat: "45.4408", lon: "12.3155"},
+                        'Italia': {lat: "41.8719", lon: "12.5674"},
+                        'Italy': {lat: "41.8719", lon: "12.5674"}
+                    };
+                    
+                    // Find coordinates based on the region in the address
+                    let coords = {lat: "41.8719", lon: "12.5674"}; // Default to Italy center
+                    
+                    // Check if we have a region match
+                    for (const [region, coordinates] of Object.entries(regionCoordinates)) {
+                        if (currentValue.includes(region)) {
+                            coords = coordinates;
+                            console.log(`Found region match: ${region} -> using coordinates:`, coords);
+                            break;
+                        }
+                    }
+                    
                     const fallbackAddresses = [
                         {
                             display_name: currentValue,
-                            lat: "45.4636", // Default coords - Milano
-                            lon: "9.1602"
+                            lat: coords.lat,  // Use region-appropriate coordinates
+                            lon: coords.lon
                         }
                     ];
                     
@@ -176,12 +221,57 @@ document.addEventListener('DOMContentLoaded', function() {
                 // API failed, use fallback
                 locationSuggestions.innerHTML = '';
                 
-                // Create fallback items
+                // Create fallback items with coordinates from geocoding
+                // Try to extract regional or city information from the address
+                const addressParts = currentValue.split(',');
+                let regionName = '';
+                
+                // Try to extract region from the address (typically the second-to-last part)
+                if (addressParts.length >= 2) {
+                    regionName = addressParts[addressParts.length - 2].trim();
+                }
+                
+                // Map of regions to their approximate center coordinates
+                const regionCoordinates = {
+                    'Sardegna': {lat: "40.0690", lon: "9.0212"},
+                    'Sardinia': {lat: "40.0690", lon: "9.0212"},
+                    'Sicilia': {lat: "37.5990", lon: "14.0154"},
+                    'Sicily': {lat: "37.5990", lon: "14.0154"},
+                    'Lombardia': {lat: "45.4785", lon: "9.2195"},
+                    'Lombardy': {lat: "45.4785", lon: "9.2195"},
+                    'Lazio': {lat: "41.9028", lon: "12.4964"},
+                    'Toscana': {lat: "43.7711", lon: "11.2486"},
+                    'Tuscany': {lat: "43.7711", lon: "11.2486"},
+                    'Campania': {lat: "40.8358", lon: "14.2487"},
+                    'Piemonte': {lat: "45.0703", lon: "7.6869"},
+                    'Piedmont': {lat: "45.0703", lon: "7.6869"},
+                    'Puglia': {lat: "41.1187", lon: "16.8718"},
+                    'Apulia': {lat: "41.1187", lon: "16.8718"},
+                    'Emilia-Romagna': {lat: "44.4938", lon: "11.3426"},
+                    'Calabria': {lat: "39.3087", lon: "16.3158"},
+                    'Liguria': {lat: "44.4222", lon: "8.9052"},
+                    'Veneto': {lat: "45.4408", lon: "12.3155"},
+                    'Italia': {lat: "41.8719", lon: "12.5674"},
+                    'Italy': {lat: "41.8719", lon: "12.5674"}
+                };
+                
+                // Find coordinates based on the region in the address
+                let coords = {lat: "41.8719", lon: "12.5674"}; // Default to Italy center
+                
+                // Check if we have a region match
+                for (const [region, coordinates] of Object.entries(regionCoordinates)) {
+                    if (currentValue.includes(region)) {
+                        coords = coordinates;
+                        console.log(`Found region match: ${region} -> using coordinates:`, coords);
+                        break;
+                    }
+                }
+                
                 const fallbackAddresses = [
                     {
                         display_name: currentValue,
-                        lat: "45.4636", // Milano coordinates
-                        lon: "9.1602"
+                        lat: coords.lat, // Use region-appropriate coordinates
+                        lon: coords.lon
                     }
                 ];
                 
