@@ -98,6 +98,9 @@
                         <input type="hidden" name="latitude" value="{{ search_params.search_location.lat }}">
                         <input type="hidden" name="longitude" value="{{ search_params.search_location.lon }}">
                         {% endif %}
+                        {% if search_params.search_radius %}
+                        <input type="hidden" name="radius" value="{{ search_params.search_radius }}">
+                        {% endif %}
                         
                         <label for="sort_by" class="form-label me-2">Ordina per:</label>
                         <select class="form-select form-select-sm d-inline-block w-auto" id="sort_by" name="sort_by" onchange="document.getElementById('sortForm').submit();">
