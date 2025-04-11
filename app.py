@@ -211,16 +211,54 @@ with app.app_context():
             logger.debug(f"Treating query as potential address/location: '{query_text}'")
             is_address_search = True
             
-            # Extract the address part from the query if it contains other terms
-            address_part = extract_address_part(query_text)
-            logger.debug(f"Extracted address part: '{address_part}'")
-            
-            # Get all facilities to find ones near this address
-            all_facilities = db.session.query(MedicalFacility).all()
-            
-            # Find facilities near the specified address
-            # Use the custom search radius provided by the user
-            address_search_results = find_facilities_near_address(address_part, all_facilities, max_distance=search_radius)
+            # Check if we have coordinates from frontend
+            if latitude and longitude:
+                # If we have coordinates from frontend, use them directly
+                logger.debug(f"Using provided coordinates: lat={latitude}, lon={longitude}")
+                
+                # Get all facilities to find ones near these coordinates
+                all_facilities = db.session.query(MedicalFacility).all()
+                
+                # Create a search location from the provided coordinates
+                search_location = {
+                    'lat': float(latitude),
+                    'lon': float(longitude),
+                    'display_name': query_text
+                }
+                
+                # Find facilities near these coordinates
+                facilities_with_distance = []
+                for facility in all_facilities:
+                    if facility.latitude and facility.longitude:
+                        distance = calculate_distance(
+                            float(latitude), float(longitude), 
+                            facility.latitude, facility.longitude
+                        )
+                        if distance <= search_radius:  # Use custom radius from user
+                            # Add distance directly to the facility object
+                            facility.distance = round(distance, 1)
+                            facility.distance_text = f"{facility.distance:.1f} km"
+                            facilities_with_distance.append(facility)
+                
+                # Sort by distance
+                facilities_with_distance.sort(key=lambda x: x.distance)
+                
+                # Create address search results structure
+                address_search_results = {
+                    'facilities': facilities_with_distance,
+                    'search_location': search_location
+                }
+            else:
+                # Extract the address part from the query if it contains other terms
+                address_part = extract_address_part(query_text)
+                logger.debug(f"Extracted address part: '{address_part}'")
+                
+                # Get all facilities to find ones near this address
+                all_facilities = db.session.query(MedicalFacility).all()
+                
+                # Find facilities near the specified address
+                # Use the custom search radius provided by the user
+                address_search_results = find_facilities_near_address(address_part, all_facilities, max_distance=search_radius)
             
             if address_search_results and address_search_results.get('facilities'):
                 logger.debug(f"Found {len(address_search_results['facilities'])} facilities near address: '{query_text}'")
