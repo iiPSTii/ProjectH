@@ -163,12 +163,25 @@ def main():
         'failed': 0
     }
     
-    # Per ogni struttura
+    # Per ogni struttura normale (senza città specificata)
     for facility_name, specialties in CSV_DATA.items():
         for specialty_name, rating in specialties.items():
             stats['total'] += 1
             
             if fix_facility_rating(facility_name, specialty_name, rating):
+                stats['updated'] += 1
+            else:
+                stats['failed'] += 1
+    
+    # Per ogni struttura con città specificata
+    for facility_data in CSV_DATA_WITH_CITY:
+        facility_name = facility_data['name']
+        city = facility_data['city']
+        
+        for specialty_name, rating in facility_data['ratings'].items():
+            stats['total'] += 1
+            
+            if fix_facility_rating(facility_name, specialty_name, rating, city=city):
                 stats['updated'] += 1
             else:
                 stats['failed'] += 1
