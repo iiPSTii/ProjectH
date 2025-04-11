@@ -671,22 +671,27 @@ with app.app_context():
             
             # Regular search results - sort the facilities based on the sort_by parameter
             
-            # If sort_by is distance but we don't have distance attributes, calculate them if possible
-            if sort_by == 'distance' and latitude and longitude:
-                # Calculate distances for all facilities
-                logger.debug(f"Calculating distances for all facilities for distance sorting")
-                for facility in facilities:
-                    if facility.latitude and facility.longitude:
-                        distance = calculate_distance(
-                            float(latitude), float(longitude),
-                            facility.latitude, facility.longitude
-                        )
-                        facility.distance = round(distance, 1)
-                        facility.distance_text = f"{facility.distance:.1f} km"
-                    else:
-                        # For facilities without coordinates, set a high distance
-                        facility.distance = float('inf')
-                        facility.distance_text = "N/A"
+            # Sempre calcoliamo le distanze quando abbiamo coordinate di ricerca, indipendentemente dall'ordinamento
+        # Questo assicura che le distanze vengano mostrate nei riquadri anche se non stiamo ordinando per distanza
+        if latitude and longitude:
+            # Calculate distances for all facilities
+            logger.debug(f"Calculating distances for all facilities")
+            for facility in facilities:
+                if facility.latitude and facility.longitude:
+                    distance = calculate_distance(
+                        float(latitude), float(longitude),
+                        facility.latitude, facility.longitude
+                    )
+                    facility.distance = round(distance, 1)
+                    facility.distance_text = f"{facility.distance:.1f} km"
+                else:
+                    # For facilities without coordinates, set a high distance
+                    facility.distance = float('inf')
+                    facility.distance_text = "N/A"
+                    
+            # Se stiamo ordinando per distanza, assicuriamoci che is_address_search sia impostato a True
+            if sort_by == 'distance':
+                is_address_search = True
             
             sorting_functions = {
                 'quality_desc': lambda x: get_specialty_score(x, specialty) * -1,  # Higher scores first
@@ -718,8 +723,9 @@ with app.app_context():
                 'detected_location': detected_location,
                 'mapped_specialties': mapped_specialties,
                 'sort_by': sort_by,
-                'is_address_search': False,
-                'search_radius': int(search_radius) if search_radius else 30  # Default to 30 if not an address search
+                'is_address_search': is_address_search or (latitude and longitude),  # True se abbiamo coordinate o è una ricerca per indirizzo
+                'search_radius': int(search_radius) if search_radius else 30,  # Default to 30 if not an address search
+                'search_location': {'lat': latitude, 'lon': longitude} if latitude and longitude else None
             })
 
     @app.route('/data-manager')
