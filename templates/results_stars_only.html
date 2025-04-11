@@ -94,7 +94,7 @@
                         
                         <label for="sort_by" class="form-label me-2">Ordina per:</label>
                         <select class="form-select form-select-sm d-inline-block w-auto" id="sort_by" name="sort_by" onchange="document.getElementById('sortForm').submit();">
-                            {% if search_params.is_address_search %}
+                            {% if search_params.search_location %}
                             <option value="distance" {% if search_params.sort_by == 'distance' %}selected{% endif %}>Distanza (Più vicine prima)</option>
                             {% endif %}
                             <option value="quality_desc" {% if search_params.sort_by == 'quality_desc' %}selected{% endif %}>Qualità (Migliore prima)</option>
@@ -138,7 +138,7 @@
                             {% if facility.region %}
                             <br><i class="fas fa-map me-2"></i>{{ facility.region.name }}
                             {% endif %}
-                            {% if facility.distance is defined and facility.distance < 1000 %}
+                            {% if search_params.search_location and facility.distance is defined %}
                             <br><i class="fas fa-route me-2 text-success"></i><span class="text-success">Distanza: {{ '%.1f'|format(facility.distance) }} km</span>
                             {% endif %}
                         </p>
@@ -340,7 +340,7 @@
                                 {% if facility.region %}
                                 <span class="ms-2"><i class="fas fa-map me-1"></i>{{ facility.region.name }}</span>
                                 {% endif %}
-                                {% if facility.distance is defined and facility.distance < 1000 %}
+                                {% if search_params.search_location and facility.distance is defined %}
                                 <br><i class="fas fa-route me-1 text-success"></i><span class="text-success">Distanza: {{ '%.1f'|format(facility.distance) }} km</span>
                                 {% endif %}
                             </p>

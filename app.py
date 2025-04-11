@@ -689,9 +689,13 @@ with app.app_context():
                         facility.distance = 9999
                         facility.distance_text = "N/A"
                 
-                # Se stiamo ordinando per distanza, assicuriamoci che is_address_search sia impostato a True
+                # Se stiamo ordinando per distanza, assicuriamoci di passare le coordinate di ricerca
+                # Questo è cruciale per mantenere il contesto della ricerca geografica
                 if sort_by == 'distance':
                     is_address_search = True
+                    
+                    # Assicuriamoci che le coordinate siano passate correttamente
+                    search_location = {'lat': latitude, 'lon': longitude}
             
             sorting_functions = {
                 'quality_desc': lambda x: get_specialty_score(x, specialty) * -1,  # Higher scores first
