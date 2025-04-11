@@ -1047,6 +1047,93 @@ Expires: 2026-04-09T00:00:00.000Z
 Preferred-Languages: it, en
 """
     
+    @app.route('/heatmap')
+    def heatmap():
+        """Pagina con la mappa di densità delle strutture sanitarie"""
+        # Ottieni tutte le regioni e specialità per i filtri
+        regions = get_regions()
+        specialties = get_specialties()
+        
+        # Ottieni statistiche sulle strutture con coordinate
+        total_facilities = db.session.query(MedicalFacility).count()
+        geocoded_facilities = db.session.query(MedicalFacility).filter(
+            MedicalFacility.latitude != None,
+            MedicalFacility.longitude != None
+        ).count()
+        
+        if total_facilities > 0:
+            geocoded_percentage = round((geocoded_facilities / total_facilities) * 100)
+        else:
+            geocoded_percentage = 0
+            
+        stats = {
+            'total_facilities': total_facilities,
+            'geocoded_facilities': geocoded_facilities,
+            'geocoded_percentage': geocoded_percentage
+        }
+        
+        return render_template('heatmap.html', regions=regions, specialties=specialties, stats=stats)
+    
+    @app.route('/api/facilities-data')
+    def facilities_data():
+        """API endpoint per fornire i dati delle strutture sanitarie per la mappa di calore"""
+        # Recupera i parametri di filtro
+        region = request.args.get('region', '')
+        specialty = request.args.get('specialty', '')
+        min_quality = request.args.get('min_quality', 0, type=float)
+        
+        # Inizia la query
+        query = db.session.query(MedicalFacility)
+        
+        # Filtra solo le strutture con coordinate valide
+        query = query.filter(
+            MedicalFacility.latitude != None,
+            MedicalFacility.longitude != None
+        )
+        
+        # Applica filtri in base ai parametri ricevuti
+        if region:
+            query = query.join(MedicalFacility.region).filter(Region.name == region)
+            
+        if specialty:
+            # Unisci con la tabella delle specialità
+            query = query.join(MedicalFacility.specialties).join(FacilitySpecialty.specialty)
+            query = query.filter(Specialty.name == specialty)
+            
+        if min_quality > 0:
+            query = query.filter(MedicalFacility.quality_rating >= min_quality)
+            
+        # Esegui la query
+        facilities = query.all()
+        
+        # Prepara i dati per la risposta
+        data = []
+        for facility in facilities:
+            # Aggiungi i dati di base della struttura
+            facility_data = {
+                'id': facility.id,
+                'name': facility.name,
+                'latitude': float(facility.latitude),
+                'longitude': float(facility.longitude),
+                'address': facility.address,
+                'city': facility.city,
+                'quality_rating': facility.quality_rating
+            }
+            
+            # Se è stato specificato un filtro per specialità, aggiungi anche il rating specifico
+            if specialty:
+                for facility_specialty in facility.specialties:
+                    if facility_specialty.specialty.name == specialty:
+                        facility_data['specialty_rating'] = facility_specialty.rating
+                        break
+            
+            data.append(facility_data)
+            
+        return jsonify({
+            'count': len(facilities),
+            'facilities': data
+        })
+    
     @app.route('/<region>/<specialty>')
     def region_specialty_search(region, specialty):
         """SEO-friendly URL structure for region+specialty search"""
