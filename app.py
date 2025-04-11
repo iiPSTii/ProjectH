@@ -615,7 +615,7 @@ with app.app_context():
                 detected_region = None
                 
                 # Geocode the address to get coordinates and region information
-                from geocoding import extract_address_part, parse_address, geocode_address
+                from geocoding import extract_address_part, parse_address, geocode_address, calculate_distance
                 
                 address_part = extract_address_part(query_text)
                 address_components = parse_address(address_part)
@@ -672,26 +672,26 @@ with app.app_context():
             # Regular search results - sort the facilities based on the sort_by parameter
             
             # Sempre calcoliamo le distanze quando abbiamo coordinate di ricerca, indipendentemente dall'ordinamento
-        # Questo assicura che le distanze vengano mostrate nei riquadri anche se non stiamo ordinando per distanza
-        if latitude and longitude:
-            # Calculate distances for all facilities
-            logger.debug(f"Calculating distances for all facilities")
-            for facility in facilities:
-                if facility.latitude and facility.longitude:
-                    distance = calculate_distance(
-                        float(latitude), float(longitude),
-                        facility.latitude, facility.longitude
-                    )
-                    facility.distance = round(distance, 1)
-                    facility.distance_text = f"{facility.distance:.1f} km"
-                else:
-                    # For facilities without coordinates, set a high distance
-                    facility.distance = float('inf')
-                    facility.distance_text = "N/A"
-                    
-            # Se stiamo ordinando per distanza, assicuriamoci che is_address_search sia impostato a True
-            if sort_by == 'distance':
-                is_address_search = True
+            # Questo assicura che le distanze vengano mostrate nei riquadri anche se non stiamo ordinando per distanza
+            if latitude and longitude:
+                # Calculate distances for all facilities
+                logger.debug(f"Calculating distances for all facilities")
+                for facility in facilities:
+                    if facility.latitude and facility.longitude:
+                        distance = calculate_distance(
+                            float(latitude), float(longitude),
+                            facility.latitude, facility.longitude
+                        )
+                        facility.distance = round(distance, 1)
+                        facility.distance_text = f"{facility.distance:.1f} km"
+                    else:
+                        # For facilities without coordinates, set a high distance
+                        facility.distance = float('inf')
+                        facility.distance_text = "N/A"
+                
+                # Se stiamo ordinando per distanza, assicuriamoci che is_address_search sia impostato a True
+                if sort_by == 'distance':
+                    is_address_search = True
             
             sorting_functions = {
                 'quality_desc': lambda x: get_specialty_score(x, specialty) * -1,  # Higher scores first
