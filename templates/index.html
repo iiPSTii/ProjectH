@@ -157,24 +157,24 @@
             <div class="card-header bg-dark">
                 <h5 class="mb-0">
                     <a class="text-decoration-none text-light d-block" data-bs-toggle="collapse" href="#specificSearch" role="button" aria-expanded="false">
-                        <i class="fas fa-search-plus me-2"></i> Cerchi qualcosa di specifico? <i class="fas fa-chevron-down float-end"></i>
+                        <i class="fas fa-search-plus me-2"></i> Cerca una struttura specifica per nome <i class="fas fa-chevron-down float-end"></i>
                     </a>
                 </h5>
             </div>
             <div class="collapse" id="specificSearch">
                 <div class="card-body">
                     <form action="/search" method="get">
-                        <label for="specific_query" class="form-label">Cerca per nome, condizione medica o altro</label>
+                        <label for="specific_query" class="form-label">Cerca strutture per nome</label>
                         <div class="input-group mb-3">
                             <span class="input-group-text"><i class="fas fa-search"></i></span>
                             <input type="text" class="form-control" name="query_text" id="specific_query" 
-                                   placeholder="Es: ospedale, cardiologia, mal di schiena, artrosi..." aria-label="Cerca specifico">
+                                   placeholder="Es: Ospedale Santa Maria, Policlinico, San Raffaele..." aria-label="Cerca strutture per nome">
                             <button class="btn btn-primary" type="submit">
                                 <i class="fas fa-search me-2"></i> Cerca
                             </button>
                         </div>
                         <div class="form-text text-muted mb-3">
-                            Puoi cercare strutture per nome, condizione medica o specialità
+                            Inserisci il nome completo o parziale di una struttura sanitaria
                         </div>
                     </form>
                 </div>
@@ -238,7 +238,7 @@
                                         <li>I risultati saranno ordinati per distanza, con le strutture più vicine in cima</li>
                                         <li>Puoi poi riordinare i risultati in base alla qualità o altri criteri</li>
                                     </ul>
-                                    <p>Per ricerche più specifiche, usa le opzioni avanzate sotto "Cerchi qualcosa di specifico?"</p>
+                                    <p>Per cercare una struttura specifica per nome, usa l'opzione "Cerca una struttura specifica per nome" qui sotto.</p>
                                 </div>
                             </div>
                         </div>
