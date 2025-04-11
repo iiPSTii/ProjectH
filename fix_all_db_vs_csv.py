@@ -115,8 +115,9 @@ def get_facility_specialties(session, facility_id):
     Returns:
         dict: Dizionario con nome specialità -> rating e ID specialty
     """
+    # Utilizzo una query senza l'id della tabella facility_specialty
     sql_query = """
-    SELECT s.id, s.name, fs.quality_rating, fs.id as fs_id
+    SELECT s.id, s.name, fs.quality_rating
     FROM facility_specialty fs
     JOIN specialties s ON fs.specialty_id = s.id
     WHERE fs.facility_id = :facility_id
@@ -125,7 +126,21 @@ def get_facility_specialties(session, facility_id):
     
     specialties = {}
     for row in result:
-        specialty_id, specialty_name, rating, fs_id = row
+        specialty_id, specialty_name, rating = row
+        
+        # Ora ottengo l'id della tabella facility_specialty con una query separata
+        fs_query = """
+        SELECT id
+        FROM facility_specialty
+        WHERE facility_id = :facility_id AND specialty_id = :specialty_id
+        """
+        fs_result = session.execute(
+            sqlalchemy.text(fs_query),
+            {"facility_id": facility_id, "specialty_id": specialty_id}
+        ).fetchone()
+        
+        fs_id = fs_result[0] if fs_result else None
+        
         specialties[specialty_name] = {
             'specialty_id': specialty_id,
             'rating': float(rating) if rating is not None else None,
@@ -563,7 +578,8 @@ def fix_all_facilities_with_offset(csv_file, batch_size, output_file, offset=0, 
     
     # Prima eseguo un backup del database
     logger.info("Esecuzione backup del database...")
-    backup_database.backup_database()
+    with app.app_context():
+        backup_database.backup_database()
     
     # Carico i dati dal CSV
     csv_data = load_csv_data(csv_file)

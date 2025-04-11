@@ -1,0 +1,313 @@
+============================================
+       REPORT VERIFICA DATABASE VS CSV      
+============================================
+
+Data verifica: 2025-04-11 14:43:50.893159
+Tempo di esecuzione: 0:00:02.389171
+
+STATISTICHE GENERALI
+--------------------
+Strutture verificate: 50
+Strutture con discrepanze: 35 (70.00%)
+Specialità verificate: 400
+Specialità corrispondenti: 353 (88.25%)
+Specialità con valori diversi: 33 (8.25%)
+Specialità mancanti nel database: 14 (3.50%)
+Specialità mancanti nel CSV: 0 (0.00%)
+
+DETTAGLIO DELLE DISCREPANZE
+---------------------------
+
+Struttura: Ospedale Generale Regionale "F. Miulli"
+Città: Acquaviva delle Fonti
+ID: 1822
+Chiave CSV: ('Ospedale Generale Regionale "F. Miulli"', 'Acquaviva delle Fonti')
+Discrepanze:
+  - Neurologia: DB=2.0, CSV=3.0 (Valori diversi)
+---------------------------
+
+Struttura: Policlinico di Bari
+Città: Bari
+ID: 1824
+Chiave CSV: ('Policlinico di Bari', 'Bari')
+Discrepanze:
+  - Neurologia: DB=2.0, CSV=1.0 (Valori diversi)
+---------------------------
+
+Struttura: Ospedale "San Paolo"
+Città: Bari
+ID: 1825
+Chiave CSV: ('Ospedale "San Paolo"', 'Bari')
+Discrepanze:
+  - Neurologia: DB=2.0, CSV=5.0 (Valori diversi)
+---------------------------
+
+Struttura: Centro Medico San Giovanni
+Città: Brindisi
+ID: 1826
+Chiave CSV: ('Centro Medico San Giovanni', 'Brindisi')
+Discrepanze:
+  - Neurologia: DB=2.0, CSV=4.0 (Valori diversi)
+---------------------------
+
+Struttura: Clinica Villa Bianca
+Città: Lecce
+ID: 1827
+Chiave CSV: ('Clinica Villa Bianca', 'Lecce')
+Discrepanze:
+  - Neurologia: DB=2.0, CSV=4.0 (Valori diversi)
+---------------------------
+
+Struttura: Centro Diagnostico Puglia
+Città: Barletta
+ID: 1829
+Chiave CSV: ('Centro Diagnostico Puglia', 'Barletta')
+Discrepanze:
+  - Cardiologia: DB=None, CSV=1.0 (Mancante nel database)
+  - Ortopedia: DB=None, CSV=2.0 (Mancante nel database)
+  - Oncologia: DB=None, CSV=4.0 (Mancante nel database)
+  - Neurologia: DB=None, CSV=5.0 (Mancante nel database)
+  - Chirurgia Generale: DB=None, CSV=5.0 (Mancante nel database)
+  - Pediatria: DB=None, CSV=2.0 (Mancante nel database)
+  - Ginecologia: DB=None, CSV=4.0 (Mancante nel database)
+---------------------------
+
+Struttura: Istituto Tumori "Giovanni Paolo II"
+Città: Bari
+ID: 1830
+Chiave CSV: ('Istituto Tumori "Giovanni Paolo II"', 'Bari')
+Discrepanze:
+  - Neurologia: DB=1.0, CSV=5.0 (Valori diversi)
+---------------------------
+
+Struttura: Ospedale "SS. Annunziata"
+Città: Taranto
+ID: 1832
+Chiave CSV: ('Ospedale "SS. Annunziata"', 'Taranto')
+Discrepanze:
+  - Neurologia: DB=2.0, CSV=4.0 (Valori diversi)
+---------------------------
+
+Struttura: Ospedale Santa Chiara
+Città: Trento
+ID: 1834
+Chiave CSV: ('Ospedale Santa Chiara', 'Trento')
+Discrepanze:
+  - Neurologia: DB=1.0, CSV=4.0 (Valori diversi)
+---------------------------
+
+Struttura: Centro Medico Trentino
+Città: Trento
+ID: 1837
+Chiave CSV: ('Centro Medico Trentino', 'Trento')
+Discrepanze:
+  - Neurologia: DB=2.0, CSV=1.0 (Valori diversi)
+---------------------------
+
+Struttura: Poliambulatorio Montebello
+Città: Trento
+ID: 1839
+Chiave CSV: ('Poliambulatorio Montebello', 'Trento')
+Discrepanze:
+  - Neurologia: DB=3.0, CSV=4.0 (Valori diversi)
+---------------------------
+
+Struttura: Ospedale di Cavalese
+Città: Cavalese
+ID: 1840
+Chiave CSV: ('Ospedale di Cavalese', 'Cavalese')
+Discrepanze:
+  - Neurologia: DB=2.0, CSV=3.0 (Valori diversi)
+---------------------------
+
+Struttura: Ospedale di Cles
+Città: Cles
+ID: 1841
+Chiave CSV: ('Ospedale di Cles', 'Cles')
+Discrepanze:
+  - Neurologia: DB=1.0, CSV=2.0 (Valori diversi)
+---------------------------
+
+Struttura: Ospedale di Arco
+Città: Arco
+ID: 1842
+Chiave CSV: ('Ospedale di Arco', 'Arco')
+Discrepanze:
+  - Neurologia: DB=3.0, CSV=5.0 (Valori diversi)
+---------------------------
+
+Struttura: Centro Sanitario San Giovanni
+Città: Predazzo
+ID: 1843
+Chiave CSV: ('Centro Sanitario San Giovanni', 'Predazzo')
+Discrepanze:
+  - Cardiologia: DB=None, CSV=5.0 (Mancante nel database)
+  - Ortopedia: DB=None, CSV=3.0 (Mancante nel database)
+  - Oncologia: DB=None, CSV=3.0 (Mancante nel database)
+  - Neurologia: DB=None, CSV=3.0 (Mancante nel database)
+  - Chirurgia Generale: DB=None, CSV=5.0 (Mancante nel database)
+  - Pediatria: DB=None, CSV=3.0 (Mancante nel database)
+  - Ginecologia: DB=None, CSV=2.0 (Mancante nel database)
+---------------------------
+
+Struttura: Villa Bianca
+Città: Arco
+ID: 1844
+Chiave CSV: ('Villa Bianca', 'Arco')
+Discrepanze:
+  - Neurologia: DB=4.0, CSV=2.0 (Valori diversi)
+---------------------------
+
+Struttura: Ospedale San Lorenzo
+Città: Borgo Valsugana
+ID: 1845
+Chiave CSV: ('Ospedale San Lorenzo', 'Borgo Valsugana')
+Discrepanze:
+  - Neurologia: DB=2.0, CSV=1.0 (Valori diversi)
+---------------------------
+
+Struttura: Azienda Ospedaliero Universitaria Careggi
+Città: Firenze
+ID: 1846
+Chiave CSV: ('Azienda Ospedaliero Universitaria Careggi', 'Firenze')
+Discrepanze:
+  - Neurologia: DB=3.0, CSV=2.0 (Valori diversi)
+---------------------------
+
+Struttura: Ospedale Santa Maria Nuova
+Città: Firenze
+ID: 1847
+Chiave CSV: ('Ospedale Santa Maria Nuova', 'Firenze')
+Discrepanze:
+  - Neurologia: DB=1.0, CSV=5.0 (Valori diversi)
+---------------------------
+
+Struttura: Azienda Ospedaliero Universitaria Pisana
+Città: Pisa
+ID: 1849
+Chiave CSV: ('Azienda Ospedaliero Universitaria Pisana', 'Pisa')
+Discrepanze:
+  - Neurologia: DB=1.0, CSV=3.0 (Valori diversi)
+---------------------------
+
+Struttura: Centro Medico Fiorentino
+Città: Firenze
+ID: 1850
+Chiave CSV: ('Centro Medico Fiorentino', 'Firenze')
+Discrepanze:
+  - Neurologia: DB=2.0, CSV=5.0 (Valori diversi)
+---------------------------
+
+Struttura: Ospedale Misericordia
+Città: Grosseto
+ID: 1851
+Chiave CSV: ('Ospedale Misericordia', 'Grosseto')
+Discrepanze:
+  - Neurologia: DB=5.0, CSV=1.0 (Valori diversi)
+---------------------------
+
+Struttura: Ospedale San Donato
+Città: Arezzo
+ID: 1852
+Chiave CSV: ('Ospedale San Donato', 'Arezzo')
+Discrepanze:
+  - Neurologia: DB=1.0, CSV=5.0 (Valori diversi)
+---------------------------
+
+Struttura: Policlinico Le Scotte
+Città: Siena
+ID: 1853
+Chiave CSV: ('Policlinico Le Scotte', 'Siena')
+Discrepanze:
+  - Neurologia: DB=3.0, CSV=1.0 (Valori diversi)
+---------------------------
+
+Struttura: Centro Oncologico Toscano
+Città: Prato
+ID: 1854
+Chiave CSV: ('Centro Oncologico Toscano', 'Prato')
+Discrepanze:
+  - Neurologia: DB=3.0, CSV=4.0 (Valori diversi)
+---------------------------
+
+Struttura: Ospedale San Giuseppe
+Città: Empoli
+ID: 1856
+Chiave CSV: ('Ospedale San Giuseppe', 'Empoli')
+Discrepanze:
+  - Neurologia: DB=2.0, CSV=1.0 (Valori diversi)
+---------------------------
+
+Struttura: Ospedale SS. Cosma e Damiano
+Città: Pescia
+ID: 1857
+Chiave CSV: ('Ospedale SS. Cosma e Damiano', 'Pescia')
+Discrepanze:
+  - Neurologia: DB=3.0, CSV=2.0 (Valori diversi)
+---------------------------
+
+Struttura: Policlinico Umberto I
+Città: Roma
+ID: 1858
+Chiave CSV: ('Policlinico Umberto I', 'Roma')
+Discrepanze:
+  - Neurologia: DB=4.0, CSV=2.0 (Valori diversi)
+---------------------------
+
+Struttura: Ospedale San Giovanni Addolorata
+Città: Roma
+ID: 1859
+Chiave CSV: ('Ospedale San Giovanni Addolorata', 'Roma')
+Discrepanze:
+  - Neurologia: DB=3.0, CSV=5.0 (Valori diversi)
+---------------------------
+
+Struttura: Ospedale San Camillo-Forlanini
+Città: Roma
+ID: 1860
+Chiave CSV: ('Ospedale San Camillo-Forlanini', 'Roma')
+Discrepanze:
+  - Neurologia: DB=2.0, CSV=5.0 (Valori diversi)
+---------------------------
+
+Struttura: Ospedale Sandro Pertini
+Città: Roma
+ID: 1864
+Chiave CSV: ('Ospedale Sandro Pertini', 'Roma')
+Discrepanze:
+  - Neurologia: DB=3.0, CSV=4.0 (Valori diversi)
+---------------------------
+
+Struttura: Ospedale Regina Apostolorum
+Città: Albano Laziale
+ID: 1865
+Chiave CSV: ('Ospedale Regina Apostolorum', 'Albano Laziale')
+Discrepanze:
+  - Neurologia: DB=3.0, CSV=1.0 (Valori diversi)
+---------------------------
+
+Struttura: Ospedale Sant'Andrea
+Città: Roma
+ID: 1866
+Chiave CSV: ("Ospedale Sant'Andrea", 'Roma')
+Discrepanze:
+  - Neurologia: DB=1.0, CSV=5.0 (Valori diversi)
+---------------------------
+
+Struttura: Ospedale Pediatrico Bambino Gesu
+Città: Roma
+ID: 1867
+Chiave CSV: ('Ospedale Pediatrico Bambino Gesu', 'Roma')
+Discrepanze:
+  - Neurologia: DB=2.0, CSV=5.0 (Valori diversi)
+---------------------------
+
+Struttura: Campus Bio-Medico
+Città: Roma
+ID: 1870
+Chiave CSV: ('Campus Bio-Medico', 'Roma')
+Discrepanze:
+  - Neurologia: DB=4.0, CSV=2.0 (Valori diversi)
+---------------------------
+
+============================================
