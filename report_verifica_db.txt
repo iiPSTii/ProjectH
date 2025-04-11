@@ -1,0 +1,83 @@
+============================================
+       REPORT VERIFICA DATABASE VS CSV      
+============================================
+
+Data verifica: 2025-04-11 14:41:18.108246
+Tempo di esecuzione: 0:00:00.935575
+
+STATISTICHE GENERALI
+--------------------
+Strutture verificate: 10
+Strutture con discrepanze: 7 (70.00%)
+Specialità verificate: 80
+Specialità corrispondenti: 67 (83.75%)
+Specialità con valori diversi: 6 (7.50%)
+Specialità mancanti nel database: 7 (8.75%)
+Specialità mancanti nel CSV: 0 (0.00%)
+
+DETTAGLIO DELLE DISCREPANZE
+---------------------------
+
+Struttura: Ospedale Generale Regionale "F. Miulli"
+Città: Acquaviva delle Fonti
+ID: 1822
+Chiave CSV: ('Ospedale Generale Regionale "F. Miulli"', 'Acquaviva delle Fonti')
+Discrepanze:
+  - Neurologia: DB=2.0, CSV=3.0 (Valori diversi)
+---------------------------
+
+Struttura: Policlinico di Bari
+Città: Bari
+ID: 1824
+Chiave CSV: ('Policlinico di Bari', 'Bari')
+Discrepanze:
+  - Neurologia: DB=2.0, CSV=1.0 (Valori diversi)
+---------------------------
+
+Struttura: Ospedale "San Paolo"
+Città: Bari
+ID: 1825
+Chiave CSV: ('Ospedale "San Paolo"', 'Bari')
+Discrepanze:
+  - Neurologia: DB=2.0, CSV=5.0 (Valori diversi)
+---------------------------
+
+Struttura: Centro Medico San Giovanni
+Città: Brindisi
+ID: 1826
+Chiave CSV: ('Centro Medico San Giovanni', 'Brindisi')
+Discrepanze:
+  - Neurologia: DB=2.0, CSV=4.0 (Valori diversi)
+---------------------------
+
+Struttura: Clinica Villa Bianca
+Città: Lecce
+ID: 1827
+Chiave CSV: ('Clinica Villa Bianca', 'Lecce')
+Discrepanze:
+  - Neurologia: DB=2.0, CSV=4.0 (Valori diversi)
+---------------------------
+
+Struttura: Centro Diagnostico Puglia
+Città: Barletta
+ID: 1829
+Chiave CSV: ('Centro Diagnostico Puglia', 'Barletta')
+Discrepanze:
+  - Cardiologia: DB=None, CSV=1.0 (Mancante nel database)
+  - Ortopedia: DB=None, CSV=2.0 (Mancante nel database)
+  - Oncologia: DB=None, CSV=4.0 (Mancante nel database)
+  - Neurologia: DB=None, CSV=5.0 (Mancante nel database)
+  - Chirurgia Generale: DB=None, CSV=5.0 (Mancante nel database)
+  - Pediatria: DB=None, CSV=2.0 (Mancante nel database)
+  - Ginecologia: DB=None, CSV=4.0 (Mancante nel database)
+---------------------------
+
+Struttura: Istituto Tumori "Giovanni Paolo II"
+Città: Bari
+ID: 1830
+Chiave CSV: ('Istituto Tumori "Giovanni Paolo II"', 'Bari')
+Discrepanze:
+  - Neurologia: DB=1.0, CSV=5.0 (Valori diversi)
+---------------------------
+
+============================================
