@@ -1124,7 +1124,7 @@ Preferred-Languages: it, en
             if specialty:
                 for facility_specialty in facility.specialties:
                     if facility_specialty.specialty.name == specialty:
-                        facility_data['specialty_rating'] = facility_specialty.rating
+                        facility_data['specialty_rating'] = facility_specialty.quality_rating
                         break
             
             data.append(facility_data)
