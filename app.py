@@ -1080,7 +1080,6 @@ Preferred-Languages: it, en
         # Recupera i parametri di filtro
         region = request.args.get('region', '')
         specialty = request.args.get('specialty', '')
-        min_quality = request.args.get('min_quality', 0, type=float)
         
         # Inizia la query
         query = db.session.query(MedicalFacility)
@@ -1099,9 +1098,6 @@ Preferred-Languages: it, en
             # Unisci con la tabella delle specialità
             query = query.join(MedicalFacility.specialties).join(FacilitySpecialty.specialty)
             query = query.filter(Specialty.name == specialty)
-            
-        if min_quality > 0:
-            query = query.filter(MedicalFacility.quality_score >= min_quality)
             
         # Esegui la query
         facilities = query.all()

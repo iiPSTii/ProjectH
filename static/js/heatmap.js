@@ -16,7 +16,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const loadingOverlay = document.getElementById('loading-overlay');
     const regionFilter = document.getElementById('region-filter');
     const specialtyFilter = document.getElementById('specialty-filter');
-    const minQualityFilter = document.getElementById('min-quality-filter');
     const applyFiltersBtn = document.getElementById('apply-filters');
     const resetFiltersBtn = document.getElementById('reset-filters');
     
@@ -27,8 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let facilities = [];
     let currentFilters = {
         region: '',
-        specialty: '',
-        minQuality: 0
+        specialty: ''
     };
     
     // Inizializza la mappa
@@ -60,7 +58,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const params = new URLSearchParams();
         if (currentFilters.region) params.append('region', currentFilters.region);
         if (currentFilters.specialty) params.append('specialty', currentFilters.specialty);
-        if (currentFilters.minQuality > 0) params.append('min_quality', currentFilters.minQuality);
         
         // Effettua la richiesta API
         fetch(`/api/facilities-data?${params.toString()}`)
@@ -258,7 +255,6 @@ document.addEventListener('DOMContentLoaded', function() {
             // Aggiorna i filtri correnti
             currentFilters.region = regionFilter.value;
             currentFilters.specialty = specialtyFilter.value;
-            currentFilters.minQuality = parseFloat(minQualityFilter.value);
             
             // Carica i nuovi dati con i filtri applicati
             loadFacilitiesData();
@@ -269,12 +265,10 @@ document.addEventListener('DOMContentLoaded', function() {
             // Resetta i valori dei filtri
             regionFilter.value = '';
             specialtyFilter.value = '';
-            minQualityFilter.value = '0';
             
             // Resetta i filtri correnti
             currentFilters.region = '';
             currentFilters.specialty = '';
-            currentFilters.minQuality = 0;
             
             // Carica i dati senza filtri
             loadFacilitiesData();
