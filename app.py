@@ -583,7 +583,7 @@ with app.app_context():
                     'name_desc': lambda x: x.name.lower(),
                     'city_asc': lambda x: (x.city or '').lower(),
                     'city_desc': lambda x: (x.city or '').lower(),
-                    'distance': lambda x: x.distance if hasattr(x, 'distance') else float('inf')  # Keep original distance sort
+                    'distance': lambda x: x.distance if hasattr(x, 'distance') else 9999  # Keep original distance sort
                 }
                 
                 reverse_sort = sort_by.endswith('_desc') and sort_by != 'quality_desc'
@@ -662,11 +662,11 @@ with app.app_context():
                                 facility.distance_text = f"{facility.distance:.1f} km"
                             else:
                                 # For facilities without coordinates, set a high distance
-                                facility.distance = float('inf')
+                                facility.distance = 9999
                                 facility.distance_text = "N/A"
                         
                         # Pre-sort by distance before applying potential other sorts
-                        facilities.sort(key=lambda x: x.distance if hasattr(x, 'distance') else float('inf'))
+                        facilities.sort(key=lambda x: x.distance if hasattr(x, 'distance') else 9999)
                         logger.debug(f"Pre-sorted facilities by distance for region search")
             
             # Regular search results - sort the facilities based on the sort_by parameter
@@ -686,7 +686,7 @@ with app.app_context():
                         facility.distance_text = f"{facility.distance:.1f} km"
                     else:
                         # For facilities without coordinates, set a high distance
-                        facility.distance = float('inf')
+                        facility.distance = 9999
                         facility.distance_text = "N/A"
                 
                 # Se stiamo ordinando per distanza, assicuriamoci che is_address_search sia impostato a True
@@ -700,7 +700,7 @@ with app.app_context():
                 'name_desc': lambda x: x.name.lower(),
                 'city_asc': lambda x: (x.city or '').lower(),
                 'city_desc': lambda x: (x.city or '').lower(),
-                'distance': lambda x: x.distance if hasattr(x, 'distance') else float('inf')  # Add distance sorting support
+                'distance': lambda x: x.distance if hasattr(x, 'distance') else 9999  # Add distance sorting support
             }
 
             reverse_sort = sort_by.endswith('_desc') and sort_by != 'quality_desc'
