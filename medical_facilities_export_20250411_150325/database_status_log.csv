@@ -1,0 +1,43 @@
+id,status,message,timestamp
+1,updated,Specialty ratings updated from test_ratings.csv,2025-04-10 23:15:51.054281
+2,updated,Specialty ratings updated from test_ratings.csv,2025-04-10 23:16:08.910462
+3,updated,Specialty ratings updated from sample_ratings_new_format.csv,2025-04-10 23:22:15.229649
+4,updated,Specialty ratings updated from temp_batch_0_25.csv,2025-04-10 23:27:36.808489
+5,updated,Specialty ratings updated from temp_batch_50_60.csv,2025-04-10 23:28:50.972321
+6,updated,Specialty ratings updated from temp_batch_60_70.csv,2025-04-10 23:29:07.628190
+7,updated,Specialty ratings updated from temp_batch_70_80.csv,2025-04-10 23:29:19.121890
+8,updated,Specialty ratings updated from temp_batch_80_100.csv,2025-04-10 23:29:33.822722
+9,updated,Specialty ratings updated from temp_batch_130_150.csv,2025-04-10 23:30:57.048351
+10,updated,Specialty ratings updated from temp_batch_150_170.csv,2025-04-10 23:31:11.042796
+11,updated,Specialty ratings updated from temp_batch_170_190.csv,2025-04-10 23:31:24.436667
+12,updated,Specialty ratings updated from temp_batch_190_206.csv,2025-04-10 23:31:45.763246
+14,updated,Batch 13/21: Added 10 Urologia ratings,2025-04-11 13:35:37.859711
+15,updated,Batch 14/21: Added 20 Urologia ratings,2025-04-11 13:35:38.563196
+16,updated,Batch 15/21: Added 28 Urologia ratings,2025-04-11 13:35:39.261941
+17,updated,Batch 16/21: Added 38 Urologia ratings,2025-04-11 13:35:39.912816
+18,updated,Batch 17/21: Added 48 Urologia ratings,2025-04-11 13:35:40.529121
+19,updated,Batch 18/21: Added 58 Urologia ratings,2025-04-11 13:35:41.145180
+20,updated,Batch 19/21: Added 67 Urologia ratings,2025-04-11 13:35:41.768434
+21,updated,Batch 20/21: Added 77 Urologia ratings,2025-04-11 13:35:42.386975
+22,updated,Aggiunte valutazioni di Urologia alle ultime 5 strutture,2025-04-11 13:36:43.946952
+23,updated,Aggiornate valutazioni per IDI,2025-04-11 13:44:12.760331
+24,updated,Aggiornate valutazioni per Ospedale di Dolo,2025-04-11 13:56:33.923390
+25,updated,Aggiornate valutazioni per Ospedale San Paolo,2025-04-11 13:56:56.630089
+26,updated,Aggiornate valutazioni per Ospedale San Martino,2025-04-11 13:57:03.275632
+27,updated,"Aggiornate valutazioni per Ospedale ""Casa Sollievo della Sofferenza""",2025-04-11 13:57:09.910425
+28,updated,Aggiornate valutazioni per Villa Bianca,2025-04-11 13:57:16.487894
+29,updated,Aggiornate valutazioni per AORN Dei Colli - Monaldi,2025-04-11 13:57:24.080080
+30,updated,Aggiornate valutazioni per AORN Dei Colli - Cotugno,2025-04-11 13:57:31.189204
+31,updated,Aggiornate valutazioni per Azienda Ospedaliero Universitaria Careggi,2025-04-11 13:57:40.542861
+32,updated,Aggiornate valutazioni per Clinica Villa Bianca,2025-04-11 13:57:48.352850
+33,updated,"Aggiornate valutazioni per Ospedale ""SS. Annunziata""",2025-04-11 13:57:55.611481
+34,updated,Aggiornate valutazioni per Ospedale di Cavalese,2025-04-11 13:58:03.590584
+35,updated,Aggiornate valutazioni per Centro Medico Fiorentino,2025-04-11 13:58:37.882791
+36,updated,Aggiornate valutazioni per Ospedale Morgagni - Pierantoni,2025-04-11 13:58:46.521275
+37,updated,"Aggiornate valutazioni per Istituto Tumori ""Giovanni Paolo II""",2025-04-11 13:58:54.488689
+38,updated,Aggiornate valutazioni per Ospedale di Gubbio - Gualdo Tadino,2025-04-11 13:59:02.166052
+39,updated,Corrette valutazioni per Ospedale di Gubbio - Gualdo Tadino,2025-04-11 14:04:11.340606
+40,updated,Corretta valutazione Neurologia per Ospedale di Gubbio - Gualdo Tadino,2025-04-11 14:04:43.491977
+41,updated,Corrette 7 valutazioni per strutture con discrepanze,2025-04-11 14:20:22.484874
+42,updated,Corrette 15 valutazioni per strutture con discrepanze,2025-04-11 14:22:05.574184
+43,updated,Corretti 2 valori di specialità per 2 ospedali 'San Giovanni di Dio',2025-04-11 14:26:15.433678

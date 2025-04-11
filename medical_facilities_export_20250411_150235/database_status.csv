@@ -1,0 +1,11 @@
+id,status,last_updated,total_facilities,total_regions,total_specialties,initialized_by,notes
+9,updated,2025-04-11 14:26:15.433678,200,20,43,update_facility_ratings.py,
+4,updated,2025-04-11 14:30:15.356649,200,20,43,initialize_database.py,
+5,updated,2025-04-11 14:50:23.661411,200,20,43,update_facility_ratings.py,
+6,updated,2025-04-11 14:51:01.274104,200,20,43,update_facility_ratings.py,
+7,updated,2025-04-11 14:51:41.705619,200,20,43,update_facility_ratings.py,
+8,updated,2025-04-11 14:51:53.609804,200,20,43,restore_quality_scores.py,
+10,updated,2025-04-11 14:26:15.433678,200,20,43,update_facility_ratings.py,
+11,updated,2025-04-11 14:26:15.433678,200,20,43,update_full_ratings.py,
+12,updated,2025-04-11 14:26:15.433678,0,0,0,update_from_json.py,
+13,updated,2025-04-11 14:26:15.433678,206,0,0,update_from_json.py,
