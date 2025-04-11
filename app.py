@@ -156,8 +156,8 @@ with app.app_context():
         # Get custom search radius if provided, default to 30km
         try:
             search_radius = float(request.args.get('radius', 30.0))
-            # Limit radius between 5km and 100km for safety
-            search_radius = max(5.0, min(100.0, search_radius))
+            # Limit radius between 5km and 300km
+            search_radius = max(5.0, min(300.0, search_radius))
         except (ValueError, TypeError):
             search_radius = 30.0  # Default if invalid
 

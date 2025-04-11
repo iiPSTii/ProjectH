@@ -413,15 +413,15 @@ def extract_coordinates_from_address(address, city=None):
     
     return None
 
-def find_facilities_near_address(query_text, facilities, max_distance=10.0, max_results=20):
+def find_facilities_near_address(query_text, facilities, max_distance=30.0, max_results=50):
     """
     Find facilities near a specified address using stored coordinates.
     
     Args:
         query_text (str): The address query text
         facilities (list): List of medical facilities
-        max_distance (float): Maximum distance in kilometers (default: 10km)
-        max_results (int): Maximum number of results to return (default: 20)
+        max_distance (float): Maximum distance in kilometers (default: 30km)
+        max_results (int): Maximum number of results to return (default: 50)
         
     Returns:
         dict: Dictionary with facilities sorted by distance and search location details
@@ -594,8 +594,8 @@ def find_facilities_near_address(query_text, facilities, max_distance=10.0, max_
                         # Calculate actual distance from search point to facility
                         distance = calculate_distance(search_lat, search_lon, facility.latitude, facility.longitude)
                         
-                        # Add facility with actual distance calculation (up to 100km)
-                        if distance <= 100.0:
+                        # Add facility with actual distance calculation (up to 300km)
+                        if distance <= 300.0:
                             facility.distance = round(distance, 1)
                             facility.distance_text = f"{facility.distance:.1f} km"
                             facilities_with_distance.append(facility)
