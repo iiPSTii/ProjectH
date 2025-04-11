@@ -1,0 +1,13 @@
+id,status,message,timestamp
+1,updated,Specialty ratings updated from test_ratings.csv,2025-04-10 23:15:51.054281
+2,updated,Specialty ratings updated from test_ratings.csv,2025-04-10 23:16:08.910462
+3,updated,Specialty ratings updated from sample_ratings_new_format.csv,2025-04-10 23:22:15.229649
+4,updated,Specialty ratings updated from temp_batch_0_25.csv,2025-04-10 23:27:36.808489
+5,updated,Specialty ratings updated from temp_batch_50_60.csv,2025-04-10 23:28:50.972321
+6,updated,Specialty ratings updated from temp_batch_60_70.csv,2025-04-10 23:29:07.628190
+7,updated,Specialty ratings updated from temp_batch_70_80.csv,2025-04-10 23:29:19.121890
+8,updated,Specialty ratings updated from temp_batch_80_100.csv,2025-04-10 23:29:33.822722
+9,updated,Specialty ratings updated from temp_batch_130_150.csv,2025-04-10 23:30:57.048351
+10,updated,Specialty ratings updated from temp_batch_150_170.csv,2025-04-10 23:31:11.042796
+11,updated,Specialty ratings updated from temp_batch_170_190.csv,2025-04-10 23:31:24.436667
+12,updated,Specialty ratings updated from temp_batch_190_206.csv,2025-04-10 23:31:45.763246
