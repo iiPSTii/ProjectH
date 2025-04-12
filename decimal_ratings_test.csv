@@ -1,0 +1,207 @@
+Name of the facility,City,Cardiologia,Ortopedia,Oncologia,Neurologia,Urologia,Chirurgia generale,Pediatria,Ginecologia
+Ospedale Niguarda,Milano,3.9,3.6,4.3,5.0,5.0,5.0,5.0,3.1
+Ospedale San Carlo Borromeo,Milano,1.4,2.9,1.9,3.8,5.0,3.9,5.0,3.3
+Policlinico San Donato,San Donato Milanese,5.0,5.0,1.2,1.5,3.4,1.3,5.0,1.4
+Ospedale San Paolo,Milano,5.0,4.3,4.2,1.1,5.0,5.0,1.7,1.8
+Policlinico Paolo Giaccone,Palermo,3.0,3.1,4.7,3.8,3.3,5.0,1.7,3.8
+Ospedale Civico Di Cristina Benfratelli,Palermo,4.3,5.0,3.6,2.3,2.3,2.0,2.6,4.2
+Ospedale Cannizzaro,Catania,1.0,5.0,3.6,1.3,3.8,2.5,5.0,5.0
+Istituto Nazionale dei Tumori,Milano,1.3,2.2,5.0,4.9,2.5,5.0,3.7,5.0
+Ospedale San Raffaele,Milano,1.6,2.7,5.0,2.2,3.5,1.7,2.6,5.0
+Ospedale Maggiore Policlinico,Milano,1.1,4.6,3.0,3.8,4.3,5.0,4.3,5.0
+Ospedale Luigi Sacco,Milano,5.0,4.5,1.6,4.5,5.0,5.0,5.0,3.2
+Ospedale Fatebenefratelli,Milano,2.3,3.3,1.2,3.6,3.7,5.0,2.2,2.9
+Spedali Civili di Brescia,Brescia,2.7,2.9,4.7,4.3,4.0,2.6,5.0,3.6
+Ospedale Papa Giovanni XXIII,Bergamo,5.0,5.0,4.2,5.0,2.8,3.2,1.0,2.4
+Ospedale di Circolo e Fondazione Macchi,Varese,1.4,4.6,2.7,5.0,4.5,5.0,2.2,3.2
+Ospedale San Matteo,Pavia,3.2,2.1,3.3,3.9,3.8,4.2,2.4,3.4
+Ospedale Buccheri La Ferla,Palermo,5.0,2.1,4.8,4.6,2.5,4.0,2.3,4.0
+Ospedale Villa Sofia-Cervello,Palermo,2.1,5.0,3.6,2.1,5.0,5.0,1.2,5.0
+ISMETT,Palermo,4.4,5.0,1.0,1.6,5.0,1.6,3.1,4.6
+Policlinico Vittorio Emanuele,Catania,2.5,4.3,4.1,2.2,1.3,5.0,4.3,2.9
+Campus Bio-Medico,Roma,3.2,4.8,5.0,2.0,4.4,2.7,3.1,5.0
+Ospedale Garibaldi Centro,Catania,4.7,3.3,1.1,4.8,1.3,5.0,3.7,2.0
+Ospedale Papardo,Messina,4.3,1.8,1.7,1.3,3.6,2.8,1.2,2.5
+Ospedale dell'Angelo,Venezia,5.0,4.8,2.6,1.1,4.5,2.6,4.0,1.3
+Ospedale di Mestre,Venezia,5.0,4.9,3.7,1.3,1.9,3.2,1.8,3.8
+Policlinico G. Martino,Messina,5.0,2.3,5.0,1.6,5.0,1.7,5.0,3.0
+Ospedale Civile OMPA,Ragusa,2.9,3.0,2.6,4.1,1.7,2.5,3.4,1.7
+Policlinico Sant'Orsola-Malpighi,Bologna,5.0,4.9,3.7,2.4,3.7,4.8,5.0,5.0
+Ospedale Maggiore,Bologna,2.7,3.1,3.8,5.0,3.1,3.4,3.1,4.1
+Ospedale Bellaria,Bologna,1.0,3.6,4.9,4.3,3.6,3.7,5.0,5.0
+Azienda Ospedaliero-Universitaria di Parma,Parma,4.4,2.0,5.0,2.9,5.0,1.5,4.7,4.4
+Ospedale di Baggiovara,Modena,3.4,2.1,1.3,4.6,4.3,2.4,3.8,4.5
+Arcispedale Santa Maria Nuova,Reggio Emilia,1.4,5.0,1.5,1.5,5.0,2.4,4.6,5.0
+Ospedale Infermi,Rimini,5.0,3.7,1.5,3.1,4.1,2.5,3.9,3.5
+Ospedale Bufalini,Cesena,3.1,4.2,1.8,2.1,4.1,4.5,4.8,2.0
+Ospedale M. Bufalini,Cesena,1.4,2.4,5.0,4.2,4.5,2.6,5.0,2.7
+Ospedale Santa Maria delle Croci,Ravenna,5.0,2.3,3.6,3.1,3.4,3.6,5.0,4.2
+Azienda Ospedaliera San Giuseppe Moscati,Avellino,3.9,5.0,4.1,2.1,5.0,4.1,1.4,2.4
+Azienda Ospedaliera di Padova,Padova,2.3,5.0,2.8,3.6,2.0,4.4,3.6,1.2
+Ospedale San Bortolo,Vicenza,3.5,4.8,5.0,1.8,3.5,4.3,5.0,3.5
+Ospedale Civile SS. Giovanni e Paolo,Venezia,3.3,2.6,1.6,1.3,4.9,3.4,2.7,3.1
+Ospedale di Verona Borgo Trento,Verona,1.7,5.0,4.4,5.0,1.7,4.5,3.5,3.1
+Ospedale Giovanni Paolo II,Ragusa,4.8,3.4,1.3,4.4,5.0,5.0,3.3,2.6
+Istituto Ortopedico Rizzoli,Bologna,2.1,5.0,4.4,4.2,4.2,4.3,5.0,1.4
+Ospedale Morgagni,Pierantoni - Forl,3.4,1.4,2.3,4.5,2.1,4.6,1.8,1.8
+Ospedale Ca' Foncello,Treviso,2.1,4.5,3.4,2.7,4.4,2.3,3.8,5.0
+Ospedale di Dolo,Dolo,2.2,2.7,4.7,1.4,4.3,4.2,1.2,4.5
+Ospedale San Paolo,Savona,4.7,5.0,2.3,2.5,4.4,1.2,2.4,5.0
+Ospedale SS. Annunziata,Chieti,5.0,4.7,1.4,3.1,5.0,2.7,2.3,1.7
+Ospedale San Martino,Belluno,3.7,1.5,2.3,5.0,4.7,1.8,2.2,5.0
+Ospedale San Luigi Gonzaga,Orbassano,2.6,1.4,4.7,2.2,1.4,5.0,2.4,4.0
+Ospedale San Giovanni Bosco,Torino,3.7,4.1,1.4,1.0,5.0,5.0,4.7,5.0
+Ospedale Cardinal Massaia,Asti,2.0,3.9,3.9,2.6,2.0,5.0,2.8,5.0
+Ospedale di Belluno,Belluno,1.5,2.9,5.0,5.0,3.2,2.9,1.3,3.3
+Ospedale CTO,Torino,4.6,5.0,1.8,2.6,4.7,5.0,5.0,5.0
+Ospedale di Cittadella,Cittadella,5.0,5.0,1.8,3.6,4.4,5.0,5.0,4.1
+Ospedale Molinette,Torino,5.0,5.0,5.0,1.1,1.2,3.6,1.5,3.9
+Ospedale Regina Margherita,Torino,4.9,2.9,3.4,3.6,2.5,1.5,1.6,4.2
+Ospedale Sant'Anna,Torino,1.1,2.6,2.5,4.0,3.8,5.0,4.4,3.1
+Ospedale Mauriziano Umberto I,Torino,2.5,1.1,1.3,5.0,4.3,3.4,3.8,4.5
+Ospedale Maggiore della Carita,Novara,4.8,5.0,1.9,3.7,1.2,3.3,4.5,2.5
+Ospedale SS. Antonio e Biagio,Alessandria,3.0,5.0,4.4,5.0,4.1,5.0,1.2,5.0
+Ospedale Santa Croce e Carle,Cuneo,4.5,3.5,2.5,2.8,2.1,2.7,2.7,3.1
+Ospedale Maria Vittoria,Torino,4.4,1.5,4.2,4.7,4.8,1.2,2.4,3.5
+Ospedale Policlinico San Martino,Genova,3.5,1.8,5.0,2.6,5.0,3.8,4.7,4.2
+Ospedale Galliera,Genova,3.4,2.0,1.8,2.5,3.6,3.8,1.1,1.5
+Ospedale Villa Scassi,Genova,5.0,4.4,1.6,3.7,4.8,5.0,4.1,3.3
+Ospedale Gaslini,Genova,3.1,2.5,2.9,5.0,4.8,2.3,5.0,5.0
+Ospedale San Pio,Vasto,3.5,4.3,3.8,2.1,1.1,5.0,1.4,2.0
+Ospedale di Civitanova Marche,Civitanova Marche,5.0,1.6,5.0,2.6,2.3,3.0,1.4,1.3
+Ospedale San Salvatore,Pesaro,4.7,5.0,4.1,1.9,5.0,5.0,3.8,3.0
+Ospedale Madonna del Soccorso,San Benedetto del Tronto,2.1,5.0,2.2,1.6,1.7,3.5,2.3,2.3
+Ospedale Santa Maria della Misericordia,Perugia,3.6,2.3,5.0,4.1,5.0,2.1,4.1,1.3
+Ospedale Santa Maria,Terni,2.4,4.2,5.0,4.7,4.2,3.7,3.5,3.6
+Ospedale Lavagna,Lavagna,1.7,3.7,4.3,3.6,4.0,4.6,2.7,3.8
+Ospedali Riuniti di Ancona,Ancona,5.0,4.8,3.2,4.6,4.2,4.4,3.3,3.8
+Ospedale Salesi,Ancona,5.0,3.2,3.2,4.5,3.7,1.7,1.5,4.8
+INRCA Ancona,Ancona,2.3,5.0,3.0,5.0,3.1,5.0,2.2,5.0
+Ospedale Carlo Urbani,Jesi,3.1,5.0,4.6,1.1,5.0,4.7,2.6,1.9
+Ospedale di Macerata,Macerata,1.4,3.9,1.4,4.3,4.7,5.0,1.9,4.6
+Ospedale di Foligno,Foligno,3.5,5.0,4.8,5.0,1.4,2.7,2.6,5.0
+Ospedale di Spoleto,Spoleto,3.2,1.8,1.4,3.5,5.0,1.2,4.2,2.2
+Ospedale Pugliese Ciaccio,Catanzaro,5.0,3.1,2.9,4.5,5.0,4.0,4.3,1.6
+Ospedale San Francesco di Paola,Paola,3.3,3.3,3.7,1.8,2.4,5.0,3.7,5.0
+Ospedale di Crotone,Crotone,1.4,3.0,5.0,3.5,3.5,5.0,2.6,3.0
+Ospedale di Vibo Valentia,Vibo Valentia,5.0,4.6,4.4,1.6,4.8,4.6,5.0,2.1
+Ospedale San Francesco,Nuoro,5.0,4.4,5.0,4.2,1.2,5.0,1.9,4.0
+Ospedale Civile SS. Annunziata,Sassari,2.8,1.1,3.2,5.0,4.2,5.0,5.0,3.5
+Ospedale Civile G. Bernabeo,Ortona,4.0,4.9,3.3,2.2,2.5,5.0,2.4,1.6
+Ospedale Santa Croce,Fano,4.4,5.0,2.1,3.5,5.0,5.0,1.7,4.6
+Ospedale San Giovanni Battista,Orvieto,5.0,4.8,3.3,3.4,2.2,3.7,5.0,1.6
+Ospedale di Citta di Castello,Citt di Castello,3.7,3.1,1.3,1.3,2.2,3.0,4.8,1.5
+Ospedale di Gubbio,Gualdo Tadino - Gubbio,1.8,1.2,4.3,3.1,1.3,3.4,5.0,2.4
+Ospedale Media Valle del Tevere,Todi,4.5,2.7,2.8,2.6,3.7,1.4,4.2,3.2
+Ospedale di Melfi,Melfi,1.6,5.0,4.1,2.5,3.9,5.0,1.8,3.3
+Ospedale Umberto Parini,Aosta,3.3,2.3,4.1,2.2,5.0,4.7,3.8,5.0
+Ospedale Cardarelli,Campobasso,5.0,5.0,5.0,1.2,1.0,3.3,5.0,4.1
+Ospedale San Timoteo,Termoli,5.0,4.6,2.6,1.1,3.1,1.0,1.7,4.2
+Ospedale F. Veneziale,Isernia,4.7,2.9,4.1,5.0,4.4,1.3,1.8,5.0
+IRCCS Neuromed,Pozzilli,4.8,2.0,4.4,3.8,3.5,5.0,4.1,5.0
+Ospedale Binaghi,Cagliari,2.4,4.3,2.9,5.0,5.0,2.1,3.5,3.4
+Ospedale Brotzu,Cagliari,2.2,1.2,1.1,4.1,3.5,2.5,5.0,3.1
+Policlinico Duilio Casula,Monserrato,1.3,4.3,1.8,3.5,1.0,5.0,2.7,4.6
+Ospedale Marino,Cagliari,4.7,2.7,3.1,1.1,2.8,3.6,4.8,3.2
+Ospedale Santissima Trinita,Cagliari,4.9,2.3,5.0,2.2,3.2,4.4,1.2,5.0
+Ospedale San Carlo,Potenza,3.8,2.1,3.3,4.6,4.5,2.7,4.5,3.5
+Ospedale Santa Maria della Misericordia,Udine,1.0,3.6,4.5,3.2,4.4,2.0,2.7,1.1
+Ospedale Santa Maria degli Angeli,Pordenone,2.5,5.0,3.2,3.5,3.0,3.4,4.8,1.2
+Ospedale San Polo,Monfalcone,4.7,3.9,3.1,3.8,5.0,3.8,4.6,3.3
+Ospedale di Cattinara,Trieste,4.2,3.3,5.0,3.0,5.0,5.0,3.2,5.0
+Ospedale Maggiore,Trieste,4.5,3.8,3.7,4.4,1.5,4.2,3.4,5.0
+Ospedale San Daniele,San Daniele del Friuli,1.9,4.0,5.0,5.0,3.5,4.3,2.3,2.7
+Ospedale di Palmanova,Palmanova,3.1,1.0,4.2,3.2,5.0,5.0,3.2,1.8
+Ospedale di Monfalcone,Monfalcone,1.6,3.5,3.4,4.6,4.6,1.5,4.3,3.8
+Ospedale Giovanni Paolo II,Olbia,4.8,2.2,4.6,1.3,1.4,4.8,2.6,2.0
+Ospedale San Martino,Oristano,3.8,4.6,4.1,5.0,2.3,4.4,2.5,3.5
+Ospedale di Lagonegro,Lagonegro,3.8,5.0,5.0,3.5,3.2,5.0,4.0,4.4
+"Ospedale Generale Regionale ""F. Miulli""",Acquaviva delle Fonti,4.5,5.0,2.3,3.9,2.2,2.6,3.8,5.0
+"Ospedale ""Di Venere""",Bari,4.8,5.0,4.6,2.3,2.8,4.6,3.1,4.4
+Centro Medico San Giovanni,Brindisi,3.7,1.6,1.7,4.2,2.7,2.2,4.1,5.0
+Clinica Villa Bianca,Lecce,4.1,4.8,4.1,4.3,2.1,4.6,5.0,4.8
+Centro Diagnostico Puglia,Barletta,1.6,2.8,4.7,5.0,5.0,5.0,2.1,4.3
+"Istituto Tumori ""Giovanni Paolo II""",Bari,3.1,5.0,1.1,5.0,1.8,2.4,2.8,5.0
+"Ospedale ""SS. Annunziata""",Taranto,2.8,3.0,2.8,4.5,2.7,4.8,2.9,2.7
+"Ospedale ""Casa Sollievo della Sofferenza""",San Giovanni Rotondo,4.2,4.7,1.2,4.8,4.4,5.0,1.3,3.2
+Ospedale di Cavalese,Cavalese,3.6,4.6,4.9,3.3,2.9,4.5,4.9,5.0
+Centro Sanitario San Giovanni,Predazzo,5.0,3.5,3.2,3.8,5.0,5.0,3.4,2.4
+Villa Bianca,Arco,1.8,4.6,2.8,2.6,4.9,2.9,1.5,3.9
+Azienda Ospedaliero Universitaria Careggi,Firenze,2.5,1.2,5.0,2.4,3.4,5.0,5.0,4.8
+Centro Medico Fiorentino,Firenze,3.3,2.3,1.1,5.0,2.7,3.5,1.8,1.7
+Ospedale San Donato,Arezzo,5.0,5.0,4.2,5.0,1.2,2.3,4.8,1.2
+Policlinico Le Scotte,Siena,3.2,3.0,3.2,1.6,3.2,3.6,5.0,2.6
+Centro Oncologico Toscano,Prato,3.4,2.7,4.4,4.6,3.6,3.2,1.4,1.1
+"Ospedale ""San Paolo""",Bari,1.1,2.4,3.7,5.0,2.7,5.0,1.3,1.6
+"Ospedale ""Perrino""",Brindisi,2.9,5.0,3.4,3.2,3.5,2.4,1.1,5.0
+Ospedale Villa Rosa,Pergine Valsugana,5.0,5.0,2.4,1.1,1.3,5.0,5.0,3.3
+Ospedale di Cles,Cles,2.5,3.4,1.2,2.3,1.3,3.8,1.4,1.5
+Ospedale di Arco,Arco,4.4,2.3,2.1,5.0,3.0,1.7,5.0,1.1
+Ospedale San Lorenzo,Borgo Valsugana,5.0,5.0,1.5,1.7,2.3,1.5,4.0,1.4
+Ospedale San Giovanni di Dio,Firenze,2.4,4.3,1.3,4.1,3.7,5.0,5.0,5.0
+Ospedale San Giuseppe,Empoli,5.0,4.3,1.1,1.1,2.1,5.0,4.1,5.0
+IDI,Istituto Dermopatico dell'Immacolata - Roma,5.0,4.4,2.8,1.1,5.0,4.4,4.4,1.1
+Ospedale Antonio Cardarelli,Napoli,4.2,4.4,4.7,4.5,5.0,4.6,1.2,4.5
+Policlinico Federico II,Napoli,2.4,1.7,1.8,5.0,4.5,2.8,3.0,5.0
+Ospedale del Mare,Napoli,1.2,5.0,1.5,3.7,4.6,5.0,5.0,4.6
+AORN Dei Colli,Monaldi - Napoli,5.0,5.0,3.0,3.3,1.4,4.2,4.9,4.4
+Ospedale Santobono,Napoli,5.0,4.1,2.6,5.0,2.3,4.4,4.3,1.7
+Azienda Ospedaliera San Sebastiano,Caserta,4.2,5.0,3.6,1.0,1.7,2.2,4.5,3.1
+Casa di Cura Villa dei Fiori,Acerra,2.8,4.5,3.6,5.0,1.1,5.0,1.5,1.1
+Clinica Mediterranea,Napoli,3.8,5.0,4.4,3.7,5.0,3.7,3.8,3.7
+Ospedale San Salvatore,L'Aquila,2.2,2.8,1.3,4.7,5.0,2.0,1.7,1.1
+Ospedale Spirito Santo,Pescara,4.6,1.3,1.1,2.0,1.0,3.4,1.5,5.0
+Ospedale G. Mazzini,Teramo,1.2,2.2,1.1,4.3,2.1,1.9,1.2,1.1
+Ospedale San Massimo,Penne,2.8,5.0,3.7,1.4,3.1,3.6,3.8,4.8
+Ospedale Maria SS. dello Splendore,Giulianova,4.9,1.0,3.7,2.4,1.4,3.6,3.3,1.2
+Grande Ospedale Metropolitano,Reggio Calabria,1.4,5.0,4.6,4.2,1.9,1.9,5.0,4.7
+Ospedale di Policoro,Policoro,1.0,5.0,4.4,3.5,3.3,4.5,2.3,3.6
+Ospedale SS. Cosma e Damiano,Pescia,4.0,2.3,3.7,2.5,3.5,3.5,1.1,5.0
+Ospedale Santa Chiara,Trento,1.1,2.1,2.0,4.9,1.7,2.7,1.3,5.0
+Ospedale San Camillo,Trento,3.4,4.4,5.0,5.0,5.0,2.5,2.1,2.6
+Centro Medico Trentino,Trento,3.1,4.2,2.1,1.1,2.7,1.8,2.8,5.0
+Poliambulatorio Montebello,Trento,5.0,5.0,1.0,4.8,3.0,5.0,5.0,5.0
+Ospedale Santa Maria Nuova,Firenze,3.7,2.1,1.2,5.0,1.8,2.2,2.8,1.1
+Azienda Ospedaliero Universitaria Pisana,Pisa,4.2,4.7,2.8,3.0,1.1,5.0,1.8,4.2
+Ospedale Misericordia,Grosseto,5.0,4.2,2.8,1.8,5.0,1.2,3.2,3.1
+Policlinico Umberto I,Roma,1.8,5.0,2.4,2.3,4.6,2.3,4.8,3.7
+Ospedale San Giovanni Addolorata,Roma,2.0,2.6,5.0,5.0,3.4,1.8,4.2,1.9
+Ospedale San Camillo-Forlanini,Roma,4.8,4.9,4.9,5.0,2.1,4.9,1.0,1.8
+Policlinico Gemelli,Roma,5.0,5.0,1.7,5.0,5.0,4.6,3.8,1.1
+Ospedale Sant'Eugenio,Roma,4.5,5.0,4.2,1.6,1.6,1.7,5.0,1.6
+Ospedale San Filippo Neri,Roma,1.3,3.1,1.4,3.7,3.7,4.1,3.3,2.7
+Ospedale Sandro Pertini,Roma,3.4,3.1,2.3,4.3,3.7,2.1,3.1,2.6
+Ospedale Sant'Andrea,Roma,5.0,1.0,3.7,5.0,1.0,5.0,4.8,1.6
+Ospedale Pediatrico Bambino Gesu,Roma,5.0,5.0,4.3,5.0,2.5,1.8,1.3,3.6
+Ospedale Spallanzani,Roma,4.7,5.0,1.4,1.0,1.7,5.0,2.9,3.1
+Humanitas Research Hospital,Rozzano,5.0,4.1,4.7,5.0,3.0,5.0,3.4,4.7
+Ospedale Santa Corona,Pietra Ligure,2.0,5.0,1.7,5.0,3.8,2.9,2.4,4.8
+Ospedale Sant'Andrea,La Spezia,1.3,3.5,4.8,3.6,2.2,4.1,4.1,4.3
+Ospedale di Sanremo,Sanremo,2.5,2.9,1.6,2.4,1.0,3.4,4.7,2.4
+"Ospedale ""Vito Fazzi""",Lecce,4.5,3.1,3.4,1.6,1.8,3.6,3.1,4.2
+Clinica Solatrix,Rovereto,3.1,4.8,3.9,5.0,5.0,5.0,1.0,5.0
+Ospedale di Polistena,Polistena,4.4,1.2,2.5,3.3,1.5,2.4,5.0,1.1
+Ospedale di Soverato,Soverato,2.9,4.0,5.0,1.8,5.0,2.6,4.1,3.8
+Ospedale Ruggi D'Aragona,Salerno,4.1,1.7,1.2,2.9,5.0,5.0,5.0,1.1
+Ospedale Regina Apostolorum,Albano Laziale,2.4,5.0,2.1,1.7,3.7,5.0,1.9,2.6
+Policlinico di Bari,Bari,2.7,2.0,1.4,1.8,2.6,5.0,1.4,3.8
+Ospedale Pediatrico Meyer,Firenze,2.9,5.0,5.0,1.5,1.5,3.1,5.0,4.6
+Istituto Ortopedico Galeazzi,Milano,4.5,5.0,3.5,1.7,1.8,2.7,2.4,5.0
+AORN Dei Colli,Cotugno - Napoli,1.7,2.2,4.9,3.5,4.7,4.1,2.2,5.0
+Ospedale San Leonardo,Castellammare di Stabia,2.8,3.7,3.1,1.1,4.1,5.0,3.4,1.6
+Ospedale di Verona Borgo Roma,Verona,4.1,2.1,1.5,3.0,3.2,5.0,4.4,2.2
+Ospedale Renzetti,Lanciano,4.3,4.5,4.6,4.9,3.1,5.0,4.0,5.0
+Ospedale Giovanni Paolo II,Lamezia Terme,4.7,1.1,4.3,5.0,2.4,1.8,4.6,4.4
+Ospedale di Lamezia Terme,Lamezia Terme,4.7,4.9,2.3,2.5,1.0,5.0,5.0,1.1
+Ospedale Rummo,Benevento,5.0,5.0,5.0,4.5,2.8,3.6,3.6,2.1
+Azienda Ospedaliera di Cosenza,Cosenza,1.5,1.9,3.8,5.0,1.3,1.3,1.3,1.5
+Ospedale T. E. O. Marianna G.,Reggio Calabria,3.1,4.0,4.5,5.0,4.1,4.9,2.6,2.6
+Ospedale Jazzolino,Vibo Valentia,5.0,1.0,5.0,5.0,4.8,4.7,5.0,4.4
+Ospedale San Giovanni di Dio,Crotone,4.3,3.2,1.4,4.1,3.0,3.9,1.8,1.6
+Ospedale Madonna delle Grazie,Matera,4.6,2.6,3.1,1.6,1.2,1.7,4.4,3.6
+Ospedale di Villa d'Agri,Villa d'Agri,1.2,1.5,3.0,4.1,3.5,4.3,5.0,4.2
+Ospedale SS. Rosario,Venafro,1.8,2.6,3.7,2.1,3.5,2.6,5.0,2.9
+Ospedale G. Vietri,Larino,4.4,2.2,2.7,4.6,4.9,4.7,4.3,4.2
+Ospedale Beauregard,Aosta,3.7,2.0,3.6,1.4,2.7,4.6,4.1,2.6
+Clinica di Saint-Pierre,Saint-Pierre,2.3,4.1,1.0,5.0,1.4,5.0,5.0,5.0
+Ospedale San Giovanni di Dio,Gorizia,1.4,4.4,5.0,3.9,3.8,5.0,3.2,2.7
