@@ -1145,28 +1145,33 @@ Preferred-Languages: it, en
             current_path = request.path
             
             # Base data for all pages
-            base_data = {
-                "@context": "https://schema.org",
-                "@type": "WebSite",
-                "name": "FindMyCure Italia",
-                "url": "https://findmycure.it/",
-                "description": "Trova e confronta strutture sanitarie in Italia con valutazioni reali basate su dati ufficiali.",
-                "potentialAction": {
-                    "@type": "SearchAction",
-                    "target": "https://findmycure.it/search?query_text={search_term}",
-                    "query-input": "required name=search_term"
+            base_data = [
+                {
+                    "@context": "https://schema.org",
+                    "@type": "WebSite",
+                    "name": "FindMyCure Italia",
+                    "url": "https://findmycure.it/",
+                    "description": "Trova e confronta strutture sanitarie in Italia con valutazioni reali basate su dati ufficiali.",
+                    "potentialAction": {
+                        "@type": "SearchAction",
+                        "target": "https://findmycure.it/search?query_text={search_term}",
+                        "query-input": "required name=search_term"
+                    }
                 },
-                "publisher": {
+                {
+                    "@context": "https://schema.org",
                     "@type": "Organization",
                     "name": "FindMyCure Italia",
+                    "url": "https://findmycure.it/",
                     "logo": {
                         "@type": "ImageObject",
                         "url": "https://findmycure.it/static/images/logo-cross-112.png",
                         "width": "112",
                         "height": "112"
-                    }
+                    },
+                    "description": "FindMyCure Italia - Trova e confronta strutture sanitarie in Italia con valutazioni reali basate su dati ufficiali."
                 }
-            }
+            ]
             
             # Enhanced structured data for search results pages
             if current_path == '/search':
@@ -1183,22 +1188,15 @@ Preferred-Languages: it, en
                 if region:
                     search_title += f" in {region}"
                     
-                base_data = {
-                    "@context": "https://schema.org",
-                    "@type": "SearchResultsPage",
-                    "name": f"FindMyCure Italia - {search_title}",
-                    "description": f"Risultati della ricerca per strutture sanitarie in Italia: {search_title}"
-                }
-            
-            # Enhanced structured data for methodology page
-            elif current_path == '/methodology':
-                base_data = {
-                    "@context": "https://schema.org",
-                    "@type": "Article",
-                    "headline": "Metodologia di valutazione delle strutture sanitarie",
-                    "description": "Scopri come valutiamo le strutture sanitarie italiane usando dati ufficiali del Programma Nazionale Esiti (PNE) e altre fonti verificate",
-                    "datePublished": "2025-04-09",
-                    "publisher": {
+                base_data = [
+                    {
+                        "@context": "https://schema.org",
+                        "@type": "SearchResultsPage",
+                        "name": f"FindMyCure Italia - {search_title}",
+                        "description": f"Risultati della ricerca per strutture sanitarie in Italia: {search_title}"
+                    },
+                    {
+                        "@context": "https://schema.org",
                         "@type": "Organization",
                         "name": "FindMyCure Italia",
                         "url": "https://findmycure.it/",
@@ -1209,7 +1207,42 @@ Preferred-Languages: it, en
                             "height": "112"
                         }
                     }
-                }
+                ]
+            
+            # Enhanced structured data for methodology page
+            elif current_path == '/methodology':
+                base_data = [
+                    {
+                        "@context": "https://schema.org",
+                        "@type": "Article",
+                        "headline": "Metodologia di valutazione delle strutture sanitarie",
+                        "description": "Scopri come valutiamo le strutture sanitarie italiane usando dati ufficiali del Programma Nazionale Esiti (PNE) e altre fonti verificate",
+                        "datePublished": "2025-04-09",
+                        "publisher": {
+                            "@type": "Organization",
+                            "name": "FindMyCure Italia",
+                            "url": "https://findmycure.it/",
+                            "logo": {
+                                "@type": "ImageObject",
+                                "url": "https://findmycure.it/static/images/logo-cross-112.png",
+                                "width": "112",
+                                "height": "112"
+                            }
+                        }
+                    },
+                    {
+                        "@context": "https://schema.org",
+                        "@type": "Organization",
+                        "name": "FindMyCure Italia",
+                        "url": "https://findmycure.it/",
+                        "logo": {
+                            "@type": "ImageObject",
+                            "url": "https://findmycure.it/static/images/logo-cross-112.png",
+                            "width": "112",
+                            "height": "112"
+                        }
+                    }
+                ]
             
             # Enhanced structured data for landing pages
             elif current_path in ['/cardiologia', '/oncologia', '/milano-strutture-sanitarie']:
@@ -1236,21 +1269,35 @@ Preferred-Languages: it, en
                 # Utilizza il tipo di pagina corretto in base alle informazioni
                 page_type = info.get("type", "MedicalWebPage")
                 
-                base_data = {
-                    "@context": "https://schema.org",
-                    "@type": page_type,
-                    "headline": info["name"],
-                    "specialty": info.get("specialty", ""),
-                    "about": {
-                        "@type": "MedicalOrganization",
-                        "name": "Strutture mediche italiane",
-                        "address": {
-                            "@type": "PostalAddress",
-                            "addressCountry": "IT",
-                            "addressRegion": info.get("city", "Italia")
+                base_data = [
+                    {
+                        "@context": "https://schema.org",
+                        "@type": page_type,
+                        "headline": info["name"],
+                        "specialty": info.get("specialty", ""),
+                        "about": {
+                            "@type": "MedicalOrganization",
+                            "name": "Strutture mediche italiane",
+                            "address": {
+                                "@type": "PostalAddress",
+                                "addressCountry": "IT",
+                                "addressRegion": info.get("city", "Italia")
+                            }
+                        },
+                        "publisher": {
+                            "@type": "Organization",
+                            "name": "FindMyCure Italia",
+                            "url": "https://findmycure.it/",
+                            "logo": {
+                                "@type": "ImageObject",
+                                "url": "https://findmycure.it/static/images/logo-cross-112.png",
+                                "width": "112",
+                                "height": "112"
+                            }
                         }
                     },
-                    "publisher": {
+                    {
+                        "@context": "https://schema.org",
                         "@type": "Organization",
                         "name": "FindMyCure Italia",
                         "url": "https://findmycure.it/",
@@ -1261,7 +1308,7 @@ Preferred-Languages: it, en
                             "height": "112"
                         }
                     }
-                }
+                ]
                 
             return base_data
             
