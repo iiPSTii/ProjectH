@@ -1204,7 +1204,7 @@ Preferred-Languages: it, en
                         "url": "https://findmycure.it/",
                         "logo": {
                             "@type": "ImageObject",
-                            "url": "https://findmycure.it/static/images/logo.png",
+                            "url": url_for('static', filename='images/logo.png', _external=True),
                             "width": "512",
                             "height": "512"
                         }
@@ -1256,7 +1256,7 @@ Preferred-Languages: it, en
                         "url": "https://findmycure.it/",
                         "logo": {
                             "@type": "ImageObject",
-                            "url": "https://findmycure.it/static/images/logo.png",
+                            "url": url_for('static', filename='images/logo.png', _external=True),
                             "width": "512",
                             "height": "512"
                         }
