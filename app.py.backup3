@@ -1162,8 +1162,8 @@ Preferred-Languages: it, en
                     "logo": {
                         "@type": "ImageObject",
                         "url": "https://findmycure.it/static/images/logo-cross-112.png",
-                        "width": "112",
-                        "height": "112"
+                        "width": "512",
+                        "height": "512"
                     }
                 }
             }

@@ -1161,9 +1161,9 @@ Preferred-Languages: it, en
                     "name": "FindMyCure Italia",
                     "logo": {
                         "@type": "ImageObject",
-                        "url": "https://findmycure.it/static/images/logo-cross-112.png",
-                        "width": "112",
-                        "height": "112"
+                        "url": "https://findmycure.it/static/images/logo.png",
+                        "width": "512",
+                        "height": "512"
                     }
                 }
             }
@@ -1204,7 +1204,7 @@ Preferred-Languages: it, en
                         "url": "https://findmycure.it/",
                         "logo": {
                             "@type": "ImageObject",
-                            "url": "https://findmycure.it/static/images/logo-cross-112.png",
+                            "url": "https://findmycure.it/static/images/logo.png",
                             "width": "512",
                             "height": "512"
                         }
@@ -1256,7 +1256,7 @@ Preferred-Languages: it, en
                         "url": "https://findmycure.it/",
                         "logo": {
                             "@type": "ImageObject",
-                            "url": "https://findmycure.it/static/images/logo-cross-112.png",
+                            "url": "https://findmycure.it/static/images/logo.png",
                             "width": "512",
                             "height": "512"
                         }
