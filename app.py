@@ -1155,6 +1155,16 @@ Preferred-Languages: it, en
                     "@type": "SearchAction",
                     "target": "https://findmycure.it/search?query_text={search_term}",
                     "query-input": "required name=search_term"
+                },
+                "publisher": {
+                    "@type": "Organization",
+                    "name": "FindMyCure Italia",
+                    "logo": {
+                        "@type": "ImageObject",
+                        "url": url_for('static', filename='images/logo.png', _external=True),
+                        "width": "512",
+                        "height": "512"
+                    }
                 }
             }
             
@@ -1191,7 +1201,13 @@ Preferred-Languages: it, en
                     "publisher": {
                         "@type": "Organization",
                         "name": "FindMyCure Italia",
-                        "url": "https://findmycure.it/"
+                        "url": "https://findmycure.it/",
+                        "logo": {
+                            "@type": "ImageObject",
+                            "url": url_for('static', filename='images/logo.png', _external=True),
+                            "width": "512",
+                            "height": "512"
+                        }
                     }
                 }
             
@@ -1232,6 +1248,17 @@ Preferred-Languages: it, en
                             "@type": "PostalAddress",
                             "addressCountry": "IT",
                             "addressRegion": info.get("city", "Italia")
+                        }
+                    },
+                    "publisher": {
+                        "@type": "Organization",
+                        "name": "FindMyCure Italia",
+                        "url": "https://findmycure.it/",
+                        "logo": {
+                            "@type": "ImageObject",
+                            "url": url_for('static', filename='images/logo.png', _external=True),
+                            "width": "512",
+                            "height": "512"
                         }
                     }
                 }
